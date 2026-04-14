@@ -744,9 +744,13 @@ function loadFromCoach(){
       a.pctRend = (s.pctRend!==undefined)  ? s.pctRend  : a.pctRend;
       a.metricas= s.metricas|| a.metricas;
       if(s.notas && s.notas.length){
-        // Preserve existing seen status if note already marked as seen by alumno
+        // Preserve existing seen/visto status if alumno already saw the note
         var existingByTxt={};
-        if(a.notas) a.notas.forEach(function(n){ if(n.tipo==='seen') existingByTxt[n.txt]=true; });
+        var vistoByTxt={};
+        if(a.notas) a.notas.forEach(function(n){
+          if(n.tipo==='seen') existingByTxt[n.txt]=true;
+          if(n.tipo==='positive' && n.visto) vistoByTxt[n.txt]=true;
+        });
         a.notas = s.notas.map(function(n){
           var obj = typeof n==='object' ? n : {tipo:'new',txt:n,sem:'—'};
           // Recalculate sem if missing or dash
@@ -761,6 +765,8 @@ function loadFromCoach(){
           }
           // Keep seen status if alumno already read it
           if(existingByTxt[obj.txt]) return {tipo:'seen',txt:obj.txt,sem:obj.sem};
+          // Keep visto flag on positives already acknowledged by alumno
+          if(obj.tipo==='positive' && vistoByTxt[obj.txt]) obj.visto=true;
           return obj;
         });
       }
@@ -1076,6 +1082,7 @@ function renderNotas(notas){
   notas.forEach(function(n){
     var cls=n.tipo==='new'?'new':n.tipo==='positive'?'positive':'seen';
     if(n.tipo==='new') hasNew=true;
+    if(n.tipo==='positive' && !n.visto) hasNew=true;
     var metaIcon=n.tipo==='new'?'🔴':n.tipo==='positive'?'✅':'⏰';
     var metaLbl=n.tipo==='new'?'Nueva':'Vista';
     html+='<div class="warn-msg-item '+cls+'">'+
@@ -1565,10 +1572,10 @@ function showNotifPopup(notas){
   var semActual = getSemanaActual();
   var semLabel  = semActual ? 'Sem. '+semActual : null;
 
-  // Show: all unread (new) + notas from current week (any tipo)
+  // Show: all unread notas — both warnings (new) and uncongratulated positives
   var toShow = notas.filter(function(n){
-    if(n.tipo==='new') return true;                          // unread always
-    if(semLabel && n.sem===semLabel) return true;            // current week
+    if(n.tipo==='new') return true;                          // unread warning
+    if(n.tipo==='positive' && !n.visto) return true;         // unread congrats
     return false;
   });
 
@@ -1866,6 +1873,7 @@ function navTo(id){
       var changed=false;
       a.notas.forEach(function(n){
         if(n.tipo==='new'){ n.tipo='seen'; changed=true; }
+        if(n.tipo==='positive' && !n.visto){ n.visto=true; changed=true; }
       });
       if(changed){
         renderNotas(a.notas);
