@@ -1061,7 +1061,7 @@ function calcAprobGeneral(){
     }
   }
   // Promedio de los % de aprobación por día (solo días con ejercicios)
-  var dias = ['lunes','martes','miercoles','jueves','viernes','sabado'];
+  var dias = ['lunes','martes','miercoles','jueves','viernes','sabado','domingo'];
   var sum = 0, count = 0;
   dias.forEach(function(d){
     var exs = getRutinaDia(d);
@@ -1195,7 +1195,7 @@ function renderAprobPorDia(){
     else { banEl.style.display='none'; }
   }
 
-  var dias = [['lunes','Lunes'],['martes','Martes'],['miercoles','Miércoles'],['jueves','Jueves'],['viernes','Viernes'],['sabado','Sábado']];
+  var dias = [['lunes','Lunes'],['martes','Martes'],['miercoles','Miércoles'],['jueves','Jueves'],['viernes','Viernes'],['sabado','Sábado'],['domingo','Domingo']];
   var html = '';
   dias.forEach(function(d){
     var exs = getRutinaDia(d[0]);
