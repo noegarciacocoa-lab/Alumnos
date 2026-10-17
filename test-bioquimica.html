@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test | Coach Noé García Ibarra</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --t:#00C9C8;--tl:#7EEEED;--td:#006F6E;
+  --tg:rgba(0,201,200,.15);--tf:rgba(0,201,200,.07);
+  --n:#030F1D;--n2:#061525;--n3:#091e34;--n4:#0d2847;
+  --w:#EEF9F9;--gr:#7A9EAD;--gr2:#3d6272;
+  --ac:#FF6B35;--acl:rgba(255,107,53,.13);
+  --gn:#06D6A0;--gnl:rgba(6,214,160,.11);
+  --pu:#9B5DE5;--pul:rgba(155,93,229,.11);
+  --go:#FFD166;--gol:rgba(255,209,102,.11);
+  --rd:#FF4D6D;--rdl:rgba(255,77,109,.11);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--n);color:var(--w);font-family:'Outfit',sans-serif;overflow-x:hidden;min-height:100vh;}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 900px 500px at 50% -80px,rgba(0,201,200,.08) 0%,transparent 65%),
+  repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(0,201,200,.025) 40px),
+  repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(0,201,200,.025) 40px);}
+
+/* ── HERO ── */
+.hero{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;min-height:100vh;padding:60px 24px 80px;text-align:center;}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;
+  border:1px solid rgba(0,201,200,.35);background:rgba(0,201,200,.07);color:var(--t);
+  font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:3px;
+  padding:7px 20px;border-radius:100px;margin-bottom:30px;animation:fu .7s ease both;}
+.dot{width:6px;height:6px;background:var(--t);border-radius:50%;animation:blink 1.6s infinite;}
+.hero-name{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,9vw,5.8rem);
+  letter-spacing:5px;line-height:1;animation:fu .8s .1s ease both;}
+.hero-name em{color:var(--t);font-style:normal;}
+.hero-slogan{font-family:'Bebas Neue',sans-serif;font-size:clamp(.95rem,3vw,1.75rem);
+  letter-spacing:8px;color:var(--tl);margin:12px 0 36px;animation:fu .9s .2s ease both;}
+.hero-bio{max-width:600px;text-align:left;margin-bottom:46px;animation:fu 1s .3s ease both;}
+.bio-label{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:3px;color:var(--t);margin-bottom:14px;}
+.bio-p{font-size:.88rem;color:var(--gr);line-height:1.85;margin-bottom:12px;}
+.bio-p strong{color:var(--w);}
+.bio-p em{color:var(--t);font-style:normal;}
+.hero-btn{display:inline-flex;align-items:center;gap:10px;background:var(--t);color:var(--n);
+  font-weight:800;font-size:.95rem;letter-spacing:2px;text-transform:uppercase;
+  padding:15px 42px;border-radius:6px;border:none;cursor:pointer;transition:all .25s;
+  animation:fu 1s .45s ease both;}
+.hero-btn:hover{background:var(--tl);transform:translateY(-3px);box-shadow:0 14px 44px var(--tg);}
+.arr{display:inline-block;transition:transform .2s;}
+.hero-btn:hover .arr{transform:translateX(4px);}
+
+/* ── SHELL ── */
+.shell{position:relative;z-index:1;display:none;min-height:100vh;}
+.shell.on{display:block;}
+.scr{display:none;animation:fi .3s ease;}
+.scr.on{display:block;}
+
+/* ── TOP BAR ── */
+.tbar{position:sticky;top:0;z-index:200;background:rgba(3,15,29,.94);
+  backdrop-filter:blur(14px);border-bottom:1px solid rgba(0,201,200,.1);
+  padding:0 20px;display:flex;align-items:center;gap:14px;height:54px;}
+.tbar-brand{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:3px;color:var(--t);flex-shrink:0;}
+.tbar-mode{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:1px;
+  padding:3px 10px;border-radius:20px;border:1px solid;flex-shrink:0;}
+.tbar-prog{flex:1;height:4px;background:var(--n4);border-radius:2px;overflow:hidden;}
+.tbar-fill{height:100%;background:linear-gradient(90deg,var(--td),var(--t),var(--tl));
+  border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+.tbar-count{font-family:'Space Mono',monospace;font-size:.65rem;color:var(--gr);flex-shrink:0;white-space:nowrap;}
+
+/* ── MODE SELECTOR ── */
+.mode-wrap{max-width:760px;margin:0 auto;padding:70px 24px 80px;text-align:center;}
+.mode-label{font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:3px;color:var(--t);margin-bottom:14px;}
+.mode-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,6vw,3rem);letter-spacing:3px;margin-bottom:10px;}
+.mode-title em{color:var(--t);font-style:normal;}
+.mode-sub{color:var(--gr);font-size:.92rem;line-height:1.75;max-width:500px;margin:0 auto 48px;}
+.mode-cards{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media(max-width:560px){.mode-cards{grid-template-columns:1fr;}}
+.mode-card{background:var(--n3);border:1.5px solid rgba(0,201,200,.12);border-radius:16px;
+  padding:34px 28px;cursor:pointer;transition:all .28s;text-align:left;position:relative;overflow:hidden;}
+.mode-card::after{content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at top left,rgba(0,201,200,.07),transparent 60%);
+  opacity:0;transition:opacity .3s;}
+.mode-card:hover{border-color:rgba(0,201,200,.5);transform:translateY(-5px);
+  box-shadow:0 20px 50px rgba(0,0,0,.5);}
+.mode-card:hover::after{opacity:1;}
+.mode-card.general{border-color:rgba(255,209,102,.18);}
+.mode-card.general::after{background:radial-gradient(circle at top left,rgba(255,209,102,.07),transparent 60%);}
+.mode-card.general:hover{border-color:rgba(255,209,102,.55);}
+.mc-badge{display:inline-flex;align-items:center;gap:6px;
+  padding:4px 12px;border-radius:20px;font-family:'Space Mono',monospace;
+  font-size:.6rem;letter-spacing:2px;font-weight:700;margin-bottom:18px;}
+.mc-badge.adv{background:rgba(0,201,200,.12);color:var(--t);border:1px solid rgba(0,201,200,.3);}
+.mc-badge.gen{background:rgba(255,209,102,.12);color:var(--go);border:1px solid rgba(255,209,102,.3);}
+.mc-icon{font-size:2.8rem;margin-bottom:16px;display:block;}
+.mc-title{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;letter-spacing:3px;margin-bottom:8px;}
+.mode-card:not(.general) .mc-title{color:var(--tl);}
+.mode-card.general .mc-title{color:var(--go);}
+.mc-desc{font-size:.84rem;color:var(--gr);line-height:1.65;margin-bottom:18px;}
+.mc-topics{display:flex;flex-direction:column;gap:6px;margin-bottom:22px;}
+.mc-topic{display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--gr2);}
+.mc-topic span:first-child{flex-shrink:0;}
+.mc-go{display:inline-flex;align-items:center;gap:8px;border:none;border-radius:7px;
+  padding:11px 22px;font-weight:800;font-size:.82rem;letter-spacing:1.5px;text-transform:uppercase;
+  cursor:pointer;transition:all .2s;width:100%;justify-content:center;}
+.mc-go.adv{background:var(--t);color:var(--n);}
+.mc-go.adv:hover{background:var(--tl);}
+.mc-go.gen{background:var(--go);color:var(--n);}
+.mc-go.gen:hover{background:#ffe08a;}
+
+/* ── NAME ── */
+.name-wrap{max-width:520px;margin:0 auto;padding:80px 24px;}
+.name-label{font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:3px;color:var(--t);margin-bottom:14px;}
+.name-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,6vw,3rem);letter-spacing:3px;margin-bottom:8px;}
+.name-title em{color:var(--t);font-style:normal;}
+.name-sub{color:var(--gr);font-size:.9rem;line-height:1.7;margin-bottom:36px;}
+.name-sub strong{color:var(--w);}
+.name-mode-badge{display:inline-flex;align-items:center;gap:6px;
+  padding:5px 14px;border-radius:20px;font-family:'Space Mono',monospace;
+  font-size:.6rem;letter-spacing:2px;margin-bottom:20px;}
+.name-mode-badge.adv{background:rgba(0,201,200,.1);color:var(--t);border:1px solid rgba(0,201,200,.25);}
+.name-mode-badge.gen{background:rgba(255,209,102,.1);color:var(--go);border:1px solid rgba(255,209,102,.25);}
+.name-in{width:100%;padding:14px 18px;background:var(--n3);border:1px solid rgba(0,201,200,.2);
+  border-radius:8px;color:var(--w);font-family:'Outfit',sans-serif;font-size:1.05rem;
+  outline:none;transition:border-color .2s;}
+.name-in:focus{border-color:var(--t);}
+.name-in::placeholder{color:var(--gr2);}
+.name-start{width:100%;margin-top:16px;padding:15px;background:var(--t);border:none;
+  border-radius:8px;color:var(--n);font-weight:800;font-size:1rem;letter-spacing:2px;
+  text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.name-start:hover{background:var(--tl);transform:translateY(-2px);box-shadow:0 10px 30px var(--tg);}
+.name-start.gen-btn{background:var(--go);}
+.name-start.gen-btn:hover{background:#ffe08a;}
+.name-back{display:block;margin-top:12px;background:none;border:none;
+  color:var(--gr2);font-size:.82rem;cursor:pointer;text-align:center;width:100%;}
+.name-back:hover{color:var(--gr);}
+
+/* ── CATEGORY INTRO ── */
+.cat-wrap{max-width:640px;margin:0 auto;padding:70px 24px 40px;text-align:center;}
+.cat-icon{font-size:3.5rem;margin-bottom:20px;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+.cat-num{font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:3px;color:var(--t);margin-bottom:10px;}
+.cat-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,7vw,3.2rem);letter-spacing:4px;margin-bottom:12px;}
+.cat-title em{color:var(--t);font-style:normal;}
+.cat-desc{color:var(--gr);font-size:.92rem;line-height:1.8;max-width:480px;margin:0 auto 10px;}
+.cat-desc strong{color:var(--w);}
+.cat-qs-count{display:inline-flex;align-items:center;gap:6px;
+  border:1px solid rgba(0,201,200,.2);border-radius:50px;
+  padding:6px 18px;font-family:'Space Mono',monospace;font-size:.65rem;
+  color:var(--gr);letter-spacing:1px;margin:16px 0 28px;}
+.cat-btn{display:inline-flex;align-items:center;gap:8px;background:var(--t);color:var(--n);
+  font-weight:800;font-size:.9rem;letter-spacing:1.5px;text-transform:uppercase;
+  padding:14px 36px;border-radius:6px;border:none;cursor:pointer;transition:all .2s;}
+.cat-btn:hover{background:var(--tl);transform:translateY(-2px);box-shadow:0 10px 28px var(--tg);}
+.cat-btn.gen-btn{background:var(--go);}
+.cat-btn.gen-btn:hover{background:#ffe08a;}
+
+/* ── QUESTION ── */
+.q-wrap{max-width:700px;margin:0 auto;padding:48px 24px 80px;}
+.q-meta{display:flex;align-items:center;gap:10px;margin-bottom:22px;flex-wrap:wrap;}
+.q-cat-tag{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:2px;
+  padding:5px 12px;border-radius:20px;border:1px solid;background:transparent;}
+.q-num-tag{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:1px;color:var(--gr2);}
+.q-stem{font-size:clamp(.98rem,2.4vw,1.15rem);font-weight:700;color:var(--w);line-height:1.6;margin-bottom:28px;}
+.opts{display:grid;gap:11px;}
+.opt{background:var(--n3);border:1.5px solid rgba(0,201,200,.12);border-radius:10px;
+  padding:0;cursor:pointer;transition:border-color .18s,transform .18s,background .18s;
+  overflow:hidden;display:flex;align-items:stretch;animation:slideIn .3s ease both;}
+.opt:nth-child(1){animation-delay:.04s;}
+.opt:nth-child(2){animation-delay:.09s;}
+.opt:nth-child(3){animation-delay:.14s;}
+.opt:nth-child(4){animation-delay:.19s;}
+.opt:hover:not(.locked){border-color:rgba(0,201,200,.5);transform:translateX(5px);background:rgba(0,201,200,.05);}
+.opt-letter{width:46px;min-width:46px;display:flex;align-items:center;justify-content:center;
+  background:rgba(0,201,200,.08);border-right:1px solid rgba(0,201,200,.1);
+  font-family:'Space Mono',monospace;font-size:.8rem;font-weight:700;color:var(--t);
+  transition:all .2s;flex-shrink:0;}
+.opt-text{padding:14px 18px;font-size:.9rem;color:var(--gr);line-height:1.5;transition:color .2s;text-align:left;flex:1;}
+.opt:hover:not(.locked) .opt-text{color:var(--w);}
+.opt:hover:not(.locked) .opt-letter{background:rgba(0,201,200,.2);}
+.opt.correct{border-color:var(--gn)!important;background:var(--gnl)!important;animation:correctPop .35s ease;}
+.opt.correct .opt-letter{background:var(--gn)!important;color:var(--n)!important;}
+.opt.correct .opt-text{color:var(--w)!important;}
+.opt.wrong{border-color:var(--rd)!important;background:var(--rdl)!important;animation:wrongShake .35s ease;}
+.opt.wrong .opt-letter{background:var(--rd)!important;color:var(--w)!important;}
+.opt.wrong .opt-text{color:var(--gr);}
+.opt.locked{cursor:default;}
+.q-fb{margin-top:18px;padding:16px 20px;border-radius:10px;
+  font-size:.87rem;line-height:1.75;display:none;animation:fi .3s ease;}
+.q-fb.show{display:block;}
+.q-fb.ok{background:var(--gnl);border:1px solid rgba(6,214,160,.3);}
+.q-fb.no{background:var(--rdl);border:1px solid rgba(255,77,109,.3);}
+.fb-title{font-weight:800;margin-bottom:8px;font-size:.92rem;}
+.q-fb.ok .fb-title{color:var(--gn);}
+.q-fb.no .fb-title{color:#ff8fa3;}
+.fb-body{color:var(--gr);line-height:1.75;}
+.fb-body strong{color:var(--w);}
+.fb-body em{color:var(--tl);font-style:normal;}
+.q-next{width:100%;margin-top:18px;padding:14px;background:var(--t);border:none;
+  border-radius:8px;color:var(--n);font-weight:800;font-size:.92rem;
+  letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;
+  display:none;animation:fi .25s ease;}
+.q-next.show{display:block;}
+.q-next:hover{background:var(--tl);transform:translateY(-2px);box-shadow:0 10px 30px var(--tg);}
+.q-next.gen-btn{background:var(--go);}
+.q-next.gen-btn:hover{background:#ffe08a;}
+
+/* ── RESULT ── */
+.res-wrap{max-width:700px;margin:0 auto;padding:60px 24px 80px;}
+.res-top{text-align:center;margin-bottom:48px;}
+.res-avatar{width:88px;height:88px;border-radius:50%;
+  background:linear-gradient(135deg,var(--td),var(--t));
+  display:flex;align-items:center;justify-content:center;font-size:2.2rem;
+  margin:0 auto 22px;box-shadow:0 0 0 8px rgba(0,201,200,.12),0 0 0 16px rgba(0,201,200,.05);
+  animation:pop .5s cubic-bezier(.34,1.56,.64,1);}
+.res-avatar.gen-av{background:linear-gradient(135deg,#a07800,var(--go));}
+.res-greeting{font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:3px;color:var(--t);margin-bottom:8px;}
+.res-name{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,6vw,2.8rem);letter-spacing:3px;}
+.res-score-big{font-family:'Bebas Neue',sans-serif;font-size:clamp(4.5rem,16vw,9rem);color:var(--t);line-height:1;margin:8px 0;}
+.res-score-big.gen-score{color:var(--go);}
+.res-score-den{font-family:'Space Mono',monospace;font-size:.72rem;color:var(--gr);letter-spacing:2px;margin-bottom:10px;}
+.res-stars{font-size:1.7rem;letter-spacing:4px;margin-bottom:10px;}
+.res-badge{display:inline-block;padding:8px 22px;border-radius:50px;font-weight:800;font-size:.78rem;letter-spacing:2px;margin:6px 4px;text-transform:uppercase;}
+.res-msg{color:var(--gr);font-size:.93rem;line-height:1.8;max-width:500px;margin:14px auto 0;}
+.res-msg strong{color:var(--w);}
+.section-head{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:3px;color:var(--t);
+  margin:44px 0 18px;display:flex;align-items:center;gap:12px;}
+.section-head::after{content:'';flex:1;height:1px;background:rgba(0,201,200,.14);}
+.bk-item{display:flex;align-items:center;gap:14px;margin-bottom:12px;}
+.bk-icon{font-size:1.3rem;width:34px;text-align:center;flex-shrink:0;}
+.bk-info{flex:1;}
+.bk-name{font-size:.82rem;font-weight:700;color:var(--w);margin-bottom:4px;}
+.bk-bar-wrap{height:6px;background:var(--n4);border-radius:3px;overflow:hidden;}
+.bk-bar{height:100%;border-radius:3px;transition:width 1s cubic-bezier(.4,0,.2,1);}
+.bk-pct{font-family:'Space Mono',monospace;font-size:.7rem;color:var(--t);flex-shrink:0;width:30px;text-align:right;}
+.rv-item{background:var(--n3);border-radius:10px;padding:20px;margin-bottom:12px;border-left:3px solid var(--gr2);}
+.rv-item.ok{border-left-color:var(--gn);}
+.rv-item.no{border-left-color:var(--rd);}
+.rv-q{font-size:.88rem;font-weight:600;color:var(--w);margin-bottom:10px;line-height:1.5;}
+.rv-ans{display:flex;align-items:flex-start;gap:8px;font-size:.82rem;margin-bottom:5px;color:var(--gr);}
+.rv-ans.yours.ok{color:var(--gn);}
+.rv-ans.yours.no{color:var(--rd);}
+.rv-ans.corr{color:var(--gn);}
+.rv-explain{font-size:.8rem;color:var(--gr2);line-height:1.65;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.05);}
+.rv-explain strong{color:var(--gr);}
+.rv-explain em{color:var(--tl);font-style:normal;}
+.res-actions{display:flex;gap:12px;justify-content:center;margin-top:44px;flex-wrap:wrap;}
+.btn-primary{background:var(--t);color:var(--n);border:none;border-radius:7px;
+  padding:13px 28px;font-weight:800;font-size:.88rem;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.btn-primary:hover{background:var(--tl);transform:translateY(-2px);}
+.btn-primary.gen-btn{background:var(--go);}
+.btn-primary.gen-btn:hover{background:#ffe08a;}
+.btn-ghost{background:none;border:1.5px solid rgba(0,201,200,.3);color:var(--t);
+  border-radius:7px;padding:13px 28px;font-size:.88rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .2s;}
+.btn-ghost:hover{background:var(--tf);}
+.btn-switch{background:none;border:1.5px solid rgba(255,209,102,.3);color:var(--go);
+  border-radius:7px;padding:13px 28px;font-size:.88rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .2s;}
+.btn-switch:hover{background:rgba(255,209,102,.07);}
+
+footer{position:relative;z-index:1;text-align:center;padding:36px 20px;border-top:1px solid rgba(0,201,200,.07);}
+.ft-name{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:5px;color:var(--t);}
+.ft-sub{font-size:.68rem;color:var(--gr2);letter-spacing:2px;margin-top:4px;}
+
+/* ANIMATIONS */
+@keyframes fu{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fi{from{opacity:0;}to{opacity:1;}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-10px);}to{opacity:1;transform:translateX(0);}}
+@keyframes pop{from{opacity:0;transform:scale(.6);}to{opacity:1;transform:scale(1);}}
+@keyframes correctPop{0%{transform:scale(1);}40%{transform:scale(1.02);}100%{transform:scale(1);}}
+@keyframes wrongShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--n);}
+::-webkit-scrollbar-thumb{background:rgba(0,201,200,.2);border-radius:3px;}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+
+<!-- ═══════ HERO ═══════ -->
+<section class="hero" id="hero">
+  <div class="hero-pill"><span class="dot"></span>&nbsp;TEST INTERACTIVO · COACH NOÉ</div>
+  <h1 class="hero-name">COACH <em>NOÉ</em><br>GARCÍA IBARRA</h1>
+  <p class="hero-slogan">HAZ ARTE CON TU CUERPO</p>
+  <div class="hero-bio">
+    <p class="bio-label">FUNDAMENTO BIOQUÍMICO</p>
+    <p class="bio-p">Cada decisión nutricional activa rutas moleculares precisas. El cociente <strong>ATP/ADP</strong> regula el estado energético celular: cuando cae, activa <em>AMPK</em> (catabolismo); cuando es alto, permite que <em>mTORC1</em> promueva síntesis proteica y anabolismo.</p>
+    <p class="bio-p">Los carbohidratos alimentan la <strong>glucólisis</strong> y reponen glucógeno vía <em>UDP-glucosa</em>. Las grasas entran al <strong>Ciclo de Krebs</strong> como Acetil-CoA tras la <em>β-oxidación mitocondrial</em>. La proteína activa <em>mTORC1 → p70S6K → MPS</em>.</p>
+    <p class="bio-p">La farmacología anabólica —testosterona, GH, SARMs— amplifica estas señales vía <strong>receptores androgénicos (AR)</strong> e <em>IGF-1 / PI3K / Akt</em>, incrementando la demanda de sustratos.</p>
+  </div>
+  <button class="hero-btn" onclick="showShell()">Elegir mi Test &nbsp;<span class="arr">→</span></button>
+</section>
+
+<!-- ═══════ SHELL ═══════ -->
+<div class="shell" id="shell">
+  <div class="tbar">
+    <div class="tbar-brand">COACH NOÉ</div>
+    <div class="tbar-mode" id="tbar-mode" style="display:none"></div>
+    <div class="tbar-prog"><div class="tbar-fill" id="fill" style="width:0%"></div></div>
+    <div class="tbar-count" id="tbar-count"></div>
+  </div>
+
+  <!-- ── MODE SELECTOR ── -->
+  <div class="scr on" id="scr-mode">
+    <div class="mode-wrap">
+      <p class="mode-label">SELECCIONA TU NIVEL</p>
+      <h2 class="mode-title">¿Cuál es tu <em>test</em>?</h2>
+      <p class="mode-sub">Elige el nivel que mejor se adapte a tus conocimientos. Ambos tests evalúan los mismos temas pero con diferente profundidad.</p>
+      <div class="mode-cards">
+
+        <div class="mode-card" onclick="chooseMode('adv')">
+          <span class="mc-badge adv">🔬 NIVEL AVANZADO</span>
+          <span class="mc-icon">🧬</span>
+          <div class="mc-title">TEST BIOQUÍMICO</div>
+          <p class="mc-desc">Para personas que ya estudian o aplican nutrición y entrenamiento. Usa terminología técnica y molecular.</p>
+          <div class="mc-topics">
+            <div class="mc-topic"><span>⚡</span><span>AMPK, mTORC1, ATP/ADP, glucólisis, β-oxidación</span></div>
+            <div class="mc-topic"><span>⚗️</span><span>Macros, farmacología AR/IGF-1/PI3K/Akt, carga glucémica</span></div>
+            <div class="mc-topic"><span>🏋️</span><span>Rendimiento en pesas, TMB muscular, déficit severo, GLUT4</span></div>
+            <div class="mc-topic"><span>📊</span><span>RIR, %RM, protocolo 1RM, niveles y ética de estímulos</span></div>
+            <div class="mc-topic"><span>💧</span><span>Agua, pH, sistemas corporales, recomposición, dieta controlada</span></div>
+            <div class="mc-topic"><span>🧠</span><span>Progreso, alcohol, sacrificios, dismorfia, no compararse</span></div>
+          </div>
+          <button class="mc-go adv">Iniciar Test Avanzado →</button>
+        </div>
+
+        <div class="mode-card general" onclick="chooseMode('gen')">
+          <span class="mc-badge gen">🌟 NIVEL GENERAL</span>
+          <span class="mc-icon">💪</span>
+          <div class="mc-title">TEST GENERAL</div>
+          <p class="mc-desc">Para cualquier persona. Sin tecnicismos. Aprende cómo funciona tu cuerpo con ejemplos de la vida cotidiana.</p>
+          <div class="mc-topics">
+            <div class="mc-topic"><span>⚖️</span><span>Balance calórico y equilibrio energético</span></div>
+            <div class="mc-topic"><span>🍽️</span><span>Proteínas, carbohidratos, grasas y composición corporal</span></div>
+            <div class="mc-topic"><span>⚡</span><span>Energía, suplementos y cómo quema tu cuerpo</span></div>
+            <div class="mc-topic"><span>🏋️</span><span>Pesas, músculo, déficit y por qué comer poco hace daño</span></div>
+            <div class="mc-topic"><span>📊</span><span>RIR, 1RM, %RM y niveles principiante/intermedio/avanzado</span></div>
+            <div class="mc-topic"><span>💧</span><span>Agua, sistemas del cuerpo, dieta controlada, respuesta individual</span></div>
+            <div class="mc-topic"><span>🧠</span><span>Progreso, alcohol, vacaciones, dismorfia y no compararse</span></div>
+          </div>
+          <button class="mc-go gen">Iniciar Test General →</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── NAME ── -->
+  <div class="scr" id="scr-name">
+    <div class="name-wrap">
+      <div class="name-mode-badge" id="name-mode-badge"></div>
+      <p class="name-label">ANTES DE COMENZAR</p>
+      <h2 class="name-title">¿Cómo te <em>llamas</em>?</h2>
+      <p class="name-sub" id="name-sub"></p>
+      <input class="name-in" id="student-name" type="text" placeholder="Escribe tu nombre..."
+        maxlength="40" onkeydown="if(event.key==='Enter')startTest()">
+      <button class="name-start" id="name-start-btn" onclick="startTest()">Comenzar →</button>
+      <button class="name-back" onclick="showScr('scr-mode')">← Cambiar modalidad</button>
+    </div>
+  </div>
+
+  <!-- ── CATEGORY INTRO ── -->
+  <div class="scr" id="scr-cat">
+    <div class="cat-wrap">
+      <div class="cat-icon" id="cat-icon"></div>
+      <p class="cat-num" id="cat-num"></p>
+      <h2 class="cat-title" id="cat-title"></h2>
+      <div class="cat-qs-count" id="cat-qs-count"></div>
+      <p class="cat-desc" id="cat-desc"></p>
+      <button class="cat-btn" id="cat-start-btn" onclick="goFirstQ()">Empezar esta sección →</button>
+    </div>
+  </div>
+
+  <!-- ── QUESTION ── -->
+  <div class="scr" id="scr-q">
+    <div class="q-wrap">
+      <div class="q-meta">
+        <span class="q-cat-tag" id="q-cat-tag"></span>
+        <span class="q-num-tag" id="q-num-tag"></span>
+      </div>
+      <div class="q-stem" id="q-stem"></div>
+      <div class="opts" id="opts"></div>
+      <div class="q-fb" id="q-fb">
+        <div class="fb-title" id="fb-title"></div>
+        <div class="fb-body" id="fb-body"></div>
+      </div>
+      <button class="q-next" id="q-next" onclick="nextStep()"></button>
+    </div>
+  </div>
+
+  <!-- ── RESULT ── -->
+  <div class="scr" id="scr-res">
+    <div class="res-wrap">
+      <div class="res-top">
+        <div class="res-avatar" id="res-avatar"></div>
+        <p class="res-greeting">TEST TERMINADO · SE GUARDÓ EN TU HISTORIAL</p>
+        <h2 class="res-name" id="res-name"></h2>
+        <div class="res-score-big" id="res-score"></div>
+        <p class="res-score-den" id="res-den"></p>
+        <div class="res-stars" id="res-stars"></div>
+        <div id="res-badge-wrap"></div>
+        <p class="res-msg" id="res-msg"></p>
+      </div>
+      <p class="section-head">DESEMPEÑO POR CATEGORÍA</p>
+      <div id="bk-list"></div>
+      <p class="section-head">REVISIÓN DETALLADA</p>
+      <div id="rv-list"></div>
+      <div class="res-actions">
+        <button class="btn-primary" id="res-retry" onclick="retryTest()">↺ Repetir Test</button>
+        <button class="btn-switch" id="res-switch" onclick="switchMode()"></button>
+        <button class="btn-ghost" onclick="goHero()">← Inicio</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /shell -->
+
+<footer>
+  <div class="ft-name">COACH NOÉ GARCÍA IBARRA</div>
+  <div class="ft-sub">HAZ ARTE CON TU CUERPO · BIOQUÍMICA · METODOLOGÍA · MENTALIDAD</div>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════
+   ADVANCED TEST DATA
+═══════════════════════════════════════ */
+const CATS_ADV = [
+  {
+    id:'homeostasis',icon:'⚖️',color:'var(--t)',
+    name:'Homeostasis Energética',
+    desc:'El <strong>equilibrio metabólico celular</strong> — sensores AMPK/mTORC1 y la respuesta fisiológica al balance energético.',
+    qs:[
+      {
+        stem:'Una persona lleva 6 semanas en homeostasis energética con el plan del Coach Noé. La báscula no se ha movido. ¿Cuál de las siguientes afirmaciones es más precisa respecto a este escenario?',
+        opts:[
+          'El plan no está funcionando — el peso es el único indicador confiable de transformación corporal y si no se mueve, no hay progreso real',
+          'El peso estático confirma homeostasis perfecta, pero descarta cualquier recomposición corporal simultánea',
+          'El peso en báscula es la suma de múltiples componentes — masa magra, tejido adiposo, densidad ósea, volumen plasmático, glucógeno, minerales, retención de líquidos — por lo que puede permanecer estático mientras ocurre una recomposición corporal significativa (MPS activa + lipólisis activa), y físicamente la persona puede verse radicalmente diferente aunque la báscula diga lo mismo',
+          'Peso estático durante 6 semanas indica meseta metabólica y es necesario hacer una semana de recarga calórica obligatoriamente'
+        ],ans:2,
+        ok:'✅ El peso es la suma de docenas de variables — puede estar quieto mientras el cuerpo se transforma completamente',
+        why:'La báscula mide el <strong>peso total del cuerpo</strong>: masa muscular, tejido adiposo, densidad ósea, volumen plasmático, glucógeno intramuscular e hepático, agua intracelular y extracelular, minerales, contenido intestinal y más. Cuando la <em>MPS vía mTORC1</em> gana masa magra y la beta-oxidación reduce tejido adiposo simultáneamente, ambos procesos se compensan — la báscula no se mueve, pero la composición cambia radicalmente. Una persona puede perder 3 kg de grasa y ganar 3 kg de músculo: físicamente se ve completamente diferente aunque pese exactamente igual. <strong>Por eso el Coach Noé mide composición corporal, no solo peso.</strong> Y para que esa medición sea válida, debe tomarse siempre bajo las mismas condiciones: en ayunas, con la misma báscula y la misma cinta métrica, en el mismo lugar, con la misma pose y la misma iluminación en las fotos. Cambiar cualquiera de estas variables hace la comparación inútil — es como medir con reglas diferentes.'
+      },
+      {
+        stem:'¿Por qué es fisiológicamente incorrecto aplicar un déficit calórico sin antes establecer homeostasis energética?',
+        opts:['Porque el cuerpo necesita acostumbrarse gradualmente a cualquier cambio antes de responder','Porque sin un GET real establecido mediante condiciones controladas, el déficit aplicado es sobre una variable desconocida, haciendo imposible predecir o evaluar la respuesta metabólica','Porque el déficit calórico siempre debe aplicarse después de un superávit previo para ser efectivo','Porque la homeostasis protege la mucosa gástrica antes de reducir la ingesta'],ans:1,
+        ok:'✅ Sin GET real confirmado, el déficit es matemáticamente inválido',
+        why:'La homeostasis establece el <strong>GET real</strong>. Solo cuando el peso es estable bajo condiciones controladas por semanas se confirma que la ingesta cubre exactamente el gasto. Desde ahí, un déficit de 400 kcal produce efectos predecibles. Sin esa base, "déficit de 400 kcal" es solo una suposición sobre un número desconocido.'
+      },
+      {
+        stem:'Al iniciar homeostasis con mayor ingesta de CHO, una persona observa +2 kg en báscula en 10 días. Esto indica principalmente:',
+        opts:['Que el cálculo calórico fue erróneo y hay que reducir la ingesta inmediatamente','Que el plan genera superávit real y se almacena tejido adiposo a ritmo elevado','Acumulación de glucógeno intramuscular y consiguiente hidratación intracelular — fenómeno funcional y transitorio esperado','Retención de sodio por exceso de proteína en la dieta'],ans:2,
+        ok:'✅ Glucógeno + agua intracelular: aumento funcional, no adiposo',
+        why:'Al reponer <strong>glucógeno muscular y hepático</strong>, cada gramo arrastra ~3g de agua. Esto suma +1–3 kg en báscula sin corresponder a tejido adiposo — es un fenómeno <em>funcional y transitorio</em> que se estabiliza en 2–3 semanas. Interrumpir el plan por este dato mal interpretado es uno de los errores más frecuentes.'
+      }
+    ]
+  },
+  {
+    id:'calorico',icon:'🔥',color:'var(--ac)',
+    name:'Cálculo Calórico, TEF & Composición Corporal',
+    desc:'La ecuación de <strong>Mifflin-St. Jeor</strong>, el Efecto Térmico de los Alimentos, por qué el peso en báscula es un dato insuficiente y la importancia de la composición corporal.',
+    qs:[
+      {
+        stem:'¿Cuál es el TEF aproximado de las PROTEÍNAS comparado con carbohidratos y grasas?',
+        opts:['Similar al de los carbohidratos: 5–10%','El más bajo de los tres macros: 0–3%, porque son estructuralmente complejas','El más alto: 20–30%, porque su digestión, transporte de aminoácidos y reutilización metabólica son energéticamente costosos','Idéntico al de las grasas: exactamente 9%'],ans:2,
+        ok:'✅ Proteínas: TEF más alto — 20–30%',
+        why:'La digestión, transporte de aminoácidos y síntesis proteica consumen energía en cada paso. CHO: 5–10%, Grasas: 0–3%. Dietas altas en proteína favorecen la pérdida de grasa incluso con igual ingesta calórica — el <em>gasto neto real es mayor.</em>'
+      },
+      {
+        stem:'Dos personas con IGUAL TMB, mismo peso, misma estatura, mismo plan alimenticio y mismo entrenamiento estructurado obtienen resultados de composición corporal radicalmente diferentes. ¿Cuál es la explicación más probable?',
+        opts:['Una tiene mejor predisposición genética para ganar músculo y no hay nada que hacer al respecto','El tipo de sangre de una genera mayor absorción de nutrientes','Una tiene un NEAT significativamente mayor — se mueve más en actividades cotidianas no estructuradas, sumando hasta 800–1,000 kcal adicionales de gasto diario','Una digiere la proteína más eficientemente por diferencias en la microbiota intestinal'],ans:2,
+        ok:'✅ El NEAT: la variable más subestimada del GET total',
+        why:'Con igual TMB, mismo peso, misma dieta y mismo entrenamiento, la diferencia está en el <strong>NEAT</strong> (Non-Exercise Activity Thermogenesis): movimiento espontáneo no estructurado — caminar, gesticular, estar de pie, inquietud postural. Puede variar hasta <em>800–1,000 kcal/día</em> entre individuos similares. El Coach Noé siempre evalúa la actividad diaria total, no solo las sesiones de entrenamiento.'
+      },
+      {
+        stem:'Dos personas pesan exactamente 75 kg. Una tiene 18% grasa (61.5 kg masa magra); la otra tiene 32% grasa (51 kg masa magra). ¿Por qué el peso en báscula es un dato insuficiente para evaluar su metabolismo y salud?',
+        opts:['No es insuficiente — el peso sigue siendo el mejor indicador de salud metabólica','El mismo peso pero ~10 kg menos de masa magra genera diferencias de 130–150 kcal/día en TMB, diferente sensibilidad a la insulina y diferente capacidad de particionamiento de nutrientes','El porcentaje de grasa solo importa estéticamente, no afecta el metabolismo','La diferencia en masa magra solo importa para rendimiento deportivo, no para pérdida de grasa'],ans:1,
+        ok:'✅ Mismo peso, metabolismos completamente diferentes — la composición corporal es lo que importa',
+        why:'El peso en báscula no distingue músculo de grasa. La persona con 61.5 kg de masa magra tiene una <strong>TMB ~130–150 kcal/día mayor</strong>, mayor sensibilidad insulínica (más GLUT4 muscular), mejor particionamiento de nutrientes y menor riesgo metabólico. La otra pesa igual pero funciona metabólicamente diferente. <em>La composición corporal es el dato real; el peso es solo la suma.</em> Por eso el Coach Noé evalúa % de grasa y masa magra, no solo el peso.'
+      }
+    ]
+  },
+  {
+    id:'macros',icon:'⚗️',color:'var(--pu)',
+    name:'Macros & Farmacología',
+    desc:'Distribución por <strong>gramos/kg de masa magra</strong>, carga glucémica diferencial y cómo la farmacología anabólica incrementa los requerimientos vía <strong>AR, IGF-1/PI3K/Akt y mTORC1.</strong>',
+    qs:[
+      {
+        stem:'Al usar testosterona exógena, ¿cuál es el mecanismo molecular que incrementa el requerimiento de proteína dietética?',
+        opts:['La testosterona reduce la actividad de proteasas lisosomales, acumulando proteínas dañadas que requieren reemplazarse','La testosterona eleva la TMB directamente al aumentar la temperatura corporal basal','La unión suprafisiológica al receptor androgénico (AR) activa transcripción de genes de síntesis proteica y potencia IGF-1/PI3K/Akt/mTORC1, generando una tasa de MPS que supera la disponibilidad endógena de aminoácidos','La testosterona mejora la absorción intestinal de proteína haciendo que la misma ingesta resulte en mayor disponibilidad'],ans:2,
+        ok:'✅ AR → IGF-1/PI3K/Akt/mTORC1 → MPS suprafisiológica agota el pool aminoacídico',
+        why:'La testosterona activa el <strong>AR</strong> como factor de transcripción y potencia <em>IGF-1/PI3K/Akt/mTORC1 → p70S6K → ribosomas</em>. La MPS resultante supera la disponibilidad endógena de aminoácidos. Sin mayor proteína dietética, el cuerpo cataboliza tejido propio para obtener los sustratos necesarios.'
+      },
+      {
+        stem:'Un atleta avanzado con alta masa muscular necesita mayor carga glucémica que un principiante. ¿Cuál es la explicación más precisa?',
+        opts:['Tiene mayor resistencia a la insulina que obliga a ingerir más glucosa para el mismo efecto','Sus reservas de glucógeno muscular son mayores y la demanda glucolítica de sus entrenamientos de alta intensidad es significativamente más alta que la del principiante','La mayor masa muscular ralentiza la glucólisis, requiriendo mayor disponibilidad de substrato glucídico','Tiene menor densidad mitocondrial y por eso depende más de la glucólisis anaeróbica'],ans:1,
+        ok:'✅ Mayor glucógeno muscular + mayor demanda glucolítica = mayor requerimiento glucídico',
+        why:'Un músculo desarrollado almacena más <strong>glucógeno</strong> y tiene mayor densidad enzimática glucolítica. En un principiante, el exceso de glucosa supera la capacidad de almacenamiento muscular y activa <em>lipogénesis de novo</em>. En el atleta avanzado, los CHO consumidos van directamente a reponer glucógeno y sostener el alto rendimiento.'
+      },
+      {
+        stem:'Al usar GH, ¿qué ajuste en carbohidratos es necesario y por qué mecanismo fisiológico específico?',
+        opts:['Reducir CHO porque la GH eleva la lipólisis y el cuerpo tiene suficiente combustible endógeno de ácidos grasos','Mantener CHO sin cambios porque GH actúa principalmente sobre síntesis proteica, no el metabolismo glucídico','Eliminar CHO durante el pico de GH nocturno para potenciar la secreción hipotalámica de GH endógena','Aumentar CHO porque la GH induce resistencia insulínica en tejidos periféricos, obligando a mayor aporte glucídico exógeno para mantener flujo de glucosa hacia el músculo activo'],ans:3,
+        ok:'✅ GH → resistencia insulínica periférica → músculo necesita más glucosa exógena',
+        why:'La GH genera resistencia insulínica en tejidos periféricos (adiposo, hepático) para <em>desviar glucosa hacia el músculo</em>. Paradójicamente, esto requiere mayor aporte de CHO dietéticos para mantener el flujo glucídico muscular. Eliminar CHO con GH activa dejaría el músculo sin su sustrato primario de alta intensidad.'
+      }
+    ]
+  },
+  {
+    id:'rutas',icon:'⚡',color:'var(--gn)',
+    name:'Rutas Metabólicas & Suplementos',
+    desc:'Sistemas <strong>ATP-PCr, glucólisis y β-oxidación</strong>. El papel de creatina, citrulina malato y beta-alanina en cada ruta metabólica.',
+    qs:[
+      {
+        stem:'Durante una serie de sentadilla al 85% RM a 5 repeticiones, ¿qué sistemas energéticos están activos?',
+        opts:['Exclusivamente beta-oxidación mitocondrial porque la duración es corta','Ciclo de Krebs aeróbico en su totalidad con glucólisis como soporte secundario','Predominantemente ATP-PCr para las primeras 2–3 reps, seguido de glucólisis anaeróbica para las últimas, con el sistema aeróbico contribuyendo a la resíntesis de PCr durante el descanso','Gluconeogénesis hepática exclusivamente, ya que el glucógeno se reserva para ejercicio de larga duración'],ans:2,
+        ok:'✅ ATP-PCr → glucólisis anaeróbica → aeróbico para recuperación — todos actúan en secuencia',
+        why:'En pesas de alta intensidad, el <strong>sistema fosfágeno (ATP-PCr)</strong> domina las primeras repeticiones, la <em>glucólisis anaeróbica</em> cubre el esfuerzo sostenido, y el aeróbico restaura PCr durante los descansos. La creatina amplía el fosfágeno; la beta-alanina extiende la tolerancia glucolítica; la citrulina malato mejora la recuperación aeróbica entre series.'
+      },
+      {
+        stem:'¿Por qué la Beta-Alanina mejora específicamente esfuerzos de 1–4 minutos y no tanto sprints de 5–8 segundos?',
+        opts:['Porque en sprints cortos el pH muscular no cae lo suficiente para que la carnosina tenga efecto buffer relevante; en 1–4 min la glucólisis acumula H⁺ hasta el punto donde la carnosina buffer actúa decisivamente','Porque la beta-alanina se absorbe lentamente y sus efectos solo son visibles en ejercicios prolongados','Porque en sprints cortos la carnosina se degrada demasiado rápido para tener efecto','Porque la beta-alanina actúa sobre el sistema aeróbico, que no se activa en sprints cortos'],ans:0,
+        ok:'✅ En 5–8 seg el H⁺ no se acumula lo suficiente; en 1–4 min la carnosina marca la diferencia',
+        why:'En 5–8 seg el ATP-PCr domina sin producción significativa de H⁺. En 1–4 minutos, la <strong>glucólisis anaeróbica</strong> genera acumulación de H⁺ que baja el pH intramuscular a niveles inhibitorios para las enzimas glucolíticas. Ahí actúa la <em>carnosina (beta-alanina + histidina)</em> como buffer, captando H⁺ y retrasando la fatiga. La beta-alanina eleva los depósitos de carnosina a lo largo de semanas.'
+      },
+      {
+        stem:'¿Cuál es el papel específico del MALATO en Citrulina Malato, más allá del efecto vasodilatador de la citrulina?',
+        opts:['El malato inhibe la producción de amonio muscular bloqueando la deaminación de AMP','Es un intermediario del Ciclo de Krebs que actúa como sustrato anaplerótico, aumentando el pool de oxaloacetato y mejorando la eficiencia de la cadena respiratoria mitocondrial','El malato eleva el pH sanguíneo reduciendo la acidosis sistémica durante el ejercicio intenso','El malato activa AMPK de forma selectiva, potenciando la beta-oxidación durante el ejercicio'],ans:1,
+        ok:'✅ Malato → anaplerosis del Ciclo de Krebs → mayor eficiencia mitocondrial',
+        why:'El <strong>malato</strong> es un intermediario directo del Ciclo de Krebs. Su suplementación genera <em>anaplerosis</em> — aumenta el pool de oxaloacetato — permitiendo mayor flujo a través de la cadena respiratoria. Combinado con la citrulina (mayor flujo sanguíneo → más O₂), el resultado es mayor eficiencia aeróbica y menor acumulación de amonio muscular.'
+      }
+    ]
+  },
+  {
+    id:'rendimiento',icon:'🏋️',color:'var(--ac)',
+    name:'Rendimiento en Pesas, TMB y Déficit Severo',
+    desc:'Por qué alguien con <strong>alto rendimiento en pesas</strong> necesita más energía, cómo la masa muscular eleva la <strong>TMB permanentemente</strong>, y qué ocurre cuando se reduce demasiado la ingesta calórica.',
+    qs:[
+      {
+        stem:'Una persona con alto rendimiento en pesas requiere mayor ingesta calórica que una con bajo rendimiento. ¿Cuál es la explicación metabólica más completa?',
+        opts:['Principalmente porque el músculo grande genera más calor y eso requiere mayor compensación calórica','Porque el alto rendimiento aumenta el apetito por mecanismos hormonales, elevando el gasto indirectamente','El alto rendimiento genera mayor resíntesis de ATP vía glucólisis y PCr durante el entrenamiento, mayor MPS post-ejercicio para reparación y supercompensación, y un EPOC extendido que eleva el GET total acumulado','Porque las personas con alto rendimiento duermen más y el sueño extra consume más calorías'],ans:2,
+        ok:'✅ Mayor gasto durante + mayor MPS post + EPOC extendido = GET significativamente mayor',
+        why:'El alto rendimiento multiplica el GET: <strong>(1) resíntesis de ATP</strong> a máxima demanda; <strong>(2) MPS elevada</strong> — mTORC1 activo 24–48h para reparar miofibrilas dañadas; <strong>(3) EPOC</strong> — el cuerpo sigue oxidando sustratos para restaurar PCr, glucógeno y homeostasis hormonal. Una sesión de alto rendimiento puede generar 600–900 kcal de gasto más el EPOC posterior, frente a 250–350 kcal de una sesión de bajo esfuerzo.'
+      },
+      {
+        stem:'¿Por qué una persona con 70 kg de masa magra tiene una TMB significativamente más alta que alguien del mismo peso total pero con solo 50 kg de masa magra?',
+        opts:['Porque la mayor masa muscular aumenta la conductividad nerviosa, requiriendo más ATP para el procesamiento del SNC','Porque el tejido muscular es metabólicamente activo en reposo: mantiene la bomba Na⁺/K⁺-ATPasa activa continuamente, realiza síntesis proteica basal y sostiene tono contráctil mínimo, con ~13–15 kcal/kg/día vs los ~4–5 kcal/kg/día del tejido adiposo','Porque las personas con más músculo suelen tener mayor NEAT, elevando el gasto total pero no la TMB basal en sí','Porque la mayor masa muscular requiere más insulina, y esa señalización hormonal eleva el gasto metabólico'],ans:1,
+        ok:'✅ El músculo consume ATP 24/7 — 13–15 kcal/kg/día vs 4–5 de la grasa',
+        why:'Cada célula muscular mantiene activa la <em>bomba Na⁺/K⁺-ATPasa</em> de forma continua, realiza síntesis proteica basal y sostiene tono contráctil residual. Con <strong>20 kg más de masa magra</strong>, la diferencia de TMB es ~260–300 kcal/día en reposo absoluto. Ganar músculo es la estrategia más efectiva para elevar el metabolismo permanentemente.'
+      },
+      {
+        stem:'Una persona aplica un déficit de 1,200 kcal/día esperando acelerar la pérdida de grasa. ¿Cuál es la consecuencia metabólica más probable a las 4 semanas?',
+        opts:['Pérdida de grasa acelerada con preservación total del músculo si se mantiene alta la ingesta proteica','Mayor velocidad de pérdida de peso total con proporción grasa/músculo similar a un déficit moderado','Activación de gluconeogénesis catabolizando masa muscular, down-regulation de T3 y leptina reduciendo la TMB 15–30%, y empeoramiento progresivo de la sensibilidad insulínica por pérdida de tejido muscular captador de glucosa','Mejora temporal seguida de rebote, sin pérdida real de masa muscular si el entrenamiento es consistente'],ans:2,
+        ok:'✅ Déficit severo → catabolismo muscular + TMB más baja + peor sensibilidad insulínica — el ciclo vicioso',
+        why:'El déficit severo activa: <strong>(1) gluconeogénesis muscular</strong> — aminoácidos del músculo convertidos en glucosa; <strong>(2) adaptación hormonal</strong> — reducción de T3, leptina y actividad simpática, bajando la TMB; <strong>(3) ciclo vicioso</strong> — menos músculo → menos GLUT4 → glucosa redirigida a lipogénesis. El déficit controlado (300–500 kcal) con alta proteína y entrenamiento de fuerza <em>preserva el músculo que impulsa el metabolismo.</em>'
+      },
+      {
+        stem:'¿Por qué perder masa muscular por déficit severo empeora la utilización eficiente de los carbohidratos consumidos?',
+        opts:['Porque sin músculo el páncreas produce menos insulina, limitando la absorción de glucosa en todos los tejidos','Porque el músculo produce enzimas hepáticas necesarias para la glucogenólisis','El músculo esquelético capta el ~80% de la glucosa post-prandial mediada por insulina vía GLUT4. Al reducirse la masa muscular, la glucosa no metabolizada circula más tiempo, la señalización insulínica se deteriora y los carbohidratos se redirigen a lipogénesis de novo en el tejido adiposo','Porque el déficit severo reduce la temperatura corporal y eso enlentece la glucólisis'],ans:2,
+        ok:'✅ Menos músculo = menos GLUT4 = glucosa que no entra al músculo y se convierte en grasa',
+        why:'El <strong>músculo esquelético</strong> capta ~80% de la glucosa post-ingesta vía <em>GLUT4</em>. Al perder masa muscular, la capacidad de captación cae, la insulina permanece elevada más tiempo (resistencia insulínica), y los carbohidratos excedentes van a <em>lipogénesis de novo</em> en tejido adiposo. El músculo no es solo estético: es el órgano que decide si la energía que consumes se quema o se almacena.'
+      }
+    ]
+  },
+  {
+    id:'intensidad',icon:'📊',color:'var(--pu)',
+    name:'Intensidad, 1RM y Niveles de Entrenamiento',
+    desc:'Control de intensidad con <strong>RIR y %RM</strong>, protocolo del Coach Noé para calcular la <strong>1RM</strong> y los atributos específicos de cada nivel según la Guía de Entrenamiento.',
+    qs:[
+      {
+        stem:'El Coach Noé prescribe una serie con RIR 1. ¿Cuál describe correctamente la ejecución?',
+        opts:[
+          'Detenerse cuando la velocidad de la repetición empieza a disminuir notablemente, independientemente de cuántas reps queden',
+          'Llegar al fallo técnico — cuando la forma se compromete aunque muscularmente haya capacidad',
+          'Llegar a una rep antes del fallo muscular absoluto: la siguiente rep con técnica íntegra no podría completarse',
+          'Hacer la cantidad de reps indicada en el plan sin importar si queda capacidad adicional'
+        ],ans:2,
+        ok:'✅ RIR 1 = la siguiente rep con técnica íntegra sería imposible — una antes del fallo real',
+        why:'El <strong>RIR</strong> autorregula la intensidad según el estado real del día. RIR 0 = fallo absoluto; RIR 1 = la siguiente rep con técnica íntegra sería imposible. Esto difiere del fallo técnico (forma comprometida antes del límite muscular real). La <em>"ética de estímulos"</em> de la Guía exige que un avanzado distinga ambos y aplique el RIR correcto conscientemente.'
+      },
+      {
+        stem:'En el protocolo de 1RM del Coach Noé, ¿qué tipo de fallo es válido para que la ecuación de predicción sea confiable?',
+        opts:[
+          'Fallo cardiovascular — cuando la frecuencia cardiaca impide continuar con seguridad',
+          'Fallo técnico — cuando ya no puede mantenerse la técnica aunque haya fuerza muscular residual',
+          'Fallo muscular genuino dentro del rango 1–12 reps — incapacidad de completar una repetición más con técnica íntegra por límite muscular, no cardiovascular ni técnico',
+          'Cualquier tipo de fallo sirve siempre que ocurra antes de la repetición 15'
+        ],ans:2,
+        ok:'✅ Solo fallo muscular genuino con técnica íntegra en rango 1–12 produce un dato válido',
+        why:'Las ecuaciones Brzycki/Epley están validadas para <strong>1–12 repeticiones con fallo muscular real</strong>. El fallo técnico subestima la capacidad real; el fallo cardiovascular no refleja fuerza máxima; más de 12 reps introduce resistencia aeróbica como variable confusora. El fallo debe ser: <em>técnica íntegra + incapacidad muscular + dentro del rango</em>. Si llega a 12 sin fallar, el peso es insuficiente — hay que subir.'
+      },
+      {
+        stem:'¿Cuál atributo diferencia inequívocamente a un alumno INTERMEDIO de uno PRINCIPIANTE según la Guía del Coach Noé?',
+        opts:[
+          'El intermedio lleva entre 1 y 3 años entrenando; el principiante menos de 1 año — la diferencia es exclusivamente temporal',
+          'El intermedio puede realizar todos los ejercicios sin calentamiento porque su sistema nervioso ya está adaptado',
+          'El intermedio controla cadencia, tempo y progresión de cargas, ya siente la diferencia entre tipos de series y puede autogestionar ajustes básicos — el principiante requiere guía constante en técnica, pesos bajos y series de calentamiento obligatorias',
+          'El intermedio ya no necesita registrar sus entrenamientos en la app porque tiene experiencia suficiente'
+        ],ans:2,
+        ok:'✅ El intermedio controla cadencia, tempo y progresión — el principiante está aprendiendo a hacerlo',
+        why:'La Guía define niveles por <strong>atributos acumulados</strong>: el <em>principiante</em> aprende técnica básica, usa pesos bajos y requiere guía constante — aún no tiene percepción calibrada de su esfuerzo. El <em>intermedio</em> controla cadencia, tempo, progresión de cargas y percibe diferencias entre series. El <strong>avanzado</strong> domina RIR, %RM, focos (interno/externo/mixto), distingue fallo técnico de muscular, y su percepción del esfuerzo es tan precisa que puede ser graduado sin revisión continua.'
+      },
+      {
+        stem:'Tu 1RM en press militar es 80 kg. El plan indica una sesión de fuerza-hipertrofia al 82%. ¿Cuál es el peso correcto y el rango de reps congruente?',
+        opts:[
+          '65.6 kg — correspondiente a 12–15 repeticiones en zona de resistencia muscular',
+          '80 kg — en fuerza-hipertrofia siempre se trabaja al máximo',
+          '82 kg — el porcentaje se suma al peso base',
+          '65.6 kg — correspondiente a 3–6 repeticiones en zona de fuerza-hipertrofia'
+        ],ans:3,
+        ok:'✅ 82% de 80 kg = 65.6 kg → zona fuerza-hipertrofia: 3–6 repeticiones',
+        why:'Zonas de %RM: <em>90–100% → 1–3 reps (fuerza máxima); <strong>80–90% → 3–6 reps (fuerza-hipertrofia)</strong>; 70–80% → 6–12 reps (hipertrofia); 60–70% → 12–20 reps (resistencia).</em> Al 82%, el peso es 65.6 kg y el rango congruente es 3–6 reps. La app calcula todos estos porcentajes automáticamente a partir del test submáximo. Registrar pesos, reps y series en la app es obligatorio para seguimiento real de la progresión.'
+      }
+    ]
+  },
+  {
+    id:'adaptacion',icon:'🧬',color:'var(--go)',
+    name:'Adaptación, Recomposición & Mentalidad',
+    desc:'Cambios <strong>celulares y hormonales</strong> durante la adaptación, cuándo ocurre recomposición corporal y la relevancia biológica de la disciplina.',
+    qs:[
+      {
+        stem:'¿Por qué la recomposición corporal es mucho más frecuente en principiantes que en atletas avanzados con años de entrenamiento?',
+        opts:['Porque los principiantes tienen niveles de cortisol más bajos, favoreciendo anabolismo y lipólisis concurrentes','Porque el principiante tiene mayor densidad de receptores beta-adrenérgicos en tejido adiposo, facilitando lipólisis preferencial','En principiantes, los receptores androgénicos no están saturados, la sensibilidad a la insulina es alta y el estímulo mecánico genera señalización mTORC1 robusta incluso con balance calórico neutro, mientras la grasa acumulada provee energía vía beta-oxidación','Porque el principiante usa pesos más ligeros, generando menos daño muscular y menor demanda calórica'],ans:2,
+        ok:'✅ AR no saturados + alta sensibilidad insulínica + mTORC1 robusto con déficit leve = ventana de recomposición máxima',
+        why:'En atletas avanzados, los AR están parcialmente saturados y la adaptación muscular requiere mayor especificidad del estímulo. En <strong>principiantes</strong>, cualquier estímulo de fuerza genera señalización mTORC1 suficiente para MPS neta positiva incluso con ligero déficit, mientras el <em>exceso de grasa corporal provee Acetil-CoA vía beta-oxidación.</em>'
+      },
+      {
+        stem:'El agotamiento de las primeras 4–6 semanas ocurre aunque el cálculo calórico sea correcto. ¿Qué lo explica a nivel celular?',
+        opts:['La fatiga acumulada del daño muscular directo explica el agotamiento sin necesitar cambios hormonales','La respuesta inflamatoria eleva el cortisol, que reduce glucosa sanguínea causando hipoglucemia funcional','La biogénesis mitocondrial (vía PGC-1α), el aumento de GLUT4, el reajuste del eje HPA y la recalibración de leptina/ghrelina consumen recursos y generan fluctuaciones sistémicas percibidas como fatiga','Las microlesiones de la fase excéntrica activan prostaglandinas que cruzan la barrera hematoencefálica y deprimen el SNC directamente'],ans:2,
+        ok:'✅ Biogénesis mitocondrial + reajuste hormonal + recalibración leptina/ghrelina = adaptación real, no fracaso',
+        why:'La <strong>biogénesis mitocondrial</strong> vía PGC-1α, el aumento de GLUT4, el reajuste del eje HPA y la recalibración de <em>leptina/ghrelina</em> consumen recursos y generan fluctuaciones. El alumno que entiende esto persiste; el que no, abandona justo cuando el proceso está funcionando a nivel molecular.'
+      },
+      {
+        stem:'¿Por qué la CONSTANCIA en el entrenamiento tiene base fisiológica molecular directa?',
+        opts:['Porque la EPOC se acumula proporcionalmente a las semanas entrenadas, generando un gasto calórico compuesto','Porque el SNC necesita repetición de patrones motores para mielinizar neuronas, proceso que requiere al menos 6 meses','Porque la MPS elevada post-entrenamiento dura solo 24–48h; la hipertrofia real requiere que la señalización mTORC1 se repita semanalmente para acumular proteína miofibrilar neta','Porque el hígado necesita períodos de gluconeogénesis repetidos para adaptar sus enzimas al mayor consumo glucídico del entrenamiento'],ans:2,
+        ok:'✅ MPS solo activa 24–48h + biogénesis mitocondrial semanas-dependiente = la constancia ES biología',
+        why:'La <strong>MPS post-entrenamiento</strong> dura 24–48h. Sin el siguiente estímulo en esa ventana, el proceso retorna a basal y no hay acumulación neta de proteína miofibrilar. La <em>biogénesis mitocondrial</em> vía PGC-1α también requiere semanas de estímulo continuo. La constancia no es filosofía — es el <em>requisito temporal de la biología adaptativa.</em>'
+      }
+    ]
+  },
+  {
+    id:'sistemas',icon:'💧',color:'var(--t)',
+    name:'Agua, Sistemas Corporales & Recomposición',
+    desc:'El rol del agua y el pH en la fisiología celular, cómo los sistemas nervioso, cardiovascular, endocrino y digestivo interactúan con el entrenamiento, los factores individuales y manipulables de la recomposición, y por qué una dieta más controlada y entrenamiento de alta intensidad ofrecen mejores resultados.',
+    qs:[
+      {
+        stem:'¿Por qué el agua y la regulación del pH son críticos para el rendimiento muscular y metabólico?',
+        opts:[
+          'Solo importan para regular la temperatura corporal y lubricar articulaciones durante el ejercicio aeróbico',
+          'El agua es el solvente de todas las reacciones bioquímicas — glucólisis, Ciclo de Krebs, síntesis proteica — y el pH determina la actividad enzimática; una deshidratación del 2% reduce la fuerza hasta un 10% y la acidosis inhibe la fosfofructoquinasa, colapsando la glucólisis',
+          'Su función principal es lubricar articulaciones; el metabolismo energético no depende significativamente de la hidratación',
+          'El agua solo es crítica en ejercicio aeróbico de larga duración; en pesas su impacto es marginal'
+        ],ans:1,
+        ok:'✅ El agua es el solvente universal de toda la bioquímica celular y el regulador del pH enzimático',
+        why:'Cada reacción metabólica — desde la <strong>glucólisis hasta el Ciclo de Krebs</strong> — ocurre en solución acuosa. El pH intracelular (regulado por bicarbonato, fosfato y carnosina) determina la actividad de enzimas como la fosfofructoquinasa. La deshidratación del 2% reduce el volumen plasmático, eleva la FC, deteriora la señalización neural al músculo y compromete la eliminación de H⁺ del tejido activo. El sistema cardiovascular transporta O₂ y glucosa al músculo; el endocrino regula insulina, cortisol y GH; el digestivo determina la absorción real de nutrientes prescritos. <em>Hidratarse correctamente es una variable de rendimiento y recuperación mensurable — no opcional.</em>'
+      },
+      {
+        stem:'¿Por qué dos personas con igual plan de entrenamiento y nutrición producen resultados de recomposición corporal diferentes, y qué factores son realmente manipulables?',
+        opts:[
+          'Las diferencias se deben únicamente a la voluntad y disciplina personal — con suficiente esfuerzo los resultados siempre se igualan',
+          'La respuesta fisiológica individual depende de factores no manipulables (genética de receptores androgénicos, composición de fibras, microbiota, perfil hormonal basal) y factores manipulables (alimentación, entrenamiento, sueño, estrés) — la interacción única de estas variables genera resultados distintos en cada persona',
+          'Las diferencias son mínimas y estadísticamente irrelevantes cuando el plan es bien diseñado',
+          'Solo la genética determina los resultados; los factores manipulables tienen un impacto marginal en la recomposición real'
+        ],ans:1,
+        ok:'✅ Mismo plan + respuesta fisiológica única = resultados diferentes — el plan se ajusta a la respuesta individual',
+        why:'Los factores <strong>manipulables</strong> — alimentación precisa, entrenamiento progresivo, sueño, gestión del estrés — producen resultados diferentes según factores <em>individuales</em> no manipulables: densidad de receptores androgénicos, proporción fibras Tipo I/II, sensibilidad insulínica, microbiota intestinal y perfil hormonal basal. Por eso el Coach Noé evalúa la respuesta fisiológica de cada persona: el plan es el punto de partida y la respuesta del cuerpo dictamina los ajustes. La mayor capacidad glucolítica generada por mayor masa muscular eleva la tasa metabólica de forma permanente — y eso sí es directamente manipulable con el entrenamiento.'
+      },
+      {
+        stem:'¿Por qué una dieta más controlada (precisa en ingesta) permite mejores resultados, y por qué el entrenamiento de alta intensidad ofrece más adaptaciones estéticas que uno de baja intensidad?',
+        opts:[
+          'La dieta controlada funciona porque elimina el placer de comer y el estrés generado activa cortisol que paradójicamente quema más grasa; el HIIT simplemente quema más calorías durante la sesión',
+          'La dieta controlada genera una señal metabólica precisa y ajustable; el entrenamiento de alta intensidad produce mayor daño miofibrilar, EPOC extendido, mayor secreción de GH y testosterona aguda, y mayor densidad mitocondrial — todas adaptaciones que no se alcanzan con baja intensidad',
+          'La dieta controlada es mejor porque siempre es más baja en calorías; el entrenamiento de alta intensidad quema más grasa durante la sesión por activar la beta-oxidación preferentemente',
+          'Ambos factores son equivalentes en resultado; la diferencia entre controlado/no controlado e intensidad alta/baja es mínima a largo plazo'
+        ],ans:1,
+        ok:'✅ Dieta controlada = señal precisa ajustable; alta intensidad = mayor estímulo hormonal + EPOC + adaptaciones estructurales superiores',
+        why:'Una dieta controlada elimina la variabilidad: sabes exactamente qué entró al sistema, puedes aislar variables y ajustar con precisión. El <strong>entrenamiento de alta intensidad</strong> produce adaptaciones imposibles con baja intensidad: mayor reclutamiento de fibras Tipo II, mayor daño miofibrilar que activa mTORC1, mayor secreción aguda de GH y testosterona, EPOC extendido y biogénesis mitocondrial acelerada. La capacidad glucolítica aumentada por mayor masa muscular eleva la TMB permanentemente. Las <em>adaptaciones vienen de la repetibilidad constante del mismo estímulo progresivo</em> — el cuerpo se adapta exactamente al estímulo que recibe semana tras semana.'
+      }
+    ]
+  },
+  {
+    id:'mentalidad2',icon:'🧠',color:'var(--pu)',
+    name:'Progreso, Alcohol, Sacrificios & Salud Mental',
+    desc:'La obsesión con el progreso como proceso de aprendizaje, el impacto fisiológico del alcohol, la balanza entre disfrute y resultados, la dismorfia corporal y por qué compararse con otros sabotea el proceso.',
+    qs:[
+      {
+        stem:'Para que el progreso en pesas ocurra de forma sostenida, ¿qué proceso atraviesa el alumno y por qué lleva tiempo?',
+        opts:[
+          'Solo necesita aumentar el peso en la barra cada semana — el progreso en pesas es lineal y predecible si se mantiene constante',
+          'La adaptación neuromuscular ocurre primero (mayor reclutamiento de unidades motoras, semanas 1–8), luego la hipertrofia estructural (semanas 8–16+); la calidad técnica determina qué músculo recibe el estímulo; sin el proceso de aprendizaje → perfección → progresión sistemática registrada en la app, el estímulo es aleatorio y la adaptación impredecible',
+          'La clave es cambiar de ejercicios frecuentemente para evitar la adaptación y mantener el músculo en estado de confusión constante',
+          'El progreso solo requiere aumentar el volumen de series — la técnica y la intensidad son secundarias'
+        ],ans:1,
+        ok:'✅ Aprendizaje técnico → perfección de ejecución → progresión de cargas: cada fase es ineludible y forma parte del arte',
+        why:'La <strong>adaptación neuromuscular</strong> precede siempre a la hipertrofia estructural. En las primeras semanas las ganancias de fuerza son principalmente neurales. La calidad técnica determina qué tejido recibe el estímulo. Obsesionarse con el progreso significa registrar cada serie, peso y RIR en la app, analizar la tendencia semana a semana y ejecutar progresión sistemática — no aleatoria. Sin registro no hay progreso objetivable. Este proceso de <em>aprendizaje → perfección → progresión</em> no puede saltarse ni acelerarse; forma parte del arte de transformar el cuerpo.'
+      },
+      {
+        stem:'¿Cómo afecta el alcohol fisiológicamente al proceso de recomposición, y cuál es la perspectiva del Coach Noé al respecto?',
+        opts:[
+          'El alcohol solo afecta si se consume en grandes cantidades; cantidades moderadas no impactan la síntesis proteica ni la lipólisis de forma significativa',
+          'El etanol es metabolizado prioritariamente por el hígado inhibiendo la beta-oxidación de grasas, suprimiendo la MPS hasta un 37% vía inhibición de mTORC1, elevando el cortisol, deteriorando el sueño REM y desplazando macronutrimentos; el Coach Noé reconoce que el momento social tiene valor y puede considerarse — excepto para atletas — pero siempre con consciencia de que es un sacrificio deliberado de resultados',
+          'El impacto del alcohol en atletas recreativos es mínimo si se compensa con hidratación y se entrena al día siguiente',
+          'Solo afecta el proceso de pérdida de grasa, no la ganancia muscular ni la recuperación'
+        ],ans:1,
+        ok:'✅ El etanol para la lipólisis, suprime la MPS un 37% y arruina el sueño reparador — el disfrute social tiene valor pero siempre hay un precio',
+        why:'El <strong>etanol</strong> paraliza la <em>beta-oxidación</em> mientras el hígado lo procesa, suprime la <em>MPS vía mTORC1</em>, eleva el cortisol alterando el eje HPA y deteriora las fases de sueño profundo donde se secreta GH. Sus calorías vacías (7 kcal/g) desplazan macros programados. El Coach Noé entiende que la vida social importa y que si el momento y las amistades lo ameritan puede considerarse — a menos que sean atletas. Pero siempre con consciencia: <em>beber es una elección deliberada de sacrificar resultados, y el resultado de ese sacrificio debe ser monitoreado y gestionado sin culpa.</em>'
+      },
+      {
+        stem:'¿Qué es la dismorfia corporal en el contexto del entrenamiento, y por qué compararse con otras personas es contraproducente?',
+        opts:[
+          'La dismorfia corporal es solo perfeccionismo saludable que motiva a seguir progresando — compararse con otros es útil como referencia de lo que es posible lograr',
+          'La dismorfia corporal es un trastorno donde la percepción del propio cuerpo está distorsionada — el progreso real no se percibe — generando conductas obsesivas que dañan la salud mental y física; compararse con otro cuerpo es comparar variables completamente diferentes (genética, hormonas, historial, punto de partida), haciendo la comparación inútil y dañina',
+          'La dismorfia corporal solo afecta a atletas de élite bajo presión competitiva extrema; en entrenamiento recreativo es prácticamente inexistente',
+          'Compararse con otros es útil para definir objetivos realistas — el problema solo aparece cuando la comparación genera envidia'
+        ],ans:1,
+        ok:'✅ La dismorfia hace invisible el progreso real; tu único parámetro válido eres tú mismo comparado con quien eras ayer',
+        why:'La <strong>dismorfia corporal</strong> convierte el progreso objetivo — visible en métricas, fotos y rendimiento — en invisible para quien lo vive. Genera ciclos de entrenamiento excesivo, restricción alimentaria, aislamiento social y ansiedad. Compararte con otro cuerpo es inútil: su genética, historial hormonal, años de entrenamiento y punto de partida no son los tuyos — es como comparar dos ecuaciones con variables completamente distintas. El único parámetro de progreso justo y útil eres <em>tú mismo comparado con quien eras ayer</em>. Transformar el cuerpo sin cuidar la mente es construir sobre arena.'
+      }
+    ]
+  }
+];
+
+/* ═══════════════════════════════════════
+   GENERAL TEST DATA
+═══════════════════════════════════════ */
+const CATS_GEN = [
+  {
+    id:'balance',icon:'⚖️',color:'var(--t)',
+    name:'Balance de Energía',
+    desc:'Aprende qué pasa en tu cuerpo cuando comes más o menos de lo que gastas, y por qué el equilibrio es el primer paso.',
+    qs:[
+      {
+        stem:'Una persona lleva semanas siguiendo el plan del Coach Noé, la báscula no se ha movido ni un gramo. ¿Qué significa esto realmente?',
+        opts:[
+          'Que el plan no está funcionando — si el peso no cambia, el cuerpo no está haciendo nada diferente',
+          'Que las calorías están perfectamente calculadas pero no hay ningún cambio físico real en el cuerpo',
+          'Que el peso en báscula no es solo grasa y músculo — también incluye los huesos, el agua del cuerpo, la sangre, los minerales y mucho más. El cuerpo puede estar ganando músculo y perdiendo grasa al mismo tiempo, compensándose en la báscula, mientras físicamente la persona se ve completamente diferente',
+          'Que hay un error en el plan y hay que reducir calorías inmediatamente para ver movimiento en la báscula'
+        ],ans:2,
+        ok:'✅ La báscula mide TODO — puede estar quieta mientras tu cuerpo cambia por completo por dentro y por fuera',
+        why:'Tu peso en la báscula no es solo grasa y músculo. Incluye también <strong>la densidad de tus huesos, el volumen de tu sangre, el agua dentro y fuera de las células, los minerales, el glucógeno almacenado en los músculos y el contenido del sistema digestivo.</strong> Cuando el cuerpo gana músculo y pierde grasa al mismo tiempo, ambos cambios se compensan — la báscula no se mueve, pero físicamente te ves y te sientes radicalmente diferente. Por eso el Coach Noé no juzga el progreso solo con el peso: usa fotos, medidas con cinta y rendimiento en el entrenamiento. Y para que esas mediciones sean útiles y comparables, <em>siempre deben tomarse en las mismas condiciones: en ayunas, con la misma báscula, la misma cinta métrica, en el mismo lugar, con la misma pose y la misma iluminación en las fotos</em>. Cambiar cualquiera de esas condiciones es como comparar manzanas con naranjas.'
+      },
+      {
+        stem:'¿Por qué el Coach Noé dice que hay que establecer el equilibrio calórico ANTES de ponerse a dieta?',
+        opts:['Para que la persona coma más durante un tiempo y el metabolismo se "despierte" antes de restringir','Porque si no sabes cuánto gasta tu cuerpo de verdad, no puedes calcular cuánto quitarle o agregarle con precisión — estás operando sobre un número desconocido','Para que el proceso sea más gradual y el cuerpo no note el cambio tan abruptamente','Porque el coach necesita al menos 4 semanas de observación antes de prescribir cualquier plan'],ans:1,
+        ok:'✅ Sin saber tu gasto real, cualquier dieta es puro adivinaje',
+        why:'Imagina que quieres llegar a un lugar sin saber dónde estás parado. <strong>El equilibrio calórico es tu punto de salida en el mapa.</strong> Solo desde ahí puedes decidir si subes calorías para ganar músculo o las bajas para perder grasa, y saber exactamente cuánto.'
+      },
+      {
+        stem:'Alguien que comía muy poco durante meses empieza a comer lo que su cuerpo realmente necesita. Al inicio la báscula sube un poco. ¿Qué explica mejor esto?',
+        opts:['Que el plan está mal calculado y hay demasiadas calorías para su tipo de cuerpo','Que en realidad está ganando grasa porque come más de lo que el cuerpo puede manejar','Que su cuerpo está almacenando energía en los músculos como reserva de glucógeno, y cada gramo de esa reserva trae consigo agua — eso sube la báscula sin ser grasa real','Que el estrés del cambio de rutina genera retención de líquidos por cortisol elevado'],ans:2,
+        ok:'✅ Glucógeno + agua intracelular — la báscula sube, pero no es grasa',
+        why:'Cuando empiezas a comer más carbohidratos, tu cuerpo los almacena en los músculos como energía de reserva. <strong>Cada gramo de esa reserva retiene ~3 gramos de agua.</strong> Por eso la báscula puede subir 1–2 kg al inicio — pero eso no es grasa, es tu cuerpo cargándose de energía y funcionando mejor.'
+      }
+    ]
+  },
+  {
+    id:'calorias',icon:'🔥',color:'var(--ac)',
+    name:'Calorías, Digestión y Composición Corporal',
+    desc:'¿De dónde vienen las calorías que gastas? ¿Por qué el peso solo no te dice nada? Y la pregunta que te cambia la perspectiva: ¿qué importa más, cuánto pesas o de qué está hecho ese peso?',
+    qs:[
+      {
+        stem:'Tu cuerpo gasta energía incluso digiriendo lo que comes. ¿De esa energía digestiva, cuáles alimentos te cuestan más digerir?',
+        opts:['Las grasas, porque son las más densas en calorías y el cuerpo tarda más en procesarlas','Los carbohidratos refinados, porque se absorben muy rápido y eso requiere más trabajo enzimático','Las proteínas, porque su descomposición, transporte y uso en el cuerpo requiere más energía que cualquier otro alimento','El alcohol, porque el hígado trabaja extra para metabolizarlo'],ans:2,
+        ok:'✅ La proteína es el alimento que más energía le cuesta digerir a tu cuerpo',
+        why:'Tu cuerpo gasta aproximadamente el 10% de lo que comes solo en digestión. Pero no todos los alimentos cuestan igual: <strong>las proteínas le cuestan al cuerpo entre 20–30% de su propia energía para procesarse</strong>, mientras las grasas solo un 3% y los carbohidratos un 5–10%. Por eso dietas altas en proteína ayudan a quemar más calorías incluso sin hacer más ejercicio.'
+      },
+      {
+        stem:'Dos personas tienen exactamente la misma estatura, el mismo peso, la misma TMB (tasa metabólica basal), comen lo mismo y hacen el mismo entrenamiento estructurado. Sin embargo, una transforma su cuerpo mucho más que la otra. ¿Qué lo explica mejor?',
+        opts:['La que transforma más tiene mejor genética muscular que la otra, y no hay nada que hacer para compensarlo','Una duerme mejor, y el sueño profundo quema el doble de calorías que el sueño ligero','Una se mueve más a lo largo del día en cosas cotidianas — caminar, estar de pie, gesticular — lo que puede sumar hasta 1,000 calorías adicionales de gasto aunque no se note','La que transforma más toma más agua, lo cual acelera el metabolismo de forma significativa'],ans:2,
+        ok:'✅ El movimiento cotidiano no estructurado puede valer hasta 1,000 calorías de diferencia al día',
+        why:'Con igual metabolismo basal, misma dieta y mismo entrenamiento, la diferencia está en lo que haces el resto del día. <strong>Caminar al trabajo, pararte a buscar algo, gesticular al hablar, mantenerte de pie</strong> — todo eso suma. Entre una persona que se mueve naturalmente durante el día y una que permanece sentada, la diferencia de gasto puede ser de 800 a 1,000 calorías diarias. Por eso el Coach Noé evalúa tu actividad diaria total, no solo el gym.'
+      },
+      {
+        stem:'Dos personas pesan exactamente 70 kg. Una tiene un cuerpo tonificado y musculado; la otra tiene más grasa y menos músculo. Ambas se ven en la báscula igual. ¿Por qué el peso por sí solo es un dato engañoso?',
+        opts:['No es engañoso — el peso en báscula sigue siendo el indicador más confiable de salud y progreso','Porque el peso no distingue músculo de grasa. La persona con más músculo quema más calorías en reposo, controla mejor el azúcar en sangre y tiene un metabolismo más eficiente — aunque la báscula diga lo mismo','La báscula solo engaña cuando hay retención de líquidos, que es temporal y no cambia la interpretación a largo plazo','Porque el músculo pesa más que la grasa, entonces la persona musculada en realidad debería pesar más — si pesan igual, tienen la misma composición'],ans:1,
+        ok:'✅ Misma báscula, metabolismos completamente diferentes — la composición corporal es lo que realmente importa',
+        why:'El peso es solo la suma de todo lo que hay en tu cuerpo. <strong>No distingue músculo de grasa, agua de hueso, ni tejido activo de tejido pasivo.</strong> La persona musculada quema más calorías en reposo, el azúcar que come va al músculo en vez de convertirse en grasa, y su cuerpo funciona más eficientemente. La otra pesa igual pero su metabolismo es diferente. Por eso el Coach Noé mide composición corporal — porcentaje de grasa y masa muscular — no solo el peso.'
+      }
+    ]
+  },
+  {
+    id:'macros',icon:'🍽️',color:'var(--pu)',
+    name:'Proteínas, Carbos y Grasas',
+    desc:'¿Para qué sirve cada alimento? Entiende el papel de los tres grupos principales y cómo cambiar la cantidad según tus metas.',
+    qs:[
+      {
+        stem:'¿Cuál es la función PRINCIPAL de las proteínas en alguien que entrena con pesas?',
+        opts:['Darte energía inmediata para el entrenamiento, igual que los carbohidratos pero más duradera','Construir y reparar los músculos que dañas al entrenar, y mantener el funcionamiento de hormonas, enzimas y tejidos del cuerpo','Almacenarse como reserva de energía en los músculos para los entrenamientos siguientes','Evitar que el cuerpo use las grasas almacenadas como combustible durante el ayuno nocturno'],ans:1,
+        ok:'✅ La proteína construye, repara y mantiene — es el ladrillo del músculo',
+        why:'Las proteínas son los <strong>"ladrillos" de tu cuerpo</strong>. Cada vez que entrenas con pesas, dañas fibras musculares microscópicamente. La proteína que comes repara ese daño y lo deja más fuerte. Sin suficiente proteína, el músculo no crece aunque entrenes perfectamente. Los carbohidratos son el combustible para entrenar; la proteína es el material para construir.'
+      },
+      {
+        stem:'¿Por qué los carbohidratos son importantes si quieres entrenar pesas con intensidad?',
+        opts:['No son importantes en el entrenamiento de pesas — solo importan para deportes de resistencia como maratones','Son el combustible principal que tu cuerpo usa cuando levantas peso o haces cualquier ejercicio de alta intensidad. Sin ellos, el rendimiento cae y tardas más en recuperarte','Son opcionales si comes suficiente grasa, ya que las grasas pueden reemplazar completamente a los carbohidratos como combustible en cualquier intensidad','Solo importan para personas que entrenan más de 2 horas seguidas'],ans:1,
+        ok:'✅ Los carbohidratos son tu gasolina para entrenar fuerte',
+        why:'Cuando levantas pesas, tu cuerpo necesita energía muy rápida. <strong>Los carbohidratos son esa energía inmediata.</strong> Sin ellos, tu cuerpo empieza a usar el músculo como combustible — exactamente lo contrario de lo que buscas. Con suficientes carbohidratos antes y después de entrenar, tu rendimiento sube y tu recuperación es mucho más rápida.'
+      },
+      {
+        stem:'Una persona usa fármacos para ganar músculo más rápido y el coach le dice que debe comer más proteína y más carbohidratos. ¿Por qué tiene lógica esto?',
+        opts:['Porque los fármacos aumentan el apetito y el cuerpo simplemente pide más comida de forma natural','Porque los fármacos aceleran el proceso de construcción muscular — si el cuerpo construye más músculo más rápido, necesita más materiales (proteína) y más combustible (carbohidratos) para sostener ese proceso acelerado','Porque los fármacos dañan el hígado y necesita más nutrientes para repararse','Porque los fármacos reducen la absorción de nutrientes y hay que aumentar la ingesta para compensar la pérdida'],ans:1,
+        ok:'✅ Más velocidad de construcción = más materiales y combustible necesarios',
+        why:'Imagínate que construyes una casa. Normalmente usas un equipo pequeño con cierta cantidad de ladrillos. Si de repente triplicas el equipo de trabajadores que construyen al mismo tiempo, <strong>necesitas tres veces más ladrillos y tres veces más comida para ellos</strong>. Los fármacos anabólicos aceleran la construcción muscular, y el cuerpo demanda más proteína (ladrillos) y más carbohidratos (combustible para los trabajadores) para sostener ese proceso.'
+      }
+    ]
+  },
+  {
+    id:'ejercicio',icon:'⚡',color:'var(--gn)',
+    name:'Energía y Suplementos',
+    desc:'¿Cómo usa tu cuerpo la energía durante el ejercicio? ¿Y para qué sirven realmente la creatina, la beta-alanina y la citrulina?',
+    qs:[
+      {
+        stem:'Cuando levantas el peso máximo que puedes en una sola repetición, ¿de dónde viene esa energía tan rápida?',
+        opts:['De quemar grasa almacenada — ese esfuerzo tan intenso activa la quema de grasa de emergencia','De los carbohidratos que comiste horas antes, que el cuerpo convierte en energía en el momento del esfuerzo','De una reserva de energía instantánea que ya tienes guardada dentro del músculo, llamada fosfocreatina','Del oxígeno que respiras, que se convierte en energía de forma inmediata en las células musculares'],ans:2,
+        ok:'✅ La fosfocreatina: tu batería de emergencia muscular lista en milisegundos',
+        why:'Tu músculo tiene una reserva de energía "lista para usar al instante" llamada <strong>fosfocreatina</strong>. No necesita oxígeno ni tiempo de procesamiento — simplemente dona energía en fracciones de segundo. La creatina como suplemento sirve para <em>cargar más esa batería</em>, haciéndote más fuerte y ayudándote a recuperarte más rápido entre series pesadas.'
+      },
+      {
+        stem:'La Beta-Alanina reduce el "quemón" muscular durante series largas e intensas. ¿Cuál es la razón más precisa?',
+        opts:['Dilata los vasos sanguíneos para que llegue más oxígeno al músculo y se elimine el ácido más rápido','Aumenta la producción de energía en las mitocondrias, reduciendo la necesidad de usar la vía que produce el quemón','Eleva los niveles de carnosina en el músculo, que actúa como un amortiguador que neutraliza el ácido que genera el quemón','Reduce la frecuencia cardiaca durante el ejercicio intenso, permitiendo mayor tolerancia al esfuerzo'],ans:2,
+        ok:'✅ Carnosina = amortiguador del ácido muscular — la beta-alanina te ayuda a acumularlo',
+        why:'Cuando haces ejercicio intenso de 1 a 4 minutos, tus músculos acumulan ácido (iones H⁺) que genera ese ardor y te obliga a parar. La beta-alanina se combina con otro aminoácido para formar <strong>carnosina</strong>, que actúa como un amortiguador absorbiendo ese ácido. Resultado: puedes aguantar más repeticiones o más tiempo antes de que el quemón te detenga.'
+      },
+      {
+        stem:'¿Cuál es el beneficio principal de la Citrulina Malato antes de entrenar?',
+        opts:['Reemplaza la proteína en días que no alcanzaste a comer tu meta proteica antes del entrenamiento','Aumenta directamente la fuerza muscular máxima al activar las fibras de contracción rápida','Mejora el flujo de sangre hacia los músculos que estás trabajando y ayuda a las células musculares a producir más energía durante el esfuerzo','Reduce el cortisol producido por el entrenamiento intenso, protegiendo el músculo de degradarse'],ans:2,
+        ok:'✅ Más flujo sanguíneo al músculo + más energía celular = mejor rendimiento y recuperación',
+        why:'La citrulina hace que tus vasos sanguíneos se relajen y se dilaten, <strong>enviando más sangre, oxígeno y nutrientes a los músculos que estás trabajando</strong>. El malato, su segundo componente, ayuda a las células musculares a producir más energía de forma eficiente. Juntos te dan más bombeo, más resistencia y recuperación más rápida entre series.'
+      }
+    ]
+  },
+  {
+    id:'rendimiento',icon:'🏋️',color:'var(--ac)',
+    name:'Pesas, Músculo y No Comer de Menos',
+    desc:'¿Por qué entrenar pesas duro te hace necesitar más comida? ¿Por qué el músculo es tu mejor aliado metabólico? Y lo más importante: ¿qué le pasa a tu cuerpo cuando comes muy poco buscando perder grasa?',
+    qs:[
+      {
+        stem:'Alguien que entrena pesas con mucho peso, muchas series y alta intensidad necesita comer más que alguien que entrena con poco esfuerzo. ¿Por qué tiene sentido esto?',
+        opts:['Solo porque tiene más hambre después de un entrenamiento intenso y el cuerpo la pide naturalmente','Porque el entrenamiento intenso daña más los músculos y comerlos obliga a mayor inflamación, que requiere más calorías para resolverse','Porque gasta más energía durante el entrenamiento, y además su cuerpo sigue quemando energía extra durante horas después para reparar los músculos trabajados y reponer sus reservas de energía','Porque las personas que entrenan duro suelen ser más grandes físicamente y su cuerpo necesita más calorías por su mayor volumen corporal'],ans:2,
+        ok:'✅ El cuerpo sigue trabajando y quemando calorías horas después de terminar el entrenamiento',
+        why:'Entrenar con alta intensidad en pesas tiene dos efectos calóricos: <strong>gastar durante el entrenamiento</strong>, y luego <em>seguir gastando durante las horas siguientes</em> para reparar fibras musculares, reponer reservas de energía y restaurar el equilibrio del cuerpo. Una sesión intensa puede generar el doble de gasto calórico total comparada con una de bajo esfuerzo, incluyendo ese efecto de horas posteriores.'
+      },
+      {
+        stem:'¿Por qué tener más masa muscular hace que tu cuerpo queme más calorías aunque estés sentado o dormido?',
+        opts:['Porque las personas musculadas generalmente se mueven más durante el día, aunque no lo noten conscientemente','Porque el músculo genera más calor que otros tejidos, y mantener esa temperatura requiere energía continua','Porque el tejido muscular necesita energía constantemente para mantenerse vivo y funcional, incluso en reposo total, mientras que la grasa casi no consume energía por sí sola','Porque el mayor peso corporal de personas musculadas eleva el gasto basal de forma proporcional, sin importar la composición específica'],ans:2,
+        ok:'✅ El músculo es un motor encendido las 24 horas — la grasa es un almacén pasivo',
+        why:'Cada kilogramo de músculo consume energía todo el tiempo, incluso mientras duermes, para mantenerse activo y listo. La grasa, en cambio, casi no gasta energía por sí sola. <strong>Por eso dos personas del mismo peso pueden tener metabolismos muy diferentes</strong> dependiendo de cuánto músculo tienen. Ganar músculo con el entrenamiento de pesas es invertir en un metabolismo más alto de forma permanente.'
+      },
+      {
+        stem:'Una persona reduce sus calorías a la mitad para perder grasa más rápido. ¿Qué pasa realmente en las primeras semanas?',
+        opts:['Pierde grasa al doble de velocidad porque el déficit es mayor y el cuerpo no tiene otra opción que usar la grasa almacenada','Su cuerpo entra en modo de supervivencia: empieza a destruir músculo para obtener energía, baja el metabolismo para gastar menos, y a largo plazo hace más fácil acumular grasa porque hay menos músculo para quemarla','Solo siente más hambre y cansancio temporalmente, pero los resultados a 3 meses son mejores que con un déficit moderado','El cuerpo usa exclusivamente grasa almacenada y preserva perfectamente el músculo siempre que se consuma suficiente proteína'],ans:1,
+        ok:'✅ Comer muy poco hace exactamente lo contrario de lo que buscas — destruye el músculo que acelera el metabolismo',
+        why:'Cuando comes demasiado poco, tu cuerpo interpreta que hay una emergencia y activa el modo supervivencia. <strong>Lo primero que sacrifica es el músculo</strong> — lo convierte en combustible para sobrevivir. Al perder músculo, tu metabolismo baja permanentemente porque ahora tienes menos tejido que quema calorías. El resultado: menos músculo, metabolismo más lento y más facilidad para engordar cuando vuelves a comer normal. La clave es un déficit pequeño y controlado.'
+      },
+      {
+        stem:'¿Por qué perder músculo por comer muy poco hace que el azúcar y los carbohidratos que comes terminen convirtiéndose en grasa?',
+        opts:['Porque sin músculo el páncreas produce menos insulina, lo que impide que la glucosa entre a cualquier tejido','Porque la pérdida de músculo reduce la temperatura corporal y eso hace más lenta la quema de carbohidratos en todas las células del cuerpo','Porque el músculo es el destino principal del azúcar después de comer. Sin suficiente músculo para recibirlo y quemarlo, ese azúcar se redirige al tejido graso y se almacena como grasa','Porque la pérdida de músculo activa enzimas hepáticas que convierten el exceso de glucosa en colesterol en lugar de grasa'],ans:2,
+        ok:'✅ Sin músculo, el azúcar que comes no tiene adónde ir — y termina convirtiéndose en grasa',
+        why:'Después de comer, tu cuerpo necesita un destino para el azúcar de los alimentos. <strong>El músculo es el destino principal</strong> — lo absorbe y lo quema como combustible. Cuando tienes menos músculo, hay menos tejido para recibir ese azúcar, y el cuerpo lo manda directo al tejido graso para almacenarlo. Por eso el músculo no es solo estético: <em>es el órgano que decide si la energía que comes se quema o se acumula como grasa.</em>'
+      }
+    ]
+  },
+  {
+    id:'intensidad',icon:'📊',color:'var(--pu)',
+    name:'Medir tu Esfuerzo y Conocer tu Nivel',
+    desc:'¿Qué es el RIR y cómo sabes si entrenaste de verdad? ¿Cómo calculas tu peso máximo? ¿Y qué diferencia a un principiante de un avanzado?',
+    qs:[
+      {
+        stem:'El Coach Noé usa el "RIR" para saber qué tan intenso fue tu entrenamiento. Si terminas una serie con RIR 2, ¿qué significa exactamente?',
+        opts:[
+          'Que descansaste 2 minutos entre esa serie y la anterior',
+          'Que llegaste al límite absoluto — no podías hacer ni una más',
+          'Que te detuviste pudiendo todavía hacer 2 repeticiones más — te quedaste corto del esfuerzo máximo posible',
+          'Que hiciste 2 repeticiones de calentamiento antes de la serie principal'
+        ],ans:2,
+        ok:'✅ RIR 2 = te detuves con 2 reps en el tanque — no llegaste a tu límite real',
+        why:'El <strong>RIR (Repeticiones en Reserva)</strong> mide qué tan lejos del límite llevaste cada serie. RIR 0 = no podías hacer ni una más. RIR 2 = te quedaban dos repeticiones pero te detuviste. El Coach Noé lo usa porque <strong>tu límite cambia según cómo dormiste, cuánto estrés tienes y cómo comiste ese día</strong>. El RIR te permite ajustar el entrenamiento a tu estado real del día en lugar de seguir un número fijo a ciegas.'
+      },
+      {
+        stem:'Para calcular tu peso máximo (1RM), el Coach Noé propone que elijas un peso con el que falles de verdad en máximo 12 repeticiones. Si llegas a las 12 sin que se te acabe la fuerza, ¿qué debes hacer?',
+        opts:[
+          'Registrar esas 12 repeticiones como el dato válido para calcular tu máximo',
+          'Bajar el peso en el siguiente intento para acercarte más al rango recomendado',
+          'Subir el peso y volver a intentar hasta que genuinamente ya no puedas hacer una repetición más dentro de ese rango de 12',
+          'Promediar ese resultado con otro ejercicio similar para mayor precisión'
+        ],ans:2,
+        ok:'✅ Si llegas a 12 sin fallar, el peso está muy ligero — sube y vuelve a intentarlo',
+        why:'El objetivo es un peso con el que tu cuerpo diga "ya no más" antes o en la repetición 12. <strong>Si llegas a 12 sin que se te acabe la fuerza, el dato no es confiable</strong> para calcular tu máximo. Una vez que fallas de verdad dentro del rango, ingresas las reps y el peso en la calculadora de Harbiz — la app del Coach Noé — y ella calcula automáticamente tu peso máximo estimado y los porcentajes para cada objetivo de entrenamiento.'
+      },
+      {
+        stem:'¿Cuál es la diferencia más importante entre un alumno PRINCIPIANTE y uno AVANZADO del Coach Noé?',
+        opts:[
+          'El avanzado solo levanta más peso y lleva más años en el gym — la diferencia es únicamente de tiempo y fuerza',
+          'El principiante tiene ventaja porque aprende movimientos nuevos más rápido al no tener hábitos musculares formados',
+          'El avanzado conoce su cuerpo tan bien que sabe cuánto puede dar en cada momento, cuándo subir de peso por iniciativa propia, si una serie fue de verdad al límite, y cómo ajustar su entrenamiento sin que el coach le diga cada detalle — el principiante está aprendiendo todo eso desde cero',
+          'No hay diferencia real de proceso, solo de cuánto tiempo llevan siguiendo el mismo plan'
+        ],ans:2,
+        ok:'✅ El avanzado se conoce a sí mismo — esa percepción del esfuerzo es el atributo más valioso',
+        why:'El Coach Noé define tres niveles: el <strong>principiante</strong> aprende técnica desde cero, usa pesos bajos y necesita que el coach le indique cada ajuste. El <strong>intermedio</strong> ya controla la velocidad de los movimientos, sabe progresar sus cargas y maneja el descanso. El <strong>avanzado</strong> sabe leer su propio cuerpo: <em>si una serie fue de verdad al límite, cuándo cambiar el peso sin que se lo digan, y cómo entrenar según el objetivo del día.</em> Esa percepción del esfuerzo aplicado es el principio fundamental que un intermedio y avanzado ya debe comprender.'
+      },
+      {
+        stem:'Tu peso máximo (1RM) en un ejercicio es 80 kg. El Coach Noé indica que trabajes al 75% para ganar músculo. ¿Con cuánto debes entrenar y cuántas repeticiones corresponden a esa zona?',
+        opts:[
+          '80 kg — porque en el gym siempre debes ir al máximo para progresar',
+          '5 kg — porque al 75% de descuento quedarían 5 kg del peso base',
+          '60 kg — que es el 75% de 80 kg, correspondiente a unas 8–12 repeticiones para ganar músculo',
+          '60 kg — pero corresponde a 1–3 repeticiones de fuerza máxima, no de músculo'
+        ],ans:2,
+        ok:'✅ 75% de 80 kg = 60 kg → zona de hipertrofia: 8–12 repeticiones',
+        why:'Con tu 1RM calculado, puedes entrenar con precisión: <strong>al 85–90% haces pocas reps para ganar fuerza; al 70–80% haces 8–12 reps para ganar músculo (hipertrofia); al 60–70% haces muchas reps para resistencia muscular.</strong> En el ejemplo: 75% de 80 kg = 60 kg. La app de Harbiz del Coach Noé calcula todos esos porcentajes automáticamente y te dice exactamente con cuánto trabajar en cada tipo de entrenamiento.'
+      }
+    ]
+  },
+  {
+    id:'habitos',icon:'🧠',color:'var(--go)',
+    name:'Hábitos, Cambio & Resultados',
+    desc:'Entiende por qué el proceso toma tiempo, qué esperar en cada etapa, y cómo la disciplina y la paciencia son parte biológica del plan.',
+    qs:[
+      {
+        stem:'Una persona con mucho sobrepeso y poca musculatura empieza a entrenar pesas y comer bien. ¿Puede ganar músculo y perder grasa al mismo tiempo?',
+        opts:['No, es biológicamente imposible — el cuerpo siempre hace una cosa a la vez','Solo si hace más de 2 horas de ejercicio diario combinando cardio y pesas','Sí, especialmente al inicio: el cuerpo puede usar la grasa acumulada como combustible y al mismo tiempo construir músculo con la proteína que consume, porque el estímulo del entrenamiento es muy potente cuando eres nuevo en él','Solo si usa suplementos específicos para recomposición corporal'],ans:2,
+        ok:'✅ Al inicio los cambios pueden ir en ambas direcciones al mismo tiempo',
+        why:'Cuando alguien empieza a entrenar por primera vez con sobrepeso, su cuerpo tiene dos cosas a su favor: <strong>mucha grasa almacenada para usar como combustible, y músculos que responden de forma muy intensa al primer estímulo del ejercicio</strong>. Esto permite perder grasa y ganar músculo al mismo tiempo. Este efecto es más fuerte al inicio y se va reduciendo conforme la persona progresa.'
+      },
+      {
+        stem:'Las primeras semanas de un programa nuevo es común sentirse cansado aunque estés comiendo bien. ¿Por qué ocurre esto?',
+        opts:['El plan tiene demasiadas calorías y el exceso de energía genera fatiga digestiva','Es señal de sobreentrenamiento y deberías reducir la frecuencia de entrenamiento inmediatamente','El cuerpo está construyendo nuevas estructuras musculares, ajustando hormonas y creando nuevas vías de energía — todo eso cuesta recursos y se siente como cansancio','Tu cuerpo está desintoxicándose de los hábitos anteriores, lo cual genera fatiga temporal mientras elimina toxinas'],ans:2,
+        ok:'✅ Ese cansancio es tu cuerpo construyendo su nueva versión',
+        why:'Imagina que estás remodelando una casa. Mientras dura la remodelación hay polvo, desorden y todo parece peor. Pero cuando termina, la casa está mejor. <strong>Tu cuerpo hace exactamente lo mismo</strong>: está construyendo más capacidad muscular, ajustando hormonas y mejorando cómo produce y usa la energía. Ese cansancio es la señal de que el cambio está ocurriendo — no de que algo está mal.'
+      },
+      {
+        stem:'El Coach Noé dice que la disciplina y la constancia tienen un fundamento real más allá de la motivación. ¿Cuál es la razón más concreta?',
+        opts:['La motivación es emocional y el cerebro necesita recompensa constante para mantener un hábito — sin disciplina el hábito no se forma neurológicamente','La constancia solo importa los primeros 3 meses hasta que el hábito queda automático; después ya no se necesita esfuerzo consciente','Cada vez que entrenas, tu cuerpo activa la construcción muscular por solo 24 a 48 horas. Si no vuelves a entrenar en ese tiempo, el proceso se detiene. La disciplina es lo que garantiza que ese estímulo llegue a tiempo, semana tras semana','La disciplina reduce el cortisol a largo plazo, y el cortisol bajo es el principal factor de ganancia muscular'],ans:2,
+        ok:'✅ La construcción muscular se activa 24–48 h por sesión — la disciplina es lo que la mantiene encendida',
+        why:'Cada vez que entrenas, tu cuerpo activa la construcción muscular por aproximadamente <strong>24 a 48 horas</strong>. Si no vuelves a entrenar en ese tiempo, el proceso se detiene sin dejar huella. Para que el músculo crezca de verdad, necesitas darle ese estímulo semana tras semana, mes tras mes. La disciplina no es motivación — es el mecanismo biológico que mantiene encendido el proceso de transformación.'
+      }
+    ]
+  },
+  {
+    id:'sistemas',icon:'💧',color:'var(--t)',
+    name:'Agua, Sistemas, Recomposición & Dieta Controlada',
+    desc:'¿Qué hace el agua dentro de tu cuerpo? ¿Por qué cada persona responde diferente al mismo plan? ¿Y por qué una dieta más controlada te da mejores resultados?',
+    qs:[
+      {
+        stem:'¿Por qué tomar suficiente agua es fundamental para el rendimiento en el gym y para la recuperación muscular?',
+        opts:[
+          'Solo importa para no tener calambres — fuera de eso el agua no afecta el rendimiento ni el metabolismo',
+          'El agua es el medio donde ocurren todas las reacciones de energía de tu cuerpo. Sin suficiente agua, la producción de energía muscular se deteriora, el transporte de nutrientes al músculo falla y el ácido producido por el ejercicio no puede eliminarse correctamente — una deshidratación del 2% puede reducir tu fuerza hasta un 10%',
+          'Su función es lubricar las articulaciones; el metabolismo energético no depende de la hidratación',
+          'Tomar mucha agua durante el entrenamiento puede generar náuseas y reducir el rendimiento, por lo que es mejor hidratarse solo antes y después'
+        ],ans:1,
+        ok:'✅ El agua es el medio donde sucede toda la bioquímica — sin ella, el rendimiento cae aunque el plan sea perfecto',
+        why:'Cada reacción metabólica — desde producir energía hasta reparar el músculo — ocurre en solución acuosa. <strong>El agua transporta glucosa y oxígeno al músculo, elimina ácido y CO₂ del tejido activo, y regula el pH que determina qué tan bien funcionan las enzimas que producen energía.</strong> Tu corazón, riñones y sistema hormonal también dependen del agua para funcionar. Un cuerpo deshidratado es un cuerpo que no puede rendir ni recuperarse al 100%.'
+      },
+      {
+        stem:'Dos personas siguen exactamente el mismo plan del Coach Noé — misma dieta, mismo entrenamiento, misma duración — pero obtienen resultados muy diferentes. ¿Qué lo explica?',
+        opts:[
+          'Una tiene más fuerza de voluntad y eso determina los resultados',
+          'Cada persona tiene una respuesta fisiológica única: diferente genética, nivel de estrés, calidad de sueño, hormonas, microbiota intestinal y composición de fibras musculares. Estos factores hacen que el mismo estímulo produzca resultados distintos en cada cuerpo',
+          'El plan no es correcto si no produce los mismos resultados en todas las personas — hay un error de diseño',
+          'Solo el entrenamiento produce resultados; si la dieta es igual, los resultados siempre deberían ser iguales también'
+        ],ans:1,
+        ok:'✅ Mismo plan, respuestas diferentes — el cuerpo de cada persona es una ecuación única',
+        why:'Factores que no puedes ver a simple vista determinan tu respuesta: <strong>tu genética</strong> (composición de fibras, receptores de hormonas), <strong>tus hormonas</strong> (testosterona, estrógeno, cortisol), <strong>tu microbiota intestinal</strong> (qué absorbes realmente), <strong>tu calidad de sueño</strong> (cuánta GH produces), y tu nivel de estrés (cuánto cortisol inhibe tu recuperación). El plan es el mejor punto de partida disponible — pero la respuesta del cuerpo te dice cómo ajustarlo para ti específicamente. <em>No existe el plan universal; existe el plan ajustado a tu respuesta.</em>'
+      },
+      {
+        stem:'¿Por qué una dieta más controlada y precisa te permite aspirar a mejores resultados que una dieta flexible sin seguimiento?',
+        opts:[
+          'Porque las dietas estrictas generan más hambre, y el hambre motiva a entrenar más fuerte',
+          'Porque cuando sabes exactamente cuánto comes, puedes identificar qué funciona y qué no, ajustar con precisión lo que el cuerpo recibe, y eliminar la variabilidad que hace imposible saber por qué los resultados no ocurren',
+          'Porque las dietas controladas siempre son más bajas en calorías, y menos calorías siempre significa mejores resultados',
+          'Porque el seguimiento de la dieta aumenta la dopamina al ver los números, y eso mejora el rendimiento en el entrenamiento'
+        ],ans:1,
+        ok:'✅ Control = precisión = capacidad de ajustar = resultados más predecibles y mejores',
+        why:'Cuando comes "más o menos bien" sin registro, cualquier resultado bueno o malo tiene docenas de causas posibles — y no puedes saber cuál ajustar. <strong>Una dieta controlada convierte la nutrición en una variable que puedes medir, comparar y mejorar.</strong> No significa que no puedas comer variado o disfrutar — significa que sabes exactamente qué está entrando al sistema. Esa información es la que le permite al Coach Noé hacer ajustes reales basados en datos, no en suposiciones.'
+      }
+    ]
+  },
+  {
+    id:'mentalidad2',icon:'🔮',color:'var(--pu)',
+    name:'Progreso, Alcohol, Sacrificios & Salud Mental',
+    desc:'La obsesión sana con el progreso, cómo el alcohol afecta tu cuerpo, la balanza entre resultados y disfrute, la dismorfia corporal y por qué compararte con otros te sabotea.',
+    qs:[
+      {
+        stem:'El Coach Noé habla de "obsesionarse con el progreso". ¿Qué proceso real tienes que atravesar para que el progreso ocurra?',
+        opts:[
+          'Solo necesitas aumentar el peso en la barra cada semana — el progreso en pesas es simplemente levantar más',
+          'El progreso real requiere primero aprender la técnica correcta, luego perfeccionarla hasta que el músculo correcto trabaje, y solo entonces progresar las cargas sistemáticamente — cada fase lleva tiempo y no puede saltarse',
+          'La clave es cambiar constantemente los ejercicios para sorprender al músculo y que nunca se adapte',
+          'La obsesión con el progreso es negativa porque genera ansiedad y sobreentrenamiento'
+        ],ans:1,
+        ok:'✅ Aprendizaje → perfección técnica → progresión de cargas — cada fase es ineludible y lleva tiempo',
+        why:'Antes de progresar el peso, el músculo tiene que aprender a hacer bien el movimiento — eso lleva semanas. Luego viene perfeccionar la ejecución para que el estímulo llegue al músculo correcto con la técnica íntegra. Solo entonces tiene sentido aumentar la carga sistemáticamente. <strong>Este proceso no puede acelerarse ni saltarse.</strong> Obsesionarse con el progreso significa registrar cada entrenamiento en la app, comparar semana a semana y ejecutar la progresión con intención — no al azar ni por ego.'
+      },
+      {
+        stem:'¿Qué le hace el alcohol a tu cuerpo cuando estás buscando ganar músculo o perder grasa?',
+        opts:[
+          'Si tomas agua entre copas y entrenas al día siguiente, el efecto del alcohol es completamente neutralizado',
+          'El alcohol hace que tu cuerpo deje de quemar grasa mientras lo procesa, reduce la construcción muscular hasta un 37%, eleva el cortisol, arruina la calidad del sueño donde se produce la hormona de crecimiento, y sus calorías desplazan a los nutrientes que necesitas',
+          'Solo afecta si tomas más de 5 copas; cantidades menores no tienen impacto medible en la composición corporal',
+          'El alcohol solo afecta a atletas de competición; para personas que entrenan por estética el impacto es mínimo'
+        ],ans:1,
+        ok:'✅ El alcohol para la quema de grasa, frena la construcción muscular y arruina el sueño reparador — todo al mismo tiempo',
+        why:'Cuando hay alcohol en tu cuerpo, <strong>el hígado lo procesa primero y deja todo lo demás en pausa</strong> — incluyendo quemar grasa. Además reduce la síntesis de músculo, eleva el cortisol que degrada tejido, y deteriora el sueño profundo donde se produce la hormona de crecimiento. El Coach Noé entiende que el disfrute social tiene valor y que si el momento y las amistades lo ameritan puede considerarse — excepto para atletas. Pero hay que ser consciente: beber es una decisión de sacrificar resultados, no un evento sin consecuencias.'
+      },
+      {
+        stem:'La vida tiene vacaciones, reuniones y momentos donde no puedes seguir el plan. ¿Cuál es la mejor forma de manejarlo según el Coach Noé?',
+        opts:[
+          'Las vacaciones siempre arruinan el progreso — es mejor no tomarlas hasta alcanzar el objetivo',
+          'El disfrute tiene valor real y es parte de una vida completa. La clave es ser consciente de que hay un sacrificio de resultados, monitorear el impacto al regresar y ajustar el plan sin culpa ni ignorancia — porque siempre hay un precio: si quieres resultados sacrificas comodidades; si prefieres el disfrute momentáneo, sacrificas progreso',
+          'Si el entrenamiento se mantiene durante las vacaciones, la nutrición libre no genera ningún impacto medible',
+          'Una o dos semanas fuera del plan nunca tienen consecuencias reales y no necesitan ajuste posterior'
+        ],ans:1,
+        ok:'✅ Todo tiene un precio — la consciencia del sacrificio y el ajuste posterior es lo que te distingue',
+        why:'El Coach Noé plantea que la vida es una balanza: <strong>si eliges resultados, sacrificas comer lo que quieras y vivir sin restricciones; si eliges el placer momentáneo, sacrificas resultados.</strong> Ninguna es la opción incorrecta — ambas son válidas si las eliges conscientemente. Las vacaciones son un sacrificio legítimo por el disfrute. Lo que importa es no ignorar el impacto: monitorear qué cambió en composición corporal, peso o rendimiento al regresar, y retomar el plan con ajustes inteligentes sin caer en culpa ni en minimización.'
+      },
+      {
+        stem:'¿Por qué el Coach Noé insiste en que NO te compares con otras personas, y qué es la dismorfia corporal?',
+        opts:[
+          'Compararse motiva a esforzarse más — el Coach lo desaconseja solo para alumnos con baja autoestima',
+          'Compararte con otro cuerpo es inútil porque cada persona tiene una genética, historial hormonal, composición de fibras y punto de partida completamente diferentes — como comparar dos ecuaciones con variables distintas. La dismorfia corporal es cuando la percepción de tu cuerpo está tan distorsionada que nunca te ves con suficiente músculo o suficientemente delgado, aunque el progreso sea real y visible',
+          'La dismorfia corporal es solo un concepto de redes sociales sin impacto clínico real en personas que entrenan recreativamente',
+          'Compararse es útil como referencia técnica de ejercicios, solo es problemático en términos de estética corporal'
+        ],ans:1,
+        ok:'✅ Tu único parámetro de progreso válido eres tú mismo — la dismorfia hace invisible el progreso real',
+        why:'Compararte con otro cuerpo es comparar variables completamente diferentes: su genética, hormonas, años de entrenamiento, estilo de vida y punto de partida no son los tuyos. <strong>El único parámetro justo eres tú mismo comparado con quien eras ayer.</strong> La dismorfia corporal — donde nunca te ves suficientemente bien aunque el progreso sea objetivo y medible — convierte el entrenamiento en una fuente de sufrimiento en lugar de transformación. Aparece gradualmente, afecta a hombres y mujeres, y si no se atiende, escala a conductas que dañan la salud física y mental. El Coach Noé habla de esto porque <em>transformar el cuerpo sin cuidar la mente es construir sobre arena.</em>'
+      }
+    ]
+  }
+];
+
+/* ═══════════════════════════════════════
+   STATE & HELPERS
+═══════════════════════════════════════ */
+let MODE = 'adv'; // 'adv' | 'gen'
+let ALL = [];
+let ST = {name:'',qi:0,ci:0,answered:false,log:[]};
+
+const $ = id => document.getElementById(id);
+function showScr(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');window.scrollTo({top:0,behavior:'smooth'});}
+function updateBar(){
+  $('fill').style.width = Math.round((ST.qi/ALL.length)*100)+'%';
+  $('tbar-count').textContent = ST.qi+' / '+ALL.length;
+}
+
+function showShell(){
+  $('hero').style.display='none';
+  $('shell').classList.add('on');
+  $('tbar-count').textContent='';
+}
+function goHero(){$('shell').classList.remove('on');$('hero').style.display='flex';}
+
+/* ── MODE CHOICE ── */
+function chooseMode(m){
+  MODE = m;
+  ALL = [];
+  const cats = m==='adv' ? CATS_ADV : CATS_GEN;
+  cats.forEach((cat,ci)=>cat.qs.forEach((q,qi)=>ALL.push({...q,cat,ci,qi})));
+
+  // topbar mode badge
+  const mb = $('tbar-mode');
+  mb.style.display='inline-flex';
+  if(m==='adv'){mb.textContent='🔬 AVANZADO';mb.style.color='var(--t)';mb.style.borderColor='rgba(0,201,200,.3)';}
+  else{mb.textContent='🌟 GENERAL';mb.style.color='var(--go)';mb.style.borderColor='rgba(255,209,102,.3)';}
+
+  // name screen
+  const badge = $('name-mode-badge');
+  const startBtn = $('name-start-btn');
+  const total = ALL.length;
+  if(m==='adv'){
+    badge.className='name-mode-badge adv';badge.textContent='🔬 TEST BIOQUÍMICO AVANZADO';
+    $('name-sub').innerHTML=`Tu nombre aparecerá en los resultados. Este test consta de <strong>${total} preguntas</strong> con terminología técnica de bioquímica del entrenamiento.`;
+    startBtn.className='name-start';
+  } else {
+    badge.className='name-mode-badge gen';badge.textContent='🌟 TEST GENERAL';
+    $('name-sub').innerHTML=`Tu nombre aparecerá en los resultados. Este test consta de <strong>${total} preguntas</strong> explicadas de manera sencilla para cualquier persona.`;
+    startBtn.className='name-start gen-btn';
+  }
+  updateBar();
+  // Sin pregunta de nombre: arranca directo
+  ST={name:'',qi:0,ci:0,answered:false,log:[]};
+  showCat();
+}
+
+/* ── START ── */
+function startTest(){
+  const inp=$('student-name'),n=inp.value.trim();
+  if(!n){inp.style.animation='wrongShake .4s ease';setTimeout(()=>inp.style.animation='',450);inp.focus();return;}
+  ST={name:n,qi:0,ci:0,answered:false,log:[]};
+  showCat();
+}
+
+/* ── CATEGORY INTRO ── */
+function showCat(){
+  const cats = MODE==='adv'?CATS_ADV:CATS_GEN;
+  const cat = cats[ST.ci];
+  $('cat-icon').textContent=cat.icon;
+  $('cat-num').textContent=`CATEGORÍA ${ST.ci+1} DE ${cats.length}`;
+  const words=cat.name.split(' '), last=words.pop();
+  $('cat-title').innerHTML=words.join(' ')+' <em>'+last+'</em>';
+  $('cat-qs-count').textContent=`📋  ${cat.qs.length} preguntas en esta sección`;
+  $('cat-desc').innerHTML=cat.desc;
+  const btn=$('cat-start-btn');
+  btn.className=MODE==='adv'?'cat-btn':'cat-btn gen-btn';
+  showScr('scr-cat');
+}
+function goFirstQ(){showQ();}
+
+/* ── QUESTION ── */
+function showQ(){
+  ST.answered=false;
+  const item=ALL[ST.qi];
+  const cat=item.cat;
+  const LL=['A','B','C','D','E'];
+
+  const tag=$('q-cat-tag');
+  tag.textContent=cat.icon+'  '+cat.name;
+  tag.style.color=cat.color;tag.style.borderColor=cat.color;
+  $('q-num-tag').textContent=`P${item.qi+1}/${cat.qs.length} en esta categoría  ·  ${ST.qi+1}/${ALL.length} total`;
+  $('q-stem').innerHTML=item.stem;
+
+  const div=$('opts');div.innerHTML='';
+  item.opts.forEach((o,i)=>{
+    const el=document.createElement('div');
+    el.className='opt';
+    el.innerHTML=`<div class="opt-letter">${LL[i]}</div><div class="opt-text">${o}</div>`;
+    el.onclick=()=>pick(i);
+    div.appendChild(el);
+  });
+
+  $('q-fb').className='q-fb';
+  const nxt=$('q-next');
+  nxt.className='q-next';
+  showScr('scr-q');
+  updateBar();
+}
+
+/* ── ANSWER ── */
+function pick(i){
+  if(ST.answered)return;
+  ST.answered=true;
+  const item=ALL[ST.qi];
+  const ok=i===item.ans;
+  ST.log.push({ok,chosen:i,item});
+
+  document.querySelectorAll('.opt').forEach((o,idx)=>{
+    o.classList.add('locked');
+    if(idx===item.ans)o.classList.add('correct');
+    else if(idx===i&&!ok)o.classList.add('wrong');
+  });
+
+  const fb=$('q-fb');
+  fb.className='q-fb show '+(ok?'ok':'no');
+  $('fb-title').textContent=ok?item.ok:'❌ No era esa — aquí el porqué:';
+  $('fb-body').innerHTML=item.why;
+
+  const nxt=$('q-next');
+  const ni=ST.qi+1,isLast=ni>=ALL.length;
+  const catChange=!isLast&&ALL[ni].ci!==item.ci;
+  nxt.textContent=isLast?'Ver mis resultados →':catChange?'Siguiente categoría →':'Siguiente pregunta →';
+  nxt.className='q-next show'+(MODE==='gen'?' gen-btn':'');
+}
+
+/* ── NEXT ── */
+function nextStep(){
+  ST.qi++;
+  if(ST.qi>=ALL.length){showResults();return;}
+  const cur=ALL[ST.qi];
+  if(cur.ci!==ALL[ST.qi-1].ci){ST.ci=cur.ci;showCat();}
+  else showQ();
+}
+
+/* ── RESULTS ── */
+function showResults(){
+  $('fill').style.width='100%';
+  $('tbar-count').textContent=ALL.length+' / '+ALL.length;
+  const score=ST.log.filter(r=>r.ok).length;
+  const pct=Math.round((score/ALL.length)*100);
+  const LL=['A','B','C','D','E'];
+  const isGen=MODE==='gen';
+
+  $('res-name').textContent='TUS RESULTADOS';
+  $('res-score').textContent=score;
+  $('res-score').className='res-score-big'+(isGen?' gen-score':'');
+  $('res-den').textContent=`RESPUESTAS CORRECTAS DE ${ALL.length}`;
+
+  const av=$('res-avatar');
+  av.textContent=pct>=90?'🏆':pct>=70?'💪':pct>=50?'🎯':'🌱';
+  av.className='res-avatar'+(isGen?' gen-av':'');
+
+  const stars=pct>=90?5:pct>=75?4:pct>=55?3:pct>=40?2:1;
+  $('res-stars').textContent='⭐'.repeat(stars);
+
+  let badge,bc,msg;
+  if(isGen){
+    if(pct>=90){badge='¡MAESTRO DEL CONOCIMIENTO!';bc='var(--gn)';msg='<strong>¡Increíble!</strong> Entiendes muy bien cómo funciona tu cuerpo. Tienes las bases para transformarte con inteligencia y consistencia. El Coach Noé estaría orgulloso.';}
+    else if(pct>=75){badge='¡BUEN NIVEL!';bc='var(--t)';msg='<strong>¡Muy bien!</strong> Tienes una comprensión sólida. Repasa las respuestas donde fallaste — cada concepto que dominas es un paso más hacia tu transformación.';}
+    else if(pct>=55){badge='SIGUIENDO EL CAMINO';bc='var(--go)';msg='Vas avanzando. Los temas de nutrición pueden parecer complicados al inicio, pero con práctica todo se vuelve más claro. Vuelve a intentarlo después de leer las explicaciones.';}
+    else if(pct>=35){badge='APENAS COMENZANDO';bc='var(--ac)';msg='Esto es solo el principio. Lee con calma las explicaciones de cada pregunta y vuelve a intentarlo. El conocimiento es parte de la transformación.';}
+    else{badge='¡A ESTUDIAR!';bc='var(--rd)';msg='Tranquilo — todos empezamos desde cero. Lee las explicaciones detalladas abajo y vuelve a intentar el test. Con cada intento aprenderás más.';}
+  } else {
+    if(pct>=90){badge='BIOQUÍMICO ÉLITE';bc='var(--gn)';msg='<strong>Dominas los fundamentos moleculares.</strong> AMPK, mTORC1, β-oxidación y la cascada AR/IGF-1/PI3K/Akt son herramientas que aplicas con precisión.';}
+    else if(pct>=75){badge='NIVEL AVANZADO';bc='var(--t)';msg='<strong>Muy bien.</strong> Comprensión sólida. Repasa los puntos donde fallaste — la bioquímica completa del entrenamiento es tu siguiente nivel.';}
+    else if(pct>=55){badge='EN DESARROLLO';bc='var(--go)';msg='Vas bien. Profundiza en Ciclo de Krebs, señalización mTORC1 y farmacología. El conocimiento técnico también requiere constancia.';}
+    else if(pct>=35){badge='INICIANDO';bc='var(--ac)';msg='Tienes las bases. Revisa homeostasis energética y rutas metabólicas desde el principio. La bioquímica se construye capa por capa.';}
+    else{badge='SIGUE ESTUDIANDO';bc='var(--rd)';msg='Este es tu punto de partida. Con constancia y estudio sistemático dominarás cada ruta. Revisa el material y vuelve a intentarlo.';}
+  }
+
+  $('res-badge-wrap').innerHTML=`<span class="res-badge" style="background:${bc}22;border:1px solid ${bc};color:${bc}">${badge}</span>`;
+  $('res-msg').innerHTML=msg;
+
+  // retry / switch buttons
+  const retryBtn=$('res-retry');
+  retryBtn.className='btn-primary'+(isGen?' gen-btn':'');
+  const switchBtn=$('res-switch');
+  if(isGen){switchBtn.textContent='🔬 Probar Test Avanzado';}
+  else{switchBtn.textContent='🌟 Probar Test General';}
+
+  // breakdown
+  const cats=isGen?CATS_GEN:CATS_ADV;
+  const bk=$('bk-list');bk.innerHTML='';
+  cats.forEach(cat=>{
+    const cr=ST.log.filter(r=>r.item.cat===cat);
+    const cs=cr.filter(r=>r.ok).length,ct=cat.qs.length;
+    const cp=Math.round((cs/ct)*100);
+    const col=cp===100?'var(--gn)':cp>=60?'var(--t)':cp>=30?'var(--ac)':'var(--rd)';
+    bk.innerHTML+=`<div class="bk-item">
+      <div class="bk-icon">${cat.icon}</div>
+      <div class="bk-info">
+        <div class="bk-name">${cat.name}</div>
+        <div class="bk-bar-wrap"><div class="bk-bar" style="width:0%;background:${col}" data-w="${cp}"></div></div>
+      </div>
+      <div class="bk-pct">${cs}/${ct}</div>
+    </div>`;
+  });
+  setTimeout(()=>document.querySelectorAll('.bk-bar').forEach(b=>b.style.width=b.dataset.w+'%'),120);
+
+  // review
+  const rv=$('rv-list');rv.innerHTML='';
+  ST.log.forEach((r,i)=>{
+    const q=r.item;
+    rv.innerHTML+=`<div class="rv-item ${r.ok?'ok':'no'}">
+      <div class="rv-q">${i+1}. ${q.stem}</div>
+      <div class="rv-ans yours ${r.ok?'ok':'no'}">
+        <span>${r.ok?'✅':'❌'}</span>
+        <span>Tu respuesta: ${LL[r.chosen]}. ${q.opts[r.chosen]}</span>
+      </div>
+      ${!r.ok?`<div class="rv-ans corr"><span>✓</span><span>Correcta: ${LL[q.ans]}. ${q.opts[q.ans]}</span></div>`:''}
+      <div class="rv-explain">${q.why}</div>
+    </div>`;
+  });
+
+  showScr('scr-res');
+  // FitTrack: guardar el resultado en el historial del alumno
+  try{
+    var resumen=cats.map(function(cat){var cr=ST.log.filter(function(r){return r.item.cat===cat;});return cat.name+' '+cr.filter(function(r){return r.ok;}).length+'/'+cat.qs.length;}).join(' · ');
+    if(window.parent&&window.parent!==window) window.parent.postMessage({ft:'resultado',herramienta:'bioquimica',
+      titulo:(isGen?'Test general':'Test avanzado')+': '+score+'/'+ALL.length+' ('+pct+'%) · '+badge,
+      resumen:resumen, detalle:{modo:MODE,correctas:score,total:ALL.length,pct:pct}},'*');
+  }catch(e){}
+}
+
+/* ── RESET & SWITCH ── */
+function retryTest(){
+  ST={name:ST.name,qi:0,ci:0,answered:false,log:[]};
+  updateBar();
+  showCat();
+}
+function switchMode(){
+  const newMode=MODE==='adv'?'gen':'adv';
+  $('student-name').value=ST.name;
+  ST={name:'',qi:0,ci:0,answered:false,log:[]};
+  chooseMode(newMode);
+  $('student-name').value=ST.name;
+}
+</script>
+</body>
+</html>
