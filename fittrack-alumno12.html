@@ -1600,6 +1600,7 @@ function doLogin(){
   if(nip.length<4){err.style.display='block';err.textContent=t('login_err_digits');return;}
   var a=ALL_ALUMNOS[nip];
   if(!a){err.style.display='block';err.textContent=t('login_err_nip');document.querySelectorAll('.nip-digit').forEach(function(d){d.value='';d.classList.remove('filled');});document.querySelectorAll('.nip-digit')[0].focus();return;}
+  try{ var _raw=JSON.parse(localStorage.getItem('fittrack_data')||'{}'); var _e=_raw.alumnos&&_raw.alumnos[nip]&&_raw.alumnos[nip].estado; if(_e==='archivado'){ err.style.display='block'; err.textContent='Tu acceso a FitTrack no está activo. Si quieres reactivar tu coaching, escríbele a tu coach.'; document.querySelectorAll('.nip-digit').forEach(function(d){d.value='';d.classList.remove('filled');}); return; } }catch(e){}
   err.style.display='none';
   currentAlumno=nip;
   var st=STATUS_MAP[a.status]||STATUS_MAP.activo;
@@ -2819,9 +2820,12 @@ function _gestion(){
 function bvInit(nip){
   var a=(typeof ALL_ALUMNOS!=='undefined'&&ALL_ALUMNOS[nip])||{};
   var forzar=null; try{ var m=location.search.match(/bienvenida=(apto|no_apto)/); if(FT_PRUEBA&&m) forzar=m[1]; }catch(e){}
-  return db.ref('fittrack_ingreso/'+nip).once('value').then(function(s){
+  return Promise.all([db.ref('fittrack_ingreso/'+nip).once('value'), db.ref('fittrack_data/alumnos/'+nip+'/estado').once('value').catch(function(){return null;})]).then(function(rr){
+    var s=rr[0], est=rr[1]&&rr[1].val();
     var ing=s.val()||{};
     if(currentAlumno!==nip) return;
+    if(est==='archivado'){ inactivoMostrar(); return; }
+    if(est==='pausa'){ pausaMostrar(); return; }
     _ing=ing; renderHerrEntreno(); renderConstancia();
     if(ing.pausa===true || /pausa=1/.test(location.search)&&FT_PRUEBA){ pausaMostrar(); return; }
     if(ing.bienvenida&&ing.bienvenida.completada&&!forzar) return;
@@ -2951,6 +2955,15 @@ function renderConstancia(){
 })();
 
 // Pausa: sin acceso temporal a FitTrack
+function inactivoMostrar(){
+  _bv={pausa:true};
+  var v=document.getElementById('bv'); v.classList.add('on');
+  document.getElementById('bv-paso-n').textContent='';
+  document.getElementById('bv-t').textContent='Tu acceso no está activo';
+  document.getElementById('bv-prog').style.width='0';
+  document.getElementById('bv-b').innerHTML='<div class="bv-in"><div class="bv-ic">🔒</div><h3 class="bv-sub">FitTrack no está disponible para tu cuenta</h3><p>Tu coaching ya no está activo, así que no tienes acceso a FitTrack.</p><div class="bv-nota">💬 Si quieres reactivar tu coaching, escríbele a tu coach por WhatsApp.</div><p style="text-align:center;margin-top:16px"><button class="hr-btn" onclick="doLogout()">Salir</button></p></div>';
+  document.getElementById('bv-nav').style.display='none';
+}
 function pausaMostrar(){
   _bv={pausa:true};
   var v=document.getElementById('bv'); v.classList.add('on');
