@@ -2450,7 +2450,7 @@ function _conducta(it){
     t.push('<div class="chq-tile" style="background:'+(ok?'var(--green-light)':mal?'var(--red-light)':'var(--amber-light)')+';color:'+(ok?'var(--green)':mal?'var(--red)':'var(--amber)')+'"><b style="font-size:15px;line-height:1.5">'+_esc(it.aprendizaje)+'</b><span>Aprendizaje</span></div>'); }
   return t.length?'<div class="chq-sub">Evaluación conductual</div><div class="chq-tiles">'+t.join('')+'</div>':'';
 }
-function _faltas(it){ if(it.faltas==null) return ''; var f=+it.faltas; var c=f>=6?'var(--red)':f>=3?'var(--amber)':'var(--green)', bg=f>=6?'var(--red-light)':f>=3?'var(--amber-light)':'var(--green-light)';
+function _faltas(it){ if(it.faltas==null||it.evaluacionInicial) return ''; var f=+it.faltas; var c=f>=6?'var(--red)':f>=3?'var(--amber)':'var(--green)', bg=f>=6?'var(--red-light)':f>=3?'var(--amber-light)':'var(--green-light)';
   return '<div class="chq-faltas" style="background:'+bg+';color:'+c+'">'+(f>=3?'<span class="alerta-tri">⚠️</span> ':'')+'<b>'+f+'</b> '+(f===1?'sesión perdida':'sesiones perdidas')+(f===0?' · ¡ninguna! 👏':f>=6?' · afecta tu volumen de entrenamiento':'')+'</div>'; }
 function _objetivo(it){ var m=_metaDe(it); return '<div class="chq-obj">🎯 Evaluado como <b>'+_esc(it.objetivo||(_chq&&_chq.objetivo)||'—')+'</b> · nivel de exigencia <b>'+m+'%</b>'+(it.nivel?' · nivel de entrenamiento <b>'+_esc(it.nivel)+'</b>':'')+'</div>'; }
 var _METD=[['ef','Efectividad','🎯'],['es','Nivel de esfuerzo','💥'],['in','Intensidad','🔥'],['fu','Fuerza','💪'],['re','Resistencia','🏃'],['rm','Rango de movimiento','📐'],['ca','Cadencia','⏱️'],['tc','Técnica','✅'],['ud','Umbral de dolor','🧠']];
@@ -2526,14 +2526,14 @@ function renderChequeos(abrirId){
   if(abrirId && _chq.items[abrirId]) sel=_chq.items[abrirId];
   var esUlt = sel===ult, nuevo=!sel.vistoEn;
   var h='<div class="chq-hero'+(nuevo?' nuevo':'')+'">'+
-    '<div class="chq-hero-h"><div><div class="chq-hero-k">'+(esUlt?'Tu chequeo más reciente':'Chequeo anterior')+'</div><div class="chq-hero-t">Chequeo #'+_esc(sel.num)+(nuevo?'<span class="chq-new">Nuevo</span>':'')+'</div><div class="chq-hero-d">'+_fcorta(sel.fecha)+(sel.periodo?' · periodo '+_esc(sel.periodo):'')+'</div></div><span class="chq-hero-ic">📋</span></div>'+
+    '<div class="chq-hero-h"><div><div class="chq-hero-k">'+(esUlt?'Tu chequeo más reciente':'Chequeo anterior')+'</div><div class="chq-hero-t">'+(sel.evaluacionInicial?'Evaluación inicial':'Chequeo #'+_esc(sel.num))+(nuevo?'<span class="chq-new">Nuevo</span>':'')+'</div><div class="chq-hero-d">'+_fcorta(sel.fecha)+(sel.periodo?' · periodo '+_esc(sel.periodo):'')+'</div></div><span class="chq-hero-ic">📋</span></div>'+
     (esUlt?'':'<button class="chq-volver" onclick="renderChequeos()">‹ Volver a mi chequeo más reciente</button>')+
     _chqDetalle(sel)+'</div>';
   var ant=items.slice().reverse().filter(function(x){return x!==sel;});
   if(ant.length){
     h+='<div class="section-title" style="margin:20px 0 4px">Otros chequeos</div><p style="font-size:12px;color:var(--text3);margin-bottom:8px">Toca "Ver" para abrir cada uno.</p>';
     ant.forEach(function(it){ var id=_chqId(it);
-      h+='<button class="chq-row" onclick="renderChequeos(\''+id+'\');document.getElementById(\'chq-view\').scrollTop=0"><div><b>Chequeo #'+_esc(it.num)+'</b>'+(it.vistoEn?'':'<span class="chq-new">Nuevo</span>')+'<div style="font-size:12px;color:var(--text3)">'+_fcorta(it.fecha)+(it.periodo?' · '+_esc(it.periodo):'')+'</div></div><div class="chq-mini">'+
+      h+='<button class="chq-row" onclick="renderChequeos(\''+id+'\');document.getElementById(\'chq-view\').scrollTop=0"><div><b>'+(it.evaluacionInicial?'Evaluación inicial':'Chequeo #'+_esc(it.num))+'</b>'+(it.vistoEn?'':'<span class="chq-new">Nuevo</span>')+'<div style="font-size:12px;color:var(--text3)">'+_fcorta(it.fecha)+(it.periodo?' · '+_esc(it.periodo):'')+'</div></div><div class="chq-mini">'+
         ['pesas','cardio','dieta'].map(function(k){return it[k]==null?'':'<span>'+k.charAt(0).toUpperCase()+' '+Math.round(it[k])+'%</span>';}).join('')+'</div><span class="chq-ver">Ver ›</span></button>'; });
   }
   if(items.length>=2) h+='<details class="chq-evo"><summary>📈 Ver tu evolución entre chequeos ›</summary>'+_chart(items,_metaDe(ult))+'</details>';
