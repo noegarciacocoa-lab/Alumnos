@@ -1320,7 +1320,9 @@ function renderAprobPorDia(){
   var esNoAplica = alumnoActual && alumnoActual.tipoRevision === 'no_aplica';
   // Update semana tag in rutina header
   var semTag = document.getElementById('rutina-semana-tag');
-  if(semTag) semTag.textContent = esNoAplica ? t('rut_no_aplica') : (sem ? t('rut_semana_en_curso').replace('{n}',sem) : t('rut_sin_fecha'));
+  var _fi = currentAlumno && (ALL_FECHAS[currentAlumno] || (alumnoActual&&alumnoActual.fechaInicio)), _hoy = new Date(); _hoy = _hoy.getFullYear()+'-'+String(_hoy.getMonth()+1).padStart(2,'0')+'-'+String(_hoy.getDate()).padStart(2,'0');
+  var _empieza = (!sem && _fi && String(_fi) > _hoy) ? ('Empieza el '+new Date(_fi+'T12:00:00').toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'short'})) : '';
+  if(semTag) semTag.textContent = esNoAplica ? t('rut_no_aplica') : (sem ? t('rut_semana_en_curso').replace('{n}',sem) : (_empieza || t('rut_sin_fecha')));
   // Banner: tipo de revisión de la rutina actual (asignado por el coach)
   var banEl = document.getElementById('tipo-revision-banner');
   if(banEl){
