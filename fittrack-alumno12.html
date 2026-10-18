@@ -72,7 +72,7 @@ body{display:flex;justify-content:center;height:100%}
 .device.modo-farma .app-header{background:linear-gradient(135deg,#7a4700 0%,#C77A06 60%,#E8920A 100%)}
 .device.modo-chq .app-header{background:linear-gradient(135deg,#1E2566 0%,#3A47B0 60%,#5B6BE0 100%)}
 .chq-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.chq-tile{border-radius:12px;padding:10px 6px;text-align:center}.chq-tile b{display:block;font-size:22px;line-height:1.1}.chq-tile span{font-size:11.5px;font-weight:600}
+.chq-tile{border-radius:12px;padding:10px 6px;text-align:center}.chq-tile b{display:block;font-size:22px;line-height:1.1}.chq-tile span{font-size:11.5px;font-weight:600}.chq-tile small{display:block;font-size:10.5px;font-weight:500;opacity:.85;margin-top:3px;line-height:1.3}.chq-tiles.c4{grid-template-columns:repeat(2,1fr)}@media(min-width:520px){.chq-tiles.c4{grid-template-columns:repeat(4,1fr)}}
 .chq-acc{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);margin-bottom:10px;box-shadow:var(--shadow);overflow:hidden}
 .chq-acc summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;align-items:center;gap:10px}.chq-acc summary::-webkit-details-marker{display:none}
 .chq-mini{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}.chq-mini span{font-size:10.5px;background:var(--teal-xlight);color:var(--teal-dark);border-radius:8px;padding:2px 6px;font-weight:600}
@@ -2346,7 +2346,7 @@ function onLangChange(){
 // ══ EXTENSIÓN ARTFIT (Noé · oct 2026) ══════════════════════════════════════
 // Áreas del interruptor: Entrenamiento | Mis chequeos | Farmacología (solo activados).
 // Datos nuevos (base FitTrack, nodos aparte; el coach no los toca):
-//   fittrack_chequeos/<nip> = {meta, objetivo, items:{id:{num,fecha,periodo,pesas,cardio,dieta,faltas,pctGrasa,logros[],criticos[],oportunidades[],mensaje,vistoEn}}}
+//   fittrack_chequeos/<nip> = {meta, objetivo, items:{id:{num,fecha,periodo,pesas,cardio,dieta,registro,confiabilidad,pesasDet,cardioDet,dietaDet,faltas,pctGrasa,logros[],criticos[],oportunidades[],mensaje,vistoEn}}}
 //   fittrack_sugerencias/<nip>/<id> = {fecha, ejercicio, tipo:'progresion'|'observacion', texto, vistoEn}
 //   fittrack_farma/<nip> = {activo}
 var FT_PRUEBA = false;
@@ -2445,11 +2445,11 @@ function _chart(items, meta){
   var ley=series.map(function(s){return '<span style="display:inline-flex;align-items:center;gap:4px;margin-right:10px"><i style="width:10px;height:3px;border-radius:2px;background:'+s[1]+';display:inline-block"></i>'+s[2]+'</span>';}).join('');
   return '<div class="card" style="margin-bottom:14px"><div class="card-title">Tu evolución por chequeo</div><svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;display:block">'+g+'</svg><div style="font-size:11px;color:var(--text2);margin-top:6px">'+ley+'</div></div>';
 }
-function _pctChip(lbl,v,meta){
+function _pctChip(lbl,v,meta,det){
   if(v==null||v==='') return '';
   var c = v>=meta ? 'var(--green)' : v>=meta-15 ? 'var(--amber)' : 'var(--red)';
   var bg = v>=meta ? 'var(--green-light)' : v>=meta-15 ? 'var(--amber-light)' : 'var(--red-light)';
-  return '<div class="chq-tile" style="background:'+bg+';color:'+c+'"><b>'+Math.round(v)+'%</b><span>'+lbl+'</span></div>';
+  return '<div class="chq-tile" style="background:'+bg+';color:'+c+'"><b>'+Math.round(v)+'%</b><span>'+lbl+'</span>'+(det?'<small>'+_esc(det)+'</small>':'')+'</div>';
 }
 var _EXIG={'Bienestar y Salud':75,'Fitness Alto Rendimiento':85,'Atleta Bodybuilding':95,'Atleta Powerlifting':95};
 function _metaDe(it){ return it.meta || _EXIG[it.objetivo] || (_chq&&_chq.meta) || 85; }
@@ -2518,7 +2518,7 @@ function _chqId(it){ return Object.keys(_chq.items).filter(function(k){return _c
 function _chqDetalle(it){
   var m=_metaDe(it);
   var res='<div class="chq-sub" style="margin-top:0">Tus resultados</div>'+_objetivo(it)+
-      '<div class="chq-sub">Cumplimiento</div><div class="chq-tiles">'+_pctChip('Pesas',it.pesas,m)+_pctChip('Cardio',it.cardio,m)+_pctChip('Dieta',it.dieta,m)+'</div>'+_faltas(it)+_conducta(it)+
+      '<div class="chq-sub">Cumplimiento</div><div class="chq-tiles'+(it.registro!=null?' c4':'')+'">'+_pctChip('Pesas',it.pesas,m,it.pesasDet)+_pctChip('Cardio',it.cardio,m,it.cardioDet)+_pctChip('Dieta',it.dieta,m,it.dietaDet)+_pctChip('Registro a tiempo',it.registro,m,it.confiabilidad?'confiabilidad '+it.confiabilidad:'')+'</div>'+_faltas(it)+_conducta(it)+
       (it.pctGrasa?'<div style="font-size:12px;color:var(--text2);margin:8px 0">Grasa estimada: <b>'+_esc(it.pctGrasa)+'</b></div>':'')+
       '<div style="font-size:11.5px;color:var(--text3);margin-top:8px;line-height:1.45">Exigencia por objetivo: Bienestar y salud 75% · Fitness alto rendimiento 85% · Atletas 95%. Si tu objetivo cambia, se aplica a partir de tu siguiente chequeo.</div>';
   var fb='<div class="chq-fb">'+res+
