@@ -678,6 +678,7 @@ body{display:flex;justify-content:center;height:100%}
           <p style="font-size:12.5px;color:var(--text3);margin-bottom:10px">Antes de tus entrenamientos revisamos tus registros: aquí te decimos cómo seguir avanzando.</p>
           <div id="sug-cal"></div>
           <div id="sug-list" style="margin-bottom:18px"></div>
+          <div id="r177-lista" style="display:none;margin-bottom:6px"></div>
           <details class="notas-acc" open><summary>🔔 Notas de tu coach</summary>
           <div id="estado-dinamico" style="margin-bottom:14px"></div>
           <div id="notas-chart-card" style="display:none"></div>
@@ -1768,6 +1769,7 @@ function doLogin(){
   document.getElementById('main-app').classList.add('visible');
   navTo('rutina');
   try{ ftInit(nip); }catch(e){}
+  try{ r174Entrada(nip); }catch(e){} // regla 174: registro de acceso + aviso de plan de acción
   // Check for celebration after renders settle
   setTimeout(function(){ checkCelebrations(a, calcAprobGeneral()); }, 1000);
   // Show notification popup if there are new or positive notes
@@ -3103,6 +3105,198 @@ function dtFlechas(){ document.querySelectorAll('.day-tabs').forEach(function(t)
   document.addEventListener('click', function(){ setTimeout(dtFlechas,60); setTimeout(bvFlecha,60); }, true);
   setInterval(function(){ dtFlechas(); bvFlecha(); }, 1200);
 })();
+</script>
+<script>
+// ══ REGLA 174 (Noé · 20 oct 2026) ═══════════════════════════════════════════
+// a) Registro silencioso de acceso: fittrack_vistos/<nip>/acceso = {ultimo, primero, veces, dias:{AAAA-MM-DD:n}}
+//    Una vez por carga de la app (por NIP). Nunca muestra nada ni bloquea si falla.
+// b) Aviso "Plan de acción en espera": lee fittrack_chequeos/planAccion/<nip>;
+//    si pendiente===true y hoy (hora México) <= hasta → modal en cada entrada.
+var _r174Reg = {}; // regla 174: NIPs ya registrados en esta carga
+function _r174HoyMx(){ // regla 174: fecha AAAA-MM-DD en hora de México
+  try{ return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Mexico_City',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()); }
+  catch(e){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+}
+function r174RegistrarAcceso(nip){ // regla 174 a)
+  try{
+    if(!nip || _r174Reg[nip]) return; _r174Reg[nip]=true;
+    var ahora=new Date().toISOString(), dia=_r174HoyMx();
+    db.ref('fittrack_vistos/'+nip+'/acceso').transaction(function(cur){
+      cur = (cur && typeof cur==='object') ? cur : {};
+      cur.ultimo = ahora;
+      if(!cur.primero) cur.primero = ahora;
+      cur.veces = (+cur.veces||0) + 1;
+      cur.dias = (cur.dias && typeof cur.dias==='object') ? cur.dias : {};
+      cur.dias[dia] = (+cur.dias[dia]||0) + 1;
+      return cur;
+    }).catch(function(){});
+  }catch(e){}
+}
+var _r174PlanPend = false; // regla 177: true mientras se decide/abre el aviso de plan (para no encimar modales)
+function r174AvisoPlan(nip){ // regla 174 b)
+  _r174PlanPend = true;
+  var fin=function(){ _r174PlanPend=false; };
+  try{
+    db.ref('fittrack_chequeos/planAccion/'+nip).once('value').then(function(s){
+      var p=s&&s.val();
+      if(!p || p.pendiente!==true || currentAlumno!==nip) return fin();
+      var hasta=String(p.hasta||'').slice(0,10);
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(hasta) || _r174HoyMx() > hasta) return fin();
+      setTimeout(function(){ try{ if(currentAlumno===nip) r174Mostrar(); }catch(e){} fin(); }, 1200);
+    }).catch(fin);
+  }catch(e){ fin(); }
+}
+function r174Mostrar(){ // regla 174: reutiliza las clases del modal de notificaciones
+  var o=document.getElementById('r174-overlay');
+  if(!o){
+    o=document.createElement('div'); o.id='r174-overlay'; o.className='notif-overlay'; o.style.zIndex='10000';
+    o.innerHTML='<div class="notif-popup" role="dialog" aria-modal="true" aria-labelledby="r174-t">'
+      +'<div class="notif-popup-hdr"><div class="notif-bell">⏳</div><div style="flex:1"><div class="notif-popup-title" id="r174-t">📋 Plan de acción en espera</div>'
+      +'<div class="notif-popup-sub">Tu coach está esperando tu propuesta</div></div></div>'
+      +'<div class="notif-popup-body"><div class="notif-item seen"><div class="notif-item-txt">En el feedback de tu chequeo te pedí tu plan de acción y todavía no lo tengo. Comunícate conmigo directamente por WhatsApp para presentarme tu propuesta de plan de acción.</div></div></div>'
+      +'<div class="notif-popup-footer"><button class="notif-btn" type="button" onclick="r174Cerrar()">Entendido</button></div></div>';
+    document.body.appendChild(o);
+  }
+  o.style.display='flex';
+}
+function r174Cerrar(){ var o=document.getElementById('r174-overlay'); if(o) o.style.display='none'; } // regla 174
+function r174Entrada(nip){ r174RegistrarAcceso(nip); r174AvisoPlan(nip); try{ r177Entrada(nip); }catch(e){} } // regla 174 (+177 avisos): llamada desde doLogin()
+(function(){ // regla 174: al salir, ocultar el aviso
+  if(typeof doLogout!=='function') return;
+  var _out=doLogout; doLogout=function(){ r174Cerrar(); try{ r177Reset(); }catch(e){} return _out.apply(this, arguments); };
+})();
+</script>
+<script>
+// ══ REGLA 177 (Noé · 20 oct 2026) · Avisos de tu coach por área ═════════════
+// Lee (solo lectura) fittrack_chequeos/avisos/<nip>/<id> = {area,titulo,texto,nivel,desde,hasta,creado,estado}
+// Escribe SOLO fittrack_vistos/<nip>/avisos/<id> = {primera,ultima,vistas,entendido}
+// Activo = estado!=='cerrado' y desde <= hoy(MX) <= hasta. Modal al entrar (sin entendido), después del
+// plan de acción y sin encimarse con otros modales. Lista en Progresiones con todos los activos.
+var _r177 = {nip:null, avisos:{}, vistos:{}, timer:null, gen:0};
+var R177_AREAS = {nutricion:['🥗','Nutrición'], cardio:['🏃','Cardio'], actividad:['👣','Nivel de actividad']};
+function _r177Esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function _r177Fecha(x){ x=String(x||'').slice(0,10); return /^\d{4}-\d{2}-\d{2}$/.test(x)?x:''; }
+function _r177Activos(){ // [{id,a,v}] vigentes hoy, ordenados por nivel desc y fecha de creación
+  var hoy=_r174HoyMx(), out=[];
+  try{
+    Object.keys(_r177.avisos||{}).forEach(function(id){
+      var a=_r177.avisos[id]; if(!a || typeof a!=='object') return;
+      if(a.estado==='cerrado') return;
+      var d=_r177Fecha(a.desde), h=_r177Fecha(a.hasta);
+      if(!d || !h || hoy<d || hoy>h) return;
+      out.push({id:id, a:a, v:(_r177.vistos&&_r177.vistos[id])||{}});
+    });
+  }catch(e){}
+  out.sort(function(x,y){ return ((+y.a.nivel||1)-(+x.a.nivel||1)) || String(x.a.creado||'').localeCompare(String(y.a.creado||'')); });
+  return out;
+}
+function _r177Card(it, enModal){
+  var a=it.a, ar=R177_AREAS[a.area]||['🔔','Aviso'], n=+a.nivel||1;
+  var color = n>=3 ? 'var(--red)' : (n===2 ? 'var(--amber)' : 'var(--teal)');
+  var fondo = n>=3 ? 'var(--red-light)' : (n===2 ? 'var(--amber-light)' : 'var(--teal-xlight)');
+  var txt=_r177Esc(a.texto).replace(/\r?\n/g,'<br>');
+  var pie = it.v && it.v.entendido
+    ? '<div class="r177-ok" style="margin-top:8px;font-size:12px;font-weight:700;color:var(--green)">✓ Entendido</div>'
+    : '<button class="notif-btn r177-btn" type="button" data-id="'+_r177Esc(it.id)+'" onclick="r177Entendido(this)" style="margin-top:10px;padding:10px;font-size:13px">Entendido, lo voy a aplicar</button>';
+  return '<div class="r177-card" data-id="'+_r177Esc(it.id)+'" style="background:'+fondo+';border-left:5px solid '+color+';border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:10px;transition:opacity .35s ease,transform .35s ease">'
+    +'<div style="font-size:11.5px;font-weight:700;color:'+color+';text-transform:uppercase;letter-spacing:.3px">'+ar[0]+' '+ar[1]+'</div>'
+    +'<div style="font-weight:700;font-size:14px;color:var(--text);margin-top:4px">'+_r177Esc(a.titulo)+'</div>'
+    +(txt?'<div style="font-size:13px;line-height:1.5;color:var(--text);margin-top:6px">'+txt+'</div>':'')
+    +pie+'</div>';
+}
+function r177RenderLista(){ // entrada en Progresiones (todos los activos, incluidos los ya entendidos)
+  try{
+    var box=document.getElementById('r177-lista'); if(!box) return;
+    var act=_r177.nip===currentAlumno ? _r177Activos() : [];
+    if(!act.length){ box.style.display='none'; box.innerHTML=''; return; }
+    var abierto = box.querySelector('details') ? box.querySelector('details').open : false;
+    box.innerHTML='<details class="notas-acc" id="r177-det"'+(abierto?' open':'')+'><summary>🔔 Avisos de tu coach ('+act.length+')</summary>'
+      +'<div style="padding:4px 0 6px">'+act.map(function(it){ return _r177Card(it,false); }).join('')+'</div></details>';
+    box.style.display='';
+  }catch(e){}
+}
+function _r177OtroModal(){ // ¿hay otro modal abierto o por abrirse?
+  try{
+    if(_r174PlanPend) return true;
+    var ids=['r174-overlay','notif-overlay','celeb-overlay','nov-modal'];
+    for(var i=0;i<ids.length;i++){ var e=document.getElementById(ids[i]); if(e && getComputedStyle(e).display!=='none') return true; }
+    var bv=document.getElementById('bv'); if(bv && bv.classList.contains('on')) return true;
+  }catch(e){}
+  return false;
+}
+function r177Entrada(nip){
+  try{
+    r177Reset(); _r177.nip=nip; var gen=++_r177.gen;
+    var pA=db.ref('fittrack_chequeos/avisos/'+nip).once('value').then(function(s){ return (s&&s.val())||{}; });
+    var pV=db.ref('fittrack_vistos/'+nip+'/avisos').once('value').then(function(s){ return (s&&s.val())||{}; }).catch(function(){ return {}; });
+    Promise.all([pA,pV]).then(function(r){
+      if(gen!==_r177.gen || currentAlumno!==nip) return;
+      _r177.avisos=(r[0]&&typeof r[0]==='object')?r[0]:{}; _r177.vistos=(r[1]&&typeof r[1]==='object')?r[1]:{};
+      r177RenderLista();
+      if(!_r177Activos().some(function(it){ return !(it.v&&it.v.entendido); })) return;
+      var libres=0, intentos=0;
+      _r177.timer=setInterval(function(){ // espera a que no haya otro modal (2 lecturas seguidas libres)
+        try{
+          if(gen!==_r177.gen || currentAlumno!==nip || ++intentos>900){ clearInterval(_r177.timer); _r177.timer=null; return; }
+          if(_r177OtroModal()){ libres=0; return; }
+          if(++libres<2) return;
+          clearInterval(_r177.timer); _r177.timer=null; r177Mostrar();
+        }catch(e){ clearInterval(_r177.timer); _r177.timer=null; }
+      }, 700);
+    }).catch(function(){});
+  }catch(e){}
+}
+function r177Mostrar(){
+  try{
+    var nip=_r177.nip; if(!nip || currentAlumno!==nip) return;
+    var pend=_r177Activos().filter(function(it){ return !(it.v&&it.v.entendido); });
+    if(!pend.length) return;
+    var o=document.getElementById('r177-overlay');
+    if(!o){ o=document.createElement('div'); o.id='r177-overlay'; o.className='notif-overlay'; o.style.zIndex='10000'; document.body.appendChild(o); }
+    o.innerHTML='<div class="notif-popup" role="dialog" aria-modal="true" aria-labelledby="r177-t" style="max-height:calc(100vh - 48px);display:flex;flex-direction:column">'
+      +'<div class="notif-popup-hdr has-pos" style="position:relative;flex-shrink:0"><div class="notif-bell">🔔</div><div style="flex:1"><div class="notif-popup-title" id="r177-t">🔔 Avisos de tu coach</div>'
+      +'<div class="notif-popup-sub">Indicaciones generales para esta etapa</div></div>'
+      +'<button type="button" aria-label="Cerrar" onclick="r177Cerrar()" style="background:rgba(255,255,255,0.2);border:none;border-radius:50%;width:30px;height:30px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1">×</button></div>'
+      +'<div class="notif-popup-body" id="r177-body" style="overflow-y:auto">'+pend.map(function(it){ return _r177Card(it,true); }).join('')+'</div></div>';
+    o.style.display='flex';
+    var ahora=new Date().toISOString();
+    pend.forEach(function(it){ // vistos: primera (si falta), ultima, vistas+1
+      try{
+        db.ref('fittrack_vistos/'+nip+'/avisos/'+it.id).transaction(function(cur){
+          cur=(cur&&typeof cur==='object')?cur:{};
+          if(!cur.primera) cur.primera=ahora;
+          cur.ultima=ahora; cur.vistas=(+cur.vistas||0)+1;
+          return cur;
+        }).catch(function(){});
+        var v=_r177.vistos[it.id]=_r177.vistos[it.id]||{}; if(!v.primera) v.primera=ahora; v.ultima=ahora; v.vistas=(+v.vistas||0)+1;
+      }catch(e){}
+    });
+  }catch(e){}
+}
+function r177Entendido(btn){
+  try{
+    var id=btn && btn.getAttribute('data-id'), nip=_r177.nip; if(!id || !nip) return;
+    var ahora=new Date().toISOString();
+    try{ db.ref('fittrack_vistos/'+nip+'/avisos/'+id).update({entendido:ahora}).catch(function(){}); }catch(e){}
+    var v=_r177.vistos[id]=_r177.vistos[id]||{}; v.entendido=ahora;
+    var card=btn.closest('.r177-card'), enModal=!!(card && card.closest('#r177-overlay'));
+    if(enModal){
+      card.style.opacity='0'; card.style.transform='translateX(30px)';
+      setTimeout(function(){
+        try{ if(card.parentNode) card.parentNode.removeChild(card);
+          var body=document.getElementById('r177-body');
+          if(!body || !body.querySelector('.r177-card')) r177Cerrar(); }catch(e){}
+      }, 350);
+    }
+    r177RenderLista();
+  }catch(e){}
+}
+function r177Cerrar(){ try{ var o=document.getElementById('r177-overlay'); if(o) o.style.display='none'; }catch(e){} }
+function r177Reset(){
+  try{ if(_r177.timer) clearInterval(_r177.timer); }catch(e){}
+  _r177.gen++; _r177.timer=null; _r177.nip=null; _r177.avisos={}; _r177.vistos={};
+  r177Cerrar(); try{ var b=document.getElementById('r177-lista'); if(b){ b.style.display='none'; b.innerHTML=''; } }catch(e){}
+}
 </script>
 </body>
 </html>
