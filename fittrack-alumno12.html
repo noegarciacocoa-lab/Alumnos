@@ -2470,7 +2470,7 @@ function ftModo(m){
 }
 function farmaModo(on){ ftModo(on?'farma':'ent'); }
 function ftReset(){
-  _farmaNip=null; _chq=null; _sug=[]; _rend=null; _calMes=null; _calDia=null; ftModo('ent');
+  _farmaNip=null; try{ _r183.nip=null; _r183.est=null; }catch(e){} _chq=null; _sug=[]; _rend=null; _calMes=null; _calDia=null; ftModo('ent');
   ['sw-farma','sw-dot','sw-chq-dot','sw-ent-dot','nov-modal'].forEach(function(id){var e=document.getElementById(id); if(e) e.style.display='none';});
   var f=document.getElementById('farma-frame'); if(f) f.removeAttribute('src');
   var cv=document.getElementById('chq-body'); if(cv) cv.innerHTML='';
@@ -2490,11 +2490,11 @@ function farmaInit(nip){
       return fetch(FARMA_DB+'cycles/'+me.id+'.json').then(function(r){return r.json();}).then(function(cs){
         if(currentAlumno!==nip) return;
         cs=_vals(cs);
-        var hoy=new Date(), act=cs.filter(function(c){return c&&!c.archivedAt;}).slice(-1)[0], mostrar=false, pago=false;
+        var hoy=new Date(), act=cs.filter(function(c){return c&&!c.archivedAt;}).slice(-1)[0], mostrar=false;
         if(act&&act.startDate){
           var ini=_fechaLocal(act.startDate), tot=parseInt(act.duration)||12;
           var wk=Math.floor((hoy-ini)/864e5/7)+1, fin=new Date(ini.getTime()+tot*7*864e5);
-          if(wk<tot){ mostrar=true; pago = wk>1 && (wk-1)%8===0; }
+          if(wk<tot) mostrar=true;
           else if((hoy-fin)<=30*864e5) mostrar=true;
         } else {
           var ult=cs.filter(function(c){return c&&c.archivedAt;}).slice(-1)[0];
@@ -2503,7 +2503,9 @@ function farmaInit(nip){
         if(!mostrar) return;
         _farmaNip=nip;
         document.getElementById('sw-farma').style.display='';
-        document.getElementById('sw-dot').style.display=pago?'block':'none';
+        var est=null; try{ if(act&&act.startDate) est=_r183Calc(act, flag.pagos); }catch(e){ est=null; } // regla 183: pagos de seguimiento
+        document.getElementById('sw-dot').style.display=est?'block':'none';
+        try{ _r183.nip=nip; _r183.est=est; _r183Listo(nip); }catch(e){}
       });
     });
   }).catch(function(e){ console.warn('Farmacología no disponible', e); });
@@ -3183,8 +3185,8 @@ function r174Entrada(nip){ r174RegistrarAcceso(nip); r174AvisoPlan(nip); try{ r1
 // Escribe SOLO fittrack_vistos/<nip>/avisos/<id> = {primera,ultima,vistas,entendido}
 // Activo = estado!=='cerrado' y desde <= hoy(MX) <= hasta. Modal al entrar (sin entendido), después del
 // plan de acción y sin encimarse con otros modales. Lista en Progresiones con todos los activos.
-var _r177 = {nip:null, avisos:{}, vistos:{}, timer:null, gen:0};
-var R177_AREAS = {nutricion:['🥗','Nutrición'], cardio:['🏃','Cardio'], actividad:['👣','Nivel de actividad']};
+var _r177 = {nip:null, avisos:{}, vistos:{}, timer:null, gen:0, cargado:-1, ok:{}};
+var R177_AREAS = {nutricion:['🥗','Nutrición'], cardio:['🏃','Cardio'], actividad:['👣','Nivel de actividad'], farma:['💊','Farmacología']};
 function _r177Esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
 function _r177Fecha(x){ x=String(x||'').slice(0,10); return /^\d{4}-\d{2}-\d{2}$/.test(x)?x:''; }
 function _r177Activos(){ // [{id,a,v}] vigentes hoy, ordenados por nivel desc y fecha de creación
@@ -3198,6 +3200,7 @@ function _r177Activos(){ // [{id,a,v}] vigentes hoy, ordenados por nivel desc y 
       out.push({id:id, a:a, v:(_r177.vistos&&_r177.vistos[id])||{}});
     });
   }catch(e){}
+  try{ var fs=_r183Aviso(); if(fs) out.push(fs); }catch(e){} // regla 183: aviso sintético de pago de farmacología
   out.sort(function(x,y){ return ((y.a.positivo?1:0)-(x.a.positivo?1:0)) || ((+y.a.nivel||1)-(+x.a.nivel||1)) || String(x.a.creado||'').localeCompare(String(y.a.creado||'')); });
   return out;
 }
@@ -3209,7 +3212,7 @@ function _r177Card(it, enModal){
   var txt=_r177Esc(a.texto).replace(/\r?\n/g,'<br>');
   var pie = it.v && it.v.entendido
     ? '<div class="r177-ok" style="margin-top:8px;font-size:12px;font-weight:700;color:var(--green)">✓ Entendido</div>'
-    : '<button class="notif-btn r177-btn" type="button" data-id="'+_r177Esc(it.id)+'" onclick="r177Entendido(this)" style="margin-top:10px;padding:10px;font-size:13px">'+(pos?'👏 ¡Gracias!':'Entendido, lo voy a aplicar')+'</button>';
+    : '<button class="notif-btn r177-btn" type="button" data-id="'+_r177Esc(it.id)+'" onclick="r177Entendido(this)" style="margin-top:10px;padding:10px;font-size:13px">'+(pos?'👏 ¡Gracias!':(a.btn||'Entendido, lo voy a aplicar'))+'</button>';
   return '<div class="r177-card" data-id="'+_r177Esc(it.id)+'" style="background:'+fondo+';border-left:5px solid '+color+';border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:10px;transition:opacity .35s ease,transform .35s ease">'
     +'<div style="font-size:11.5px;font-weight:700;color:'+color+';text-transform:uppercase;letter-spacing:.3px">'+(pos?'👏 Reconocimiento · ':'')+ar[0]+' '+ar[1]+'</div>'
     +'<div style="font-weight:700;font-size:14px;color:var(--text);margin-top:4px">'+_r177Esc(a.titulo)+'</div>'
@@ -3239,14 +3242,30 @@ function _r177OtroModal(){ // ¿hay otro modal abierto o por abrirse?
 function r177Entrada(nip){
   try{
     r177Reset(); _r177.nip=nip; var gen=++_r177.gen;
-    var pA=db.ref('fittrack_chequeos/avisos/'+nip).once('value').then(function(s){ return (s&&s.val())||{}; });
+    var pA=db.ref('fittrack_chequeos/avisos/'+nip).once('value').then(function(s){ return (s&&s.val())||{}; }).catch(function(){ return {}; });
     var pV=db.ref('fittrack_vistos/'+nip+'/avisos').once('value').then(function(s){ return (s&&s.val())||{}; }).catch(function(){ return {}; });
     Promise.all([pA,pV]).then(function(r){
       if(gen!==_r177.gen || currentAlumno!==nip) return;
       _r177.avisos=(r[0]&&typeof r[0]==='object')?r[0]:{}; _r177.vistos=(r[1]&&typeof r[1]==='object')?r[1]:{};
+      _r177.cargado=gen;
       r177RenderLista();
-      if(!_r177Activos().some(function(it){ return !(it.v&&it.v.entendido); })) return;
-      var libres=0, intentos=0;
+      _r177Programar();
+    }).catch(function(){});
+  }catch(e){}
+}
+function _r177Programar(){ // regla 183: programa (o completa) el modal; se llama al cargar avisos y al llegar el aviso de farmacología
+  try{
+    var nip=_r177.nip, gen=_r177.gen;
+    if(!nip || currentAlumno!==nip || _r177.cargado!==gen || _r177.timer) return;
+    var pend=_r177Activos().filter(function(it){ return !(it.v&&it.v.entendido); });
+    if(!pend.length) return;
+    var o=document.getElementById('r177-overlay'), body=document.getElementById('r177-body');
+    if(o && body && getComputedStyle(o).display!=='none'){ // modal ya abierto: agregar solo las tarjetas que falten
+      var ahora=new Date().toISOString();
+      pend.forEach(function(it){ if(!body.querySelector('.r177-card[data-id="'+it.id+'"]')){ body.insertAdjacentHTML('beforeend', _r177Card(it,true)); _r177Vista(nip,it,ahora); } });
+      return;
+    }
+    var libres=0, intentos=0;
       _r177.timer=setInterval(function(){ // espera a que no haya otro modal (2 lecturas seguidas libres)
         try{
           if(gen!==_r177.gen || currentAlumno!==nip || ++intentos>900){ clearInterval(_r177.timer); _r177.timer=null; return; }
@@ -3255,7 +3274,6 @@ function r177Entrada(nip){
           clearInterval(_r177.timer); _r177.timer=null; r177Mostrar();
         }catch(e){ clearInterval(_r177.timer); _r177.timer=null; }
       }, 700);
-    }).catch(function(){});
   }catch(e){}
 }
 function r177Mostrar(){
@@ -3272,17 +3290,18 @@ function r177Mostrar(){
       +'<div class="notif-popup-body" id="r177-body" style="overflow-y:auto">'+pend.map(function(it){ return _r177Card(it,true); }).join('')+'</div></div>';
     o.style.display='flex';
     var ahora=new Date().toISOString();
-    pend.forEach(function(it){ // vistos: primera (si falta), ultima, vistas+1
-      try{
-        db.ref('fittrack_vistos/'+nip+'/avisos/'+it.id).transaction(function(cur){
-          cur=(cur&&typeof cur==='object')?cur:{};
-          if(!cur.primera) cur.primera=ahora;
-          cur.ultima=ahora; cur.vistas=(+cur.vistas||0)+1;
-          return cur;
-        }).catch(function(){});
-        var v=_r177.vistos[it.id]=_r177.vistos[it.id]||{}; if(!v.primera) v.primera=ahora; v.ultima=ahora; v.vistas=(+v.vistas||0)+1;
-      }catch(e){}
-    });
+    pend.forEach(function(it){ _r177Vista(nip,it,ahora); });
+  }catch(e){}
+}
+function _r177Vista(nip,it,ahora){ // vistos: primera (si falta), ultima, vistas+1
+  try{
+    db.ref('fittrack_vistos/'+nip+'/avisos/'+it.id).transaction(function(cur){
+      cur=(cur&&typeof cur==='object')?cur:{};
+      if(!cur.primera) cur.primera=ahora;
+      cur.ultima=ahora; cur.vistas=(+cur.vistas||0)+1;
+      return cur;
+    }).catch(function(){});
+    var v=_r177.vistos[it.id]=_r177.vistos[it.id]||{}; if(!v.primera) v.primera=ahora; v.ultima=ahora; v.vistas=(+v.vistas||0)+1;
   }catch(e){}
 }
 function r177Entendido(btn){
@@ -3290,7 +3309,7 @@ function r177Entendido(btn){
     var id=btn && btn.getAttribute('data-id'), nip=_r177.nip; if(!id || !nip) return;
     var ahora=new Date().toISOString();
     try{ db.ref('fittrack_vistos/'+nip+'/avisos/'+id).update({entendido:ahora}).catch(function(){}); }catch(e){}
-    var v=_r177.vistos[id]=_r177.vistos[id]||{}; v.entendido=ahora;
+    var v=_r177.vistos[id]=_r177.vistos[id]||{}; v.entendido=ahora; _r177.ok[id]=true;
     var card=btn.closest('.r177-card'), enModal=!!(card && card.closest('#r177-overlay'));
     if(enModal){
       card.style.opacity='0'; card.style.transform='translateX(30px)';
@@ -3306,8 +3325,49 @@ function r177Entendido(btn){
 function r177Cerrar(){ try{ var o=document.getElementById('r177-overlay'); if(o) o.style.display='none'; }catch(e){} }
 function r177Reset(){
   try{ if(_r177.timer) clearInterval(_r177.timer); }catch(e){}
-  _r177.gen++; _r177.timer=null; _r177.nip=null; _r177.avisos={}; _r177.vistos={};
+  _r177.gen++; _r177.timer=null; _r177.nip=null; _r177.avisos={}; _r177.vistos={}; _r177.ok={};
   r177Cerrar(); try{ var b=document.getElementById('r177-lista'); if(b){ b.style.display='none'; b.innerHTML=''; } }catch(e){}
+}
+// ══ REGLA 183 (Noé · 20 oct 2026) · Pagos de seguimiento de farmacología ═════
+// Parcialidades en las semanas 9, 17, 25… del ciclo activo (la semana 1 ya está pagada), solo si W < duración.
+// Lee (solo lectura) fittrack_farma/<nip>/pagos/<W> = {pagado:true, fecha} o {noContinua:true}.
+// Estado (fecha México): previo (1–3 días antes), toca (semana W), vencido (después y sin pagar).
+// Se muestra como aviso sintético (no se escribe en avisos) dentro de "Avisos de tu coach"; vencido reaparece en cada entrada.
+var _r183 = {nip:null, est:null};
+function _r183Sumar(s,n){ var p=s.split('-'); return new Date(Date.UTC(+p[0],+p[1]-1,+p[2]+n,12)).toISOString().slice(0,10); }
+function _r183Fecha(s, dia, anio){
+  try{ var o={timeZone:'UTC', day:'numeric', month:'long'}; if(dia) o.weekday='long'; if(anio!==false) o.year='numeric';
+    return new Date(s+'T12:00:00Z').toLocaleDateString('es-MX',o).replace(',',''); }catch(e){ return s; }
+}
+function _r183Calc(act, pagos){
+  var ini=String((act&&act.startDate)||'').slice(0,10); if(!/^\d{4}-\d{2}-\d{2}$/.test(ini)) return null;
+  var tot=parseInt(act.duration)||12, hoy=_r174HoyMx(), rango={previo:1,toca:2,vencido:3}, best=null;
+  pagos=(pagos&&typeof pagos==='object')?pagos:{};
+  for(var W=9; W<tot; W+=8){
+    var pg=pagos[W]||pagos[String(W)];
+    if(pg && typeof pg==='object' && (pg.pagado===true || pg.noContinua===true)) continue;
+    var s=_r183Sumar(ini,(W-1)*7), e=_r183Sumar(s,6), st=null;
+    if(hoy>e) st='vencido'; else if(hoy>=s) st='toca'; else if(hoy>=_r183Sumar(s,-3)) st='previo';
+    if(st && (!best || rango[st]>rango[best.estado])) best={W:W, estado:st, ini:s, fin:e};
+  }
+  return best;
+}
+function _r183Aviso(){ // {id,a,v} para _r177Activos, o null
+  var e=_r183.est; if(!e || !_r183.nip || _r183.nip!==currentAlumno || _r177.nip!==_r183.nip) return null;
+  var id='farma_pago_s'+e.W+'_'+e.estado, a={area:'farma', btn:'Entendido', creado:'', sintetico:true};
+  var mismoAnio=e.ini.slice(0,4)===e.fin.slice(0,4);
+  if(e.estado==='previo'){ a.nivel=1; a.titulo='Recordatorio: se acerca tu pago de seguimiento';
+    a.texto='Tu pago de seguimiento de farmacología corresponde a la semana '+e.W+' de tu ciclo, que empieza el '+_r183Fecha(e.ini,true)+'. Ten listo tu comprobante.'; }
+  else if(e.estado==='toca'){ a.nivel=2; a.titulo='Esta semana toca tu pago de seguimiento';
+    a.texto='Corresponde a la semana '+e.W+' de tu ciclo de farmacología ('+_r183Fecha(e.ini,false,!mismoAnio)+' al '+_r183Fecha(e.fin,false)+'). Envía tu comprobante a tu coach por WhatsApp.'; }
+  else { a.nivel=3; a.titulo='Pago de seguimiento vencido';
+    a.texto='Tu pago de seguimiento de la semana '+e.W+' de tu ciclo de farmacología venció el '+_r183Fecha(e.fin,false)+'. Envía tu comprobante a tu coach por WhatsApp para continuar con tu seguimiento.'; }
+  var v=(_r177.vistos&&_r177.vistos[id])||{};
+  if(e.estado==='vencido' && !_r177.ok[id]){ v=JSON.parse(JSON.stringify(v)); delete v.entendido; } // vencido: ignora "entendido" de entradas anteriores
+  return {id:id, a:a, v:v};
+}
+function _r183Listo(nip){ // llamado por farmaInit al calcular el estado
+  try{ if(_r177.nip!==nip || currentAlumno!==nip) return; r177RenderLista(); _r177Programar(); }catch(e){}
 }
 </script>
 </body>
