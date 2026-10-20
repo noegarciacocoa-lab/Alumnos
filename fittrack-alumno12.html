@@ -557,6 +557,27 @@ body{display:flex;justify-content:center;height:100%}
 .ex-item.ex-ref{padding-top:9px;padding-bottom:9px}
 .ex-item.ex-ref .ex-name-txt{color:var(--text2);font-weight:500}
 .ex-ref-tag{font-size:11px;color:var(--text3);margin-top:2px}
+/* r185 tienda ArtFit Supplements */
+.tienda-bn{flex-shrink:0;display:flex;align-items:center;gap:10px;width:100%;border:none;cursor:pointer;padding:9px 16px;background:linear-gradient(90deg,#1a1a1a,#3a2a00 55%,#C9971C);color:#fff;font-family:'DM Sans',sans-serif;text-align:left;position:relative;overflow:hidden}
+.tienda-bn::after{content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);animation:tbShine 3.5s infinite}
+@keyframes tbShine{0%{left:-60%}60%,100%{left:120%}}
+.tienda-bn .tb-pct{font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:18px;color:#FFD54A;line-height:1;flex-shrink:0}
+.tienda-bn .tb-txt{flex:1;min-width:0;font-size:12px;line-height:1.25}
+.tienda-bn .tb-txt b{color:#FFD54A}
+.tienda-bn .tb-go{font-size:11px;font-weight:800;background:#FFD54A;color:#1a1a1a;border-radius:20px;padding:4px 10px;flex-shrink:0}
+.tienda-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;justify-content:center;z-index:9999}
+.tienda-ov.on{display:flex}
+.tienda-md{background:var(--card,#fff);color:var(--text,#111);width:100%;max-width:480px;border-radius:22px 22px 0 0;padding:22px 20px 26px;font-family:'DM Sans',sans-serif;max-height:90vh;overflow:auto}
+.tienda-md h3{font-family:'Space Grotesk',sans-serif;font-size:20px;margin:0 0 4px}
+.tienda-md .tm-sub{font-size:13px;color:var(--text3,#666);margin-bottom:14px}
+.tienda-md .tm-off{background:linear-gradient(135deg,#1a1a1a,#3a2a00);color:#fff;border-radius:16px;padding:16px;text-align:center;margin-bottom:14px}
+.tienda-md .tm-off .big{font-family:'Space Grotesk',sans-serif;font-size:34px;font-weight:800;color:#FFD54A;line-height:1}
+.tienda-md .tm-code{display:flex;align-items:center;gap:8px;justify-content:center;margin-top:12px}
+.tienda-md .tm-code span{font-family:'Space Grotesk',monospace;font-size:20px;letter-spacing:3px;background:rgba(255,255,255,.12);border:1.5px dashed #FFD54A;border-radius:10px;padding:6px 14px;min-width:150px}
+.tienda-md .tm-code button{border:none;background:#FFD54A;color:#1a1a1a;border-radius:10px;padding:8px 10px;font-size:16px;cursor:pointer}
+.tienda-md ol{padding-left:20px;margin:0 0 16px;font-size:14px;line-height:1.5}
+.tienda-md .tm-btn{display:block;text-align:center;background:linear-gradient(135deg,#C9971C,#FFD54A);color:#1a1a1a;font-weight:800;text-decoration:none;border-radius:14px;padding:14px;font-size:15px}
+.tienda-md .tm-x{display:block;width:100%;margin-top:10px;background:none;border:none;color:var(--text3,#666);font-size:13px;cursor:pointer;padding:8px}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
@@ -585,6 +606,7 @@ body{display:flex;justify-content:center;height:100%}
   </div>
 
   <div class="main-app" id="main-app">
+    <button class="tienda-bn" id="tienda-bn" onclick="tiendaAbrir()"><span class="tb-pct">10%</span><span class="tb-txt"><b>Descuento exclusivo Team</b> en suplementos de la tienda ArtFit Supplements</span><span class="tb-go">Ver ›</span></button>
     <div class="app-header">
       <div class="header-row">
         <div class="user-info">
@@ -3186,7 +3208,7 @@ function r174Entrada(nip){ r174RegistrarAcceso(nip); r174AvisoPlan(nip); try{ r1
 // Activo = estado!=='cerrado' y desde <= hoy(MX) <= hasta. Modal al entrar (sin entendido), después del
 // plan de acción y sin encimarse con otros modales. Lista en Progresiones con todos los activos.
 var _r177 = {nip:null, avisos:{}, vistos:{}, timer:null, gen:0, cargado:-1, ok:{}};
-var R177_AREAS = {nutricion:['🥗','Nutrición'], cardio:['🏃','Cardio'], actividad:['👣','Nivel de actividad'], farma:['💊','Farmacología']};
+var R177_AREAS = {nutricion:['🥗','Nutrición'], cardio:['🏃','Cardio'], actividad:['👣','Nivel de actividad'], farma:['💊','Farmacología'], tienda:['🛍️','ArtFit Supplements']};
 function _r177Esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
 function _r177Fecha(x){ x=String(x||'').slice(0,10); return /^\d{4}-\d{2}-\d{2}$/.test(x)?x:''; }
 function _r177Activos(){ // [{id,a,v}] vigentes hoy, ordenados por nivel desc y fecha de creación
@@ -3201,6 +3223,7 @@ function _r177Activos(){ // [{id,a,v}] vigentes hoy, ordenados por nivel desc y 
     });
   }catch(e){}
   try{ var fs=_r183Aviso(); if(fs) out.push(fs); }catch(e){} // regla 183: aviso sintético de pago de farmacología
+  try{ var ti=_r185Aviso(); if(ti) out.push(ti); }catch(e){} // regla 185: invitación a la tienda ArtFit Supplements
   out.sort(function(x,y){ return ((y.a.positivo?1:0)-(x.a.positivo?1:0)) || ((+y.a.nivel||1)-(+x.a.nivel||1)) || String(x.a.creado||'').localeCompare(String(y.a.creado||'')); });
   return out;
 }
@@ -3243,7 +3266,7 @@ function r177Entrada(nip){
   try{
     r177Reset(); _r177.nip=nip; var gen=++_r177.gen;
     var pA=db.ref('fittrack_chequeos/avisos/'+nip).once('value').then(function(s){ return (s&&s.val())||{}; }).catch(function(){ return {}; });
-    var pV=db.ref('fittrack_vistos/'+nip+'/avisos').once('value').then(function(s){ return (s&&s.val())||{}; }).catch(function(){ return {}; });
+    var pV=db.ref('fittrack_vistos/'+nip+'/avisos').once('value').then(function(s){ return (s&&s.val())||{}; }).catch(function(){ _r177.vistosFail=gen; return {}; });
     Promise.all([pA,pV]).then(function(r){
       if(gen!==_r177.gen || currentAlumno!==nip) return;
       _r177.avisos=(r[0]&&typeof r[0]==='object')?r[0]:{}; _r177.vistos=(r[1]&&typeof r[1]==='object')?r[1]:{};
@@ -3322,6 +3345,16 @@ function r177Entendido(btn){
     r177RenderLista();
   }catch(e){}
 }
+// ══ REGLA 185 (Noé · 20 oct 2026) · Invitación a la tienda ArtFit Supplements (aviso sintético) ═══
+var R185_ID='tienda_invitacion_v1', R185_HASTA='2026-11-30';
+function _r185Aviso(){
+  if(!_r177.nip || _r177.nip!==currentAlumno || _r174HoyMx()>R185_HASTA || _r177.vistosFail===_r177.gen) return null; // sin red: no se puede guardar 'entendido'
+  var a={area:'tienda', nivel:1, creado:'', sintetico:true, btn:'🛍️ Ver mi descuento',
+    titulo:'Descuento exclusivo para el Team',
+    texto:'Como integrante del Team tienes un descuento único de 10% en la compra de 3 o más productos de suplementación en la tienda ArtFit Supplements (aplica solo para México).\nCrea tu cuenta en la tienda y usa tu código de descuento. Lo encuentras en el aviso dorado de arriba o tocando el botón.'};
+  return {id:R185_ID, a:a, v:(_r177.vistos&&_r177.vistos[R185_ID])||{}};
+}
+(function(){ var _e=r177Entendido; r177Entendido=function(btn){ var r=_e.apply(this,arguments); try{ if(btn && btn.getAttribute('data-id')===R185_ID) setTimeout(function(){ try{ tiendaAbrir('aviso'); }catch(e){} }, 420); }catch(e){} return r; }; })();
 function r177Cerrar(){ try{ var o=document.getElementById('r177-overlay'); if(o) o.style.display='none'; }catch(e){} }
 function r177Reset(){
   try{ if(_r177.timer) clearInterval(_r177.timer); }catch(e){}
@@ -3369,6 +3402,23 @@ function _r183Aviso(){ // {id,a,v} para _r177Activos, o null
 function _r183Listo(nip){ // llamado por farmaInit al calcular el estado
   try{ if(_r177.nip!==nip || currentAlumno!==nip) return; r177RenderLista(); _r177Programar(); }catch(e){}
 }
+</script>
+<div class="tienda-ov" id="tienda-ov" onclick="if(event.target===this)tiendaCerrar()"><div class="tienda-md">
+<h3>🛍️ ArtFit Supplements</h3>
+<div class="tm-sub">Descuento único para los integrantes del Team</div>
+<div class="tm-off"><div class="big">10% OFF</div><div style="font-size:13px;margin-top:6px">en la compra de <b>3 o más productos</b> de suplementación en la tienda ArtFit Supplements<br><span style="opacity:.75;font-size:11px">Aplica solo para México</span></div>
+<div class="tm-code"><span id="tienda-code">••••••••</span><button id="tienda-eye" onclick="tiendaVer()" aria-label="Ver código">👁️</button><button id="tienda-copy" onclick="tiendaCopiar()" aria-label="Copiar código" style="display:none">📋</button></div>
+<div style="font-size:11px;opacity:.75;margin-top:6px" id="tienda-hint">Toca el ojito para ver tu código</div></div>
+<ol><li><b>Crea tu cuenta</b> en la tienda.</li><li>Elige tus suplementos (3 o más).</li><li>Usa tu código de descuento.</li></ol>
+<a class="tm-btn" onclick="_r185Log('clicTienda')" href="https://noegarciacocoa-lab.github.io/artfit-sistema/publico.html" target="_blank" rel="noopener">Ir a la tienda ArtFit Supplements ›</a>
+<button class="tm-x" onclick="tiendaCerrar()">Cerrar</button>
+</div></div>
+<script>
+function _r185Log(c){try{var nip=currentAlumno;if(!nip||typeof db==='undefined')return;var ahora=new Date().toISOString();db.ref('fittrack_vistos/'+nip+'/tienda').transaction(function(cur){cur=(cur&&typeof cur==='object')?cur:{};if(!cur.primera)cur.primera=ahora;cur[c]=(+cur[c]||0)+1;cur['ult_'+c]=ahora;return cur;}).catch(function(){});}catch(e){}}
+function tiendaAbrir(origen){document.getElementById('tienda-ov').classList.add('on');_r185Log(origen==='aviso'?'abrioAviso':'abrioBanner');}
+function tiendaCerrar(){document.getElementById('tienda-ov').classList.remove('on');}
+function tiendaVer(){var c=document.getElementById('tienda-code'),on=c.textContent==='ARTFIT10';if(!on)_r185Log('verCodigo');c.textContent=on?'••••••••':'ARTFIT10';document.getElementById('tienda-copy').style.display=on?'none':'';document.getElementById('tienda-hint').textContent=on?'Toca el ojito para ver tu código':'Tu código de descuento';}
+function tiendaCopiar(){_r185Log('copio');try{navigator.clipboard.writeText('ARTFIT10');document.getElementById('tienda-hint').textContent='¡Código copiado!';}catch(e){}}
 </script>
 </body>
 </html>
