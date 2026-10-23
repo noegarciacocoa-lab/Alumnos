@@ -2979,9 +2979,21 @@ function _bvPantallas(apto){
 // Prueba (FT_PRUEBA): ?reto=1 (sin adaptación) · ?reto=adapt (con adaptación) · &hoy=AAAA-MM-DD
 var _retoInfo=null, _retoPos=null, _retoExcl={};
 function _reto(){
-  try{ if(FT_PRUEBA){ var m=location.search.match(/[?&]reto=(1|adapt)/); if(m) return {id:'body-art-3', adaptacion:m[1]==='adapt'}; } }catch(e){}
-  return (_ing&&_ing.reto&&_ing.reto.id)?_ing.reto:null;
+  var r=null;
+  try{ if(FT_PRUEBA){ var m=location.search.match(/[?&]reto=(1|adapt|cont|ali|team)/); if(m) r={id:'body-art-3', adaptacion:m[1]==='adapt', continua:/cont|ali/.test(m[1]), plan:m[1]==='ali'?'alimentacion':(m[1]==='cont'?'completo':undefined), inicio:/cont|ali/.test(m[1])?'2027-03-15':undefined, alumnoDesde:m[1]==='cont'?'2027-03-13':undefined, team:m[1]==='team'}; } }catch(e){}
+  if(!r) r=(_ing&&_ing.reto&&_ing.reto.id)?_ing.reto:null;
+  if(r&&_retoYaAlumno(r)) return null;
+  return r;
 }
+// Regla 222 (Noé 23 oct 00:10): quien continúa pasa a modo alumno normal desde reto.alumnoDesde (lo pongo al cargar su nueva planeación);
+// los del Team vuelven a su modo normal al terminar el reto. Sus chequeos del reto se quedan en Chequeos.
+function _retoYaAlumno(r){
+  var hoy=_retoDia(_retoHoy()), fin=(_retoInfo&&_retoInfo.fin)||_RETO_DEF.fin;
+  if(r.alumnoDesde&&hoy>=r.alumnoDesde) return true;
+  if(r.team&&hoy>fin) return true;
+  return false;
+}
+function _retoSigue(r){ return !!(r&&(r.team||(r.continua&&r.plan!=='alimentacion'))); }
 function _retoHoy(){ try{ if(FT_PRUEBA){ var m=location.search.match(/[?&]hoy=(\d{4}-\d{2}-\d{2})/); if(m) return new Date(m[1]+'T12:00:00-06:00'); } }catch(e){} return new Date(); }
 function _retoF(iso){ var M=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'],D=['domingo','lunes','martes','miércoles','jueves','viernes','sábado']; var d=new Date(iso+'T12:00:00-06:00'); return D[d.getUTCDay()]+' '+d.getUTCDate()+' de '+M[d.getUTCMonth()]; }
 function _retoDia(d){ var x=new Date(d.getTime()-6*3600e3); return x.toISOString().slice(0,10); } // fecha en hora del centro de México
@@ -3039,7 +3051,7 @@ function retoCard(){
   else if(hoy===I.inicio) aviso='🚀 <b>¡Hoy arranca oficialmente el reto!</b>';
   else if(prox&&prox.f===hoy) aviso='⏰ <b>Hoy es tu chequeo'+(prox.n===ch.length?' final':'')+':</b> envíalo antes de las 10:00 a.m.';
   else if(prox&&prox.f===manana) aviso='🔔 <b>Mañana es tu chequeo'+(prox.n===ch.length?' final':'')+':</b> sábado antes de las 10:00 a.m.';
-  else if(hoy>I.fin) aviso='🏁 El reto terminó. ¡Gracias por tu compromiso!';
+  else if(hoy>I.fin){ var rr=_reto(); aviso=(rr&&rr.continua&&rr.inicio&&rr.plan!=='alimentacion')?'🔁 El reto terminó. Tu siguiente ciclo de coaching inicia el <b>'+_retoF(rr.inicio)+'</b>':'🏁 El reto terminó. ¡Gracias por tu compromiso!'; }
   var lugar = _retoPos&&_retoPos.lugar ? '<div class="rt-pos"><small>Tu lugar en el reto</small><b>'+_retoPos.lugar+'º</b><small>después del chequeo '+(_retoPos.chequeo===ch.length?'final':_retoPos.chequeo)+'</small></div>'
     : '<div class="rt-pos"><small>Tu lugar en el reto</small><b>—</b><small>'+(hoy<ch[0]?'aparece después de tu primer chequeo ('+_retoF(ch[0])+')':'se actualiza después de cada chequeo')+'</small></div>';
   var cuenta = prox ? '<div class="rt-cd"><small>Próximo chequeo'+(prox.n===ch.length?' (final)':' '+prox.n)+'</small><b>'+_retoF(prox.f)+'</b><small>antes de las 10:00 a.m.</small></div>' : '';
@@ -3062,6 +3074,11 @@ function retoModal(t, html, fin){
 function retoCierre(nip){
   var I=_retoInfo||_RETO_DEF, hoy=_retoDia(_retoHoy()); if(hoy<I.fin) return; try{ if(retoAccesoCerrado()) return; }catch(e){}
   try{ if(localStorage.getItem('ft_reto_cierre_'+nip)) return; }catch(e){}
+  var rc=_reto();
+  if(_retoSigue(rc)){
+    retoModal('🏁 ¡Terminaste el Reto Body Art 3!','<p>Gracias por tu constancia y tu compromiso durante estas 8 semanas. Lo que lograste es tuyo y se nota.</p>'+(rc.team?'<p>Sigues en tu coaching normal: tu FitTrack continúa igual.</p>':'<p>🔁 <b>Ya estás dentro de tu siguiente ciclo de coaching</b>'+(rc.inicio?', que inicia el <b>'+_retoF(rc.inicio)+'</b>':'')+'. Tu FitTrack sigue activo con el mismo NIP.</p>')+'<div class="bv-firma">— Coach Noé García Ibarra<small>Haz arte con tu cuerpo</small></div>', "try{localStorage.setItem('ft_reto_cierre_"+nip+"','1')}catch(e){};");
+    return;
+  }
   retoModal('🏁 ¡Terminaste el Reto Body Art 3!','<p>Gracias por tu constancia y tu compromiso durante estas 8 semanas. Lo que lograste es tuyo y se nota.</p><p><b>No pierdas tu avance.</b> Si quieres seguir conmigo en el coaching (plan completo, solo entrenamiento o solo alimentación), dímelo en el formulario <b>"Cuéntame qué te pareció el reto"</b> o por WhatsApp y te paso los detalles.</p><div class="bv-firma">— Coach Noé García Ibarra<small>Haz arte con tu cuerpo</small></div>', "try{localStorage.setItem('ft_reto_cierre_"+nip+"','1')}catch(e){};");
 }
 function retoChqDetalle(it){
@@ -3082,7 +3099,7 @@ function retoChqDetalle(it){
 }
 // Regla 220 (Noé 23 oct 00:02): el acceso del reto se cierra solo una semana después del fin (dom 14 mar), salvo que continúe en el coaching (fittrack_ingreso/<nip>.reto.continua = true)
 function retoAccesoCerrado(){
-  var r=_reto(); if(!r||r.continua) return false;
+  var r=_reto(); if(!r||_retoSigue(r)) return false;
   var cierre=r.cierreAcceso||'2027-03-14';
   return _retoDia(_retoHoy())>=cierre;
 }
@@ -3093,7 +3110,8 @@ function retoCerradoMostrar(){
     var b=document.getElementById('bv-b'), h3=b.querySelector('.bv-sub'), p=b.querySelector('p'), n=b.querySelector('.bv-nota');
     if(h3) h3.textContent='Tu acceso a FitTrack del reto ya cerró';
     if(p) p.textContent='Gracias por tu constancia y tu compromiso durante las 8 semanas. Lo que lograste es tuyo.';
-    if(n) n.innerHTML='💬 <b>No pierdas tu avance:</b> si quieres seguir en el coaching (plan completo, solo entrenamiento o solo alimentación), escríbeme por WhatsApp y te reactivo tu acceso.';
+    var ra=null; try{ ra=_reto(); }catch(e){}
+    if(n) n.innerHTML=(ra&&ra.continua&&ra.plan==='alimentacion')?'🍽️ <b>Tu plan de alimentación continúa en Harbiz.</b> Si más adelante quieres sumar entrenamiento, escríbeme por WhatsApp y te reactivo tu acceso.':'💬 <b>No pierdas tu avance:</b> si quieres seguir en el coaching (plan completo, solo entrenamiento o solo alimentación), escríbeme por WhatsApp y te reactivo tu acceso.';
   }catch(e){}
 }
 function retoExcluirCargar(){ return db.ref('fittrack_publico/reto/excluir').once('value').then(function(s){ _retoExcl=s.val()||{}; }).catch(function(){}); }
