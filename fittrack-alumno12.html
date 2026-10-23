@@ -566,6 +566,7 @@ body{display:flex;justify-content:center;height:100%}
 .rt-btn{margin-top:10px;width:100%;border:0;border-radius:10px;padding:9px;font-weight:700;background:#EFE8DA;color:#0A2126;cursor:pointer}
 .rt-mod{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px}
 .rt-box{background:linear-gradient(160deg,#0A2126,#0F3A42);color:#EFE8DA;border-radius:18px;padding:18px;max-width:420px;width:100%;max-height:85vh;overflow:auto}
+.rt-box .bv-firma{color:#EFE8DA}.rt-box .bv-firma small{color:#2FD3E0}
 .rt-mb h4{margin:12px 0 4px;color:#2FD3E0}.rt-mb p{font-size:14px;line-height:1.5}.rt-ol{margin:0;padding-left:22px;font-size:14px;line-height:1.7}
 /* r185 tienda ArtFit Supplements */
 .tienda-bn{flex-shrink:0;display:flex;align-items:center;gap:10px;width:100%;border:none;cursor:pointer;padding:9px 16px;background:linear-gradient(90deg,#1a1a1a,#3a2a00 55%,#C9971C);color:#fff;font-family:'DM Sans',sans-serif;text-align:left;position:relative;overflow:hidden}
@@ -3059,7 +3060,7 @@ function retoModal(t, html, fin){
   document.body.insertAdjacentHTML('beforeend','<div id="rt-modal" class="rt-mod" onclick="if(event.target===this)this.remove()"><div class="rt-box"><div class="rt-h">'+t+'</div><div class="rt-mb">'+html+'</div><button class="rt-btn" onclick="'+(fin||'')+'document.getElementById(\'rt-modal\').remove()">Cerrar</button></div></div>');
 }
 function retoCierre(nip){
-  var I=_retoInfo||_RETO_DEF, hoy=_retoDia(_retoHoy()); if(hoy<I.fin) return;
+  var I=_retoInfo||_RETO_DEF, hoy=_retoDia(_retoHoy()); if(hoy<I.fin) return; try{ if(retoAccesoCerrado()) return; }catch(e){}
   try{ if(localStorage.getItem('ft_reto_cierre_'+nip)) return; }catch(e){}
   retoModal('🏁 ¡Terminaste el Reto Body Art 3!','<p>Gracias por tu constancia y tu compromiso durante estas 8 semanas. Lo que lograste es tuyo y se nota.</p><p><b>No pierdas tu avance.</b> Si quieres seguir conmigo en el coaching (plan completo, solo entrenamiento o solo alimentación), dímelo en el formulario <b>"Cuéntame qué te pareció el reto"</b> o por WhatsApp y te paso los detalles.</p><div class="bv-firma">— Coach Noé García Ibarra<small>Haz arte con tu cuerpo</small></div>', "try{localStorage.setItem('ft_reto_cierre_"+nip+"','1')}catch(e){};");
 }
@@ -3078,6 +3079,22 @@ function retoChqDetalle(it){
   if(it.lugar) tl+='<div class="rt-t"><small>Tu lugar en el reto</small><b>'+_esc(it.lugar)+'º</b></div>';
   return '<div class="chq-in"><div class="chq-fb"><div class="chq-sub" style="margin-top:0">🏆 Reto Body Art 3 · cómo se mide tu proceso</div>'+(tl?'<div class="rt-tg">'+tl+'</div>':'')+
     (it.mensaje?'<div class="chq-blk" style="margin-top:16px"><div class="chq-blk-t">💬 Mensaje de tu coach</div><div class="chq-msg" style="white-space:pre-line">'+_esc(it.mensaje)+'</div></div>':'')+'</div></div>';
+}
+// Regla 220 (Noé 23 oct 00:02): el acceso del reto se cierra solo una semana después del fin (dom 14 mar), salvo que continúe en el coaching (fittrack_ingreso/<nip>.reto.continua = true)
+function retoAccesoCerrado(){
+  var r=_reto(); if(!r||r.continua) return false;
+  var cierre=r.cierreAcceso||'2027-03-14';
+  return _retoDia(_retoHoy())>=cierre;
+}
+function retoCerradoMostrar(){
+  inactivoMostrar();
+  try{
+    document.getElementById('bv-t').textContent='El Reto Body Art 3 terminó';
+    var b=document.getElementById('bv-b'), h3=b.querySelector('.bv-sub'), p=b.querySelector('p'), n=b.querySelector('.bv-nota');
+    if(h3) h3.textContent='Tu acceso a FitTrack del reto ya cerró';
+    if(p) p.textContent='Gracias por tu constancia y tu compromiso durante las 8 semanas. Lo que lograste es tuyo.';
+    if(n) n.innerHTML='💬 <b>No pierdas tu avance:</b> si quieres seguir en el coaching (plan completo, solo entrenamiento o solo alimentación), escríbeme por WhatsApp y te reactivo tu acceso.';
+  }catch(e){}
 }
 function retoExcluirCargar(){ return db.ref('fittrack_publico/reto/excluir').once('value').then(function(s){ _retoExcl=s.val()||{}; }).catch(function(){}); }
 
@@ -3102,6 +3119,7 @@ function bvInit(nip){
     if(est==='archivado'){ inactivoMostrar(); return; }
     if(est==='pausa'){ pausaMostrar(); return; }
     _ing=ing; renderHerrEntreno(); renderConstancia(); try{ retoInit(nip); }catch(e){} // regla 220
+    try{ if(retoAccesoCerrado()){ retoCerradoMostrar(); return; } }catch(e){}
     try{ if(esNoAplicaAlumno()){ renderExercises(currentDay||'lunes'); renderAprobPorDia(); } }catch(e){} // autogestión por test de ingreso
     if(ing.pausa===true || /pausa=1/.test(location.search)&&FT_PRUEBA){ pausaMostrar(); return; }
     if(ing.bienvenida&&ing.bienvenida.completada&&!forzar) return;
