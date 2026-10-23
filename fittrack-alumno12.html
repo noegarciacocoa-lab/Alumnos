@@ -2968,7 +2968,7 @@ function _bvPantallas(apto){
   if(apto) _BV_PASOS.forEach(function(x,i){ P.push({k:'p'+(i+1),ic:x.ic,t:'👣 Paso a paso · '+(i+1)+' de 6',sub:x.t,h:(_na?_naNota.replace('</div>',' Lo que sigue es para cuando tu coach te los solicite.</div>'):'')+x.h+_bvPreg('p'+(i+1),x.q,x.o,x.c,x.ok)}); });
   P.push({k:'politicas',ic:'📋',t:'📋 Políticas de renovación',h:'<div class="bv-app"><p>Estas políticas de renovación tienen como objetivo garantizar la continuidad y calidad del servicio de coaching, evitando interrupciones en tu progreso y asegurando que cada plan esté siempre actualizado a tus necesidades.</p><p>La renovación es tu compromiso para seguir avanzando hacia tus metas, mantener el seguimiento personalizado y aprovechar al máximo cada sesión y ajuste de tu plan. Al aceptar estas políticas, confirmas que comprendes los plazos, condiciones y responsabilidades que forman parte de tu programa, con el fin de lograr los mejores resultados posibles.</p><p><strong>Este programa no es solo un plan, es un compromiso contigo mismo.</strong> Renovar tu plan significa mantener el ritmo, seguir progresando y no dar espacio a las pausas que frenan tus resultados. ¡Cada renovación es un paso más hacia tu mejor versión!</p></div><div class="bv-app"><b>1. 🔄 Renovación</b><p>Debes confirmar tu renovación <strong>un día antes de que termine el programa en tu agenda</strong>. La renovación puede ser de dos maneras:</p><ul style="margin:6px 0 0;padding-left:18px"><li style="margin:4px 0">Llenar las tareas que estarán programadas para ese día: el <strong>formulario para chequeo</strong>, registrar tus <strong>medidas</strong>, subir tus <strong>fotos</strong> y enviar el <strong>comprobante de pago</strong> por WhatsApp. Si tienes dudas revisa el documento cargado en archivos “INDICACIONES PARA EL CHEQUEO (CHECK-IN)”.</li><li style="margin:4px 0"><strong>Extensión:</strong> si deseas aplazar tu fecha de chequeo por unas semanas, debes pagar el costo proporcional de ese tiempo para programar las tareas del plan que estés llevando en tu agenda y asignar una nueva fecha de chequeo, para tener el derecho de permanecer en la app.</li></ul><p style="margin-top:8px">* El ajuste del plan está sujeto a que se realice el chequeo y se haga el pago correspondiente por las 8 semanas.<br>* Pasada la fecha de vencimiento sin renovación, la plaza quedará disponible para nuevos clientes.</p></div><div class="bv-app"><b>2. 💳 Formas de pago y confirmación</b><ul style="margin:6px 0 0;padding-left:18px"><li style="margin:4px 0">La renovación se considera efectiva <strong>únicamente una vez confirmado el pago</strong> (enviar comprobante por WhatsApp; si estás suscrito(a) por la app, aparecerá automáticamente), ya sea por las <strong>8 semanas</strong> (costo total) o por la <strong>extensión del plan en curso</strong> (consulta el monto a pagar según las semanas que estés solicitando).</li><li style="margin:4px 0"><strong>Métodos de pago:</strong><br>• Transferencia — Tarjeta: <strong>4152 3140 6838 0065</strong> · Banco: BBVA Bancomer · Nombre: Noé García Ibarra · Concepto: tu nombre completo.<br>• Suscripción por la plataforma (app): si te suscribiste a través de la app, el pago se realizará de forma automática.</li></ul></div><div class="bv-app"><b>3. ⏸️ Solicitud de pausa</b><p>Si eres aplicado(a) y constante con tu proceso, pero por el momento se te dificulta realizar el pago o atraviesas por una situación difícil, puedes solicitarme una pausa, para la cual contarás con un plazo de <strong>8 semanas</strong> para reportarte y agendar tu chequeo de reincorporación (sujeto a la disponibilidad de la agenda del coach).</p><p>Para agendar es necesario realizar el pago correspondiente, ya que esto es lo que permite reservarte ese espacio; si se te proporciona una fecha disponible pero no se confirma el pago, no puedo garantizarte esa fecha, pues durante ese periodo pueden ingresar nuevos alumnos a quienes se les dará prioridad, por lo que te recomiendo confirmar y apartar tu fecha a tiempo.</p><p>Durante la pausa no tendrás acceso a la app de gestión (Harbiz) ni podrás llevar tu registro, pero tu lugar dentro del Team y el costo con el que iniciaste se mantendrán siempre y cuando renueves dentro de las 8 semanas establecidas.</p></div><div class="bv-app"><b>4. 💰 Precios</b><ul style="margin:6px 0 0;padding-left:18px"><li style="margin:4px 0">Se respeta el costo con el que hayas iniciado, por agradecimiento a tu confianza, siempre y cuando estés al corriente con tus renovaciones.</li><li style="margin:4px 0">Nuevos ingresos o reingresos tendrán que pagar el costo actual del coaching.</li></ul></div><div class="bv-app"><b>5. ↩️ Reembolsos y cambios en la planeación</b><ul style="margin:6px 0 0;padding-left:18px"><li style="margin:4px 0">Una vez iniciado el periodo renovado, no se realizan reembolsos totales o parciales.</li><li style="margin:4px 0">Cambios en la planeación implicarán un costo adicional.</li></ul></div><div class="bv-app"><b>6. ✋ Cancelación del servicio</b><ul style="margin:6px 0 0;padding-left:18px"><li style="margin:4px 0">Si no deseas continuar y no estás suscrito(a) en la plataforma, simplemente no te reportes en tu chequeo y daré por hecho que no deseas continuar.</li><li style="margin:4px 0">Si estás suscrito(a) en la plataforma (app), puedes cancelar la suscripción en cualquier momento en tu perfil › configuración › métodos de pago, o solicitar la cancelación antes de tu chequeo.</li></ul></div><div class="bv-app"><b>7. 🤝 Compromiso del cliente</b><p>La renovación implica aceptar nuevamente las condiciones generales del coaching y mantener la comunicación activa para un seguimiento efectivo.</p></div>'+_bvChk('politicas','<b>Acepto las políticas de renovación.</b>')});
   P.push({k:'fin',ic:'🤝',t:'✅ Mis compromisos',h:'<p>Esto es lo que confirmaste. Al tocar <b>Terminar</b> se lo hago saber a tu coach.</p><ul id="bv-resumen" class="bv-res"></ul>'+_bvChk('herr','Me comprometo a revisar mis herramientas en FitTrack.')});
-  if(_reto()) P=_retoPantallas(P,apto); // regla 220
+  var _rtB=_reto(); if(_rtB&&!_rtB.team) P=_retoPantallas(P,apto); // regla 220 (al Team no se le cambia su bienvenida: regla 220-team)
   return P;
 }
 // ── RETO BODY ART 3 (regla 220, Noé 22 oct 22:23) ─────────────────────────────
@@ -2976,7 +2976,9 @@ function _bvPantallas(apto){
 // fittrack_publico/reto/info  = {inicio, fin, chequeos:[...], top5Fecha, ganadoresFecha, top10:{c1:[nombres]}, top5:[...], ganadores:{p1,p2,p3}}
 // fittrack_publico/reto/pos/<nip> = {lugar, chequeo}   (sin total de participantes)
 // fittrack_publico/reto/excluir/<nip> = true           (no aparecen en las Listas del equipo)
-// Prueba (FT_PRUEBA): ?reto=1 (sin adaptación) · ?reto=adapt (con adaptación) · &hoy=AAAA-MM-DD
+// Prueba (FT_PRUEBA): ?reto=1 (sin adaptación) · ?reto=adapt (con adaptación) · ?reto=team (alumno actual del Team) · &hoy=AAAA-MM-DD
+// Regla 220-team (Noé 23 oct 11:56): reto.team=true → NO cambia su app (rutina, progresiones, historial, nivel, gestión, pestañas);
+//   sin bienvenida de ingreso; ve UNA VEZ la presentación del reto (retoPresInit) → fittrack_vistos/<nip>/reto/<id>/presentacion + localStorage.
 var _retoInfo=null, _retoPos=null, _retoExcl={};
 function _reto(){
   var r=null;
@@ -3005,7 +3007,7 @@ _BV_TXT.rreg='Registraré TODAS mis tareas en Harbiz: mi constancia y compromiso
 _BV_TXT.rhon='Seré honesto(a) con mis registros y mis chequeos';
 _BV_TXT.rtop='Acepto que mi nombre completo aparezca en el Top 10 si quedo entre los primeros lugares';
 }
-function _retoPantallas(P, apto){
+function _retoPantallas(P, apto, team){
   _retoTxt();
   var I=_retoInfo||_RETO_DEF, ch=I.chequeos||_RETO_DEF.chequeos;
   var benef='<div class="bv-app ft"><b>📊 FitTrack: tu tablero del reto</b><p>Aquí das seguimiento a tu proceso. Esto es lo que te da:</p></div>'+
@@ -3022,9 +3024,11 @@ function _retoPantallas(P, apto){
     '</div>';
   var Q=[];
   P.forEach(function(p){
+    if(p.k==='bienv'&&team){ Q.push({k:'bienv',ic:'🏆',t:'🏆 ¡Bienvenido(a) al Reto Body Art 3!',h:'<p>Como alumno(a) del Team ya conoces cómo trabajamos. <b>Tu coaching sigue exactamente igual:</b> tu rutina, tus progresiones, tu historial, tu nivel y tu tipo de coaching no cambian.</p><p>En estas pantallas te explico solo lo nuevo del reto: <b>cómo se gana, lo que FitTrack te da durante el reto, tus chequeos de sábado y el Top 10.</b></p><div class="bv-chips"><span>⏱️ 3 minutos</span><span>🏆 Reto</span><span>🤝 Tus compromisos</span></div><div class="bv-firma">— Coach Noé García Ibarra<small>Haz arte con tu cuerpo</small></div>'}); return; }
+    if(p.k==='apps'&&team){ Q.push({k:'apps',ic:'📊',t:'📊 FitTrack durante el reto',h:benef+'<div class="bv-nota">✋ <b>Lo que ya tienes sigue igual</b> (rutina, progresiones, historial y nivel). Solo se suma tu tarjeta del reto, con tu lugar y tu próximo chequeo, y tus chequeos del reto en <b>Mis chequeos</b>.</div>'}); return; }
     if(p.k==='bienv'){ Q.push({k:'bienv',ic:'🏆',t:'🏆 ¡Bienvenido(a) al Reto Body Art 3!',h:'<p>Ya estás dentro. Estos siguientes minutos te explican cómo funciona el reto y cómo vas a trabajar conmigo. Lee con calma: <b>todo lo que viene aquí es lo que hace que tu transformación funcione.</b></p><div class="bv-chips"><span>⏱️ 8 minutos</span><span>📱 Harbiz + FitTrack</span><span>🤝 Tus compromisos</span></div><div class="bv-firma">— Coach Noé García Ibarra<small>Haz arte con tu cuerpo</small></div>'}); return; }
     if(p.k==='apps'){ Q.push({k:'apps',ic:'📱',t:'📱 Tus dos apps: Harbiz y FitTrack',h:'<div class="bv-app"><b>🗓️ Harbiz: tu plan y tus registros</b><p>Aquí ves la programación completa de tu reto, llevas el registro de tus tareas y haces tus chequeos con sus formularios, medidas y fotos. También están los videos de apoyo.</p></div>'+benef+'<div class="bv-nota">✋ Regla fácil: <b>en Harbiz ves tu plan y registras tu cumplimiento; en FitTrack ves tu avance y tu lugar en el reto.</b></div>'+_bvChk('plan','Ya revisé mi plan en Harbiz y sé dónde está mi agenda.')}); return; }
-    if(p.k==='chequeos'){ Q.push({k:'chequeos',ic:'📊',t:'📊 Tus chequeos del reto',h:'<p>🚀 El <b>'+_retoF(I.inicio)+'</b> arranca oficialmente el reto.</p><p>Tus chequeos son en <b>sábado</b> y se envían <b>antes de las 10:00 a.m.</b> (hora del centro de México). Cada chequeo es: <b>fotos, peso y medidas en Harbiz</b>, y tu <b>video por WhatsApp</b>.</p><div class="bv-app"><b>📸 Protocolo de fotos y video</b><p>Mismo lugar y misma luz (de frente a la luz, sin contraluz), cámara a la altura del pecho a unos 2 metros, misma ropa (top y short), por la mañana en ayunas. 3 fotos: frente, perfil y espalda, relajado(a), brazos a los lados. Video: 15 a 30 segundos girando despacio 360°, igual en cada chequeo. Así tus fotos se pueden comparar de forma justa.</p></div><div class="bv-app"><p>'+ch.map(function(f,i){return '• '+_retoF(f)+(i===ch.length-1?' <b>(chequeo final; un día antes, el viernes, llenas el formulario de cierre del reto)</b>':'');}).join('<br>')+'</p></div><p>Un día antes te aparece un recordatorio en tu agenda. Un chequeo que llega después de las 10:00 a.m. no cuenta como a tiempo, y tu constancia y compromiso suman en tu calificación.</p><p>Después de cada chequeo recibes un <b>feedback breve de tu avance</b>.</p>'+
+    if(p.k==='chequeos'){ Q.push({k:'chequeos',ic:'📊',t:'📊 Tus chequeos del reto',h:'<p>🚀 El <b>'+_retoF(I.inicio)+'</b> arranca oficialmente el reto.</p><p>Tus chequeos son en <b>sábado</b> y se envían <b>antes de las 10:00 a.m.</b> (hora del centro de México). Cada chequeo es: <b>fotos, peso y medidas en Harbiz</b>, y tu <b>video por WhatsApp</b>.</p><div class="bv-app"><b>📸 Protocolo de fotos y video</b><p>Mismo lugar y misma luz (de frente a la luz, sin contraluz), cámara a la altura del pecho a unos 2 metros, misma ropa (top y short), por la mañana en ayunas. 3 fotos: frente, perfil y espalda, relajado(a), brazos a los lados. Video: 15 a 30 segundos girando despacio 360°, igual en cada chequeo. Así tus fotos se pueden comparar de forma justa.</p></div><div class="bv-app"><p>'+ch.map(function(f,i){return '• '+_retoF(f)+(i===ch.length-1?' <b>(chequeo final; un día antes, el viernes, llenas el formulario de cierre del reto)</b>':'');}).join('<br>')+'</p></div><p>Un día antes te aparece un recordatorio en tu agenda. Un chequeo que llega después de las 10:00 a.m. no cuenta como a tiempo, y tu constancia y compromiso suman en tu calificación.</p><p>Después de cada chequeo recibes un <b>feedback breve de tu avance</b>.</p>'+(team?'<div class="bv-nota">🔗 Si alguno de estos chequeos cae cerca de tu chequeo normal de 8 semanas, <b>se combinan en uno solo</b>: ese día haces también tu formulario de chequeo normal y recibes el feedback y el ajuste completo de tu coaching. Te aviso la fecha exacta.</div>':'')+
       _bvChk('rarranque',_BV_TXT.rarranque+'.')+_bvChk('rchq',_BV_TXT.rchq)+_bvChk('rreg',_BV_TXT.rreg+'.')+_bvChk('rhon',_BV_TXT.rhon+'.')}); return; }
     if(p.k==='politicas'){ Q.push({k:'rreglas',ic:'🏆',t:'🏆 Cómo se gana el reto',h:'<div class="bv-app"><b>📏 Una sola clasificación sobre 100, cada quien contra su propio punto de partida</b><p><b>50 composición corporal</b> según tu objetivo (bajar grasa: cintura, % de grasa y peso · ganar músculo: brazos y piernas sin que suba tu cintura).<br><b>20 constancia y compromiso:</b> registro de tus tareas en Harbiz, uso de FitTrack y chequeos a tiempo.<br><b>30 evaluación visual</b> de tus fotos y video.<br>Empate: gana la mejor constancia y después la mejor evaluación visual. Sin chequeo final no se entra al Top 5.</p></div><div class="bv-app"><b>🥇 Premios</b><p>El Top 5 sale por puntos. Del Top 5, el 1er lugar es la mejor transformación: hospedaje en Los Cabos por 4 días y 3 noches + $5,000 MXN. El 2º y el 3er lugar se asignan por puntos: suplementos ArtFit Supplements ($2,000 y $1,500 MXN).</p></div><div class="bv-app"><b>📣 Top 10, Top 5 y ganadores</b><p>Después de cada chequeo publico el Top 10 con nombre completo. El '+_retoF(I.top5Fecha||_RETO_DEF.top5Fecha)+' anuncio el Top 5 y el '+_retoF(I.ganadoresFecha||_RETO_DEF.ganadoresFecha)+', a los ganadores.</p></div>'+_bvChk('rtop',_BV_TXT.rtop+'.')}); return; }
     Q.push(p);
@@ -3033,7 +3037,7 @@ function _retoPantallas(P, apto){
 }
 function retoInit(nip){
   var r=_reto(); var nav=document.getElementById('nav-listas');
-  if(nav) nav.style.display=r?'none':'';
+  if(nav) nav.style.display=(r&&!r.team)?'none':''; // regla 220-team: al Team no se le quita ninguna pestaña
   if(!r){ retoQuitar(); return; }
   Promise.all([db.ref('fittrack_publico/reto/info').once('value').catch(function(){return null;}), db.ref('fittrack_publico/reto/pos/'+nip).once('value').catch(function(){return null;})]).then(function(rr){
     if(currentAlumno!==nip) return;
@@ -3114,6 +3118,41 @@ function retoCerradoMostrar(){
     if(n) n.innerHTML=(ra&&ra.continua&&ra.plan==='alimentacion')?'🍽️ <b>Tu plan de alimentación continúa en Harbiz.</b> Si más adelante quieres sumar entrenamiento, escríbeme por WhatsApp y te reactivo tu acceso.':'💬 <b>No pierdas tu avance:</b> si quieres seguir en el coaching (plan completo, solo entrenamiento o solo alimentación), escríbeme por WhatsApp y te reactivo tu acceso.';
   }catch(e){}
 }
+// ── Regla 220-team: presentación del reto UNA SOLA VEZ para alumnos actuales del Team ──
+// Visto: fittrack_vistos/<nip>/reto/<id>/presentacion = {en, compromisos[]} (+ localStorage ft_reto_pres_<nip>_<id>). Nunca escribe fittrack_data ni la bienvenida.
+function _retoPresK(nip,r){ return 'ft_reto_pres_'+nip+'_'+String((r&&r.id)||'body-art-3'); }
+function retoPresInit(nip){
+  var r=_reto(); if(!r||!r.team) return null;
+  var id=String(r.id||'body-art-3'), lk=_retoPresK(nip,r);
+  var I=_retoInfo||_RETO_DEF, ch=I.chequeos||_RETO_DEF.chequeos; if(_retoDia(_retoHoy())>=ch[ch.length-1]) return null; // desde el chequeo final ya no tiene caso
+  try{ if(localStorage.getItem(lk)) return null; }catch(e){}
+  return db.ref('fittrack_vistos/'+nip+'/reto/'+id+'/presentacion').once('value').then(function(s){
+    if(currentAlumno!==nip) return;
+    if(s&&s.val()){ try{ localStorage.setItem(lk,'1'); }catch(e){} return; }
+    var bv=document.getElementById('bv'); if(bv&&bv.classList.contains('on')) return; // otra pantalla completa abierta: sale en la siguiente entrada
+    retoPresMostrar(nip);
+  }).catch(function(){}); // sin red: no se muestra (no se puede marcar como vista)
+}
+function retoPresMostrar(nip){
+  var apto=false; try{ apto=_gestion().tipo==='integral'; }catch(e){}
+  var fin={k:'fin',ic:'🤝',t:'✅ Mis compromisos del reto',h:'<p>Esto es lo que confirmaste. Al tocar <b>Terminar</b> se lo hago saber a tu coach.</p><ul id="bv-resumen" class="bv-res"></ul>'};
+  _bv={nip:nip, apto:apto, team:true, P:_retoPantallas([{k:'bienv'},{k:'politicas'},{k:'apps'},{k:'chequeos'},fin],apto,true), i:0, ref:false, paso:false, resp:{}, marcas:{}};
+  try{ var g=JSON.parse(localStorage.getItem('ft_rtp_'+nip)||'null'); if(g){ _bv.i=Math.max(0,Math.min(_bv.P.length-1,+g.i||0)); _bv.marcas=g.marcas||{}; } }catch(e){}
+  document.getElementById('bv').classList.add('on'); document.getElementById('bv-nav').style.display='';
+  bvRender();
+}
+function retoPresGuardar(){ try{ localStorage.setItem('ft_rtp_'+_bv.nip, JSON.stringify({i:_bv.i, marcas:_bv.marcas, en:new Date().toISOString()})); }catch(e){} }
+function retoPresTerminar(){
+  var nip=_bv.nip, r=_reto()||{}, id=String(r.id||'body-art-3'), ahora=new Date().toISOString();
+  var rep={en:ahora, compromisos:Object.keys(_BV_TXT).filter(function(k){return _bv.marcas[k];}).map(function(k){return _BV_TXT[k];})};
+  if(FT_PRUEBA) rep.prueba=true;
+  try{ localStorage.setItem(_retoPresK(nip,r),'1'); localStorage.removeItem('ft_rtp_'+nip); }catch(e){}
+  try{ db.ref('fittrack_vistos/'+nip+'/reto/'+id+'/presentacion').set(rep).catch(function(){}); }catch(e){}
+  document.getElementById('bv-t').innerHTML='🚀 ¡Listo!';
+  document.getElementById('bv-prog').style.width='100%';
+  document.getElementById('bv-b').innerHTML='<p style="font-size:16px">Ya conoces cómo funciona el reto. <b>Tu FitTrack sigue igual</b>: arriba verás tu tarjeta del reto con tu lugar y tu próximo chequeo.</p><p>Tus chequeos del reto son en sábado, antes de las 10:00 a.m. ¡A darle con todo!</p><button class="hr-btn" style="margin-top:18px" onclick="bvCerrar()">Ir a mi FitTrack →</button>';
+  document.getElementById('bv-nav').style.display='none';
+}
 function retoExcluirCargar(){ return db.ref('fittrack_publico/reto/excluir').once('value').then(function(s){ _retoExcl=s.val()||{}; }).catch(function(){}); }
 
 var _ing={};
@@ -3121,7 +3160,7 @@ function _gestion(){
   var a=(typeof ALL_ALUMNOS!=='undefined'&&currentAlumno&&ALL_ALUMNOS[currentAlumno])||{};
   var f=null; try{ var m=location.search.match(/(?:bienvenida|gestion)=(apto|no_apto|liberado)/); if(FT_PRUEBA&&m) f=m[1]; }catch(e){}
   if(f) return {tipo:f==='apto'?'integral':'autogestion', motivo:f==='liberado'?'liberado':'test'};
-  var _rt=_reto(); if(_rt) return {tipo:_rt.adaptacion?'integral':'autogestion', motivo:'reto'}; // regla 220
+  var _rt=_reto(); if(_rt&&!_rt.team) return {tipo:_rt.adaptacion?'integral':'autogestion', motivo:'reto'}; // regla 220 (el Team conserva su gestión: regla 220-team)
   if(_ing.gestion) return {tipo:_ing.gestion, motivo:_ing.motivo||'test'};
   if(a.status==='liberado'||a.status==='autogest') return {tipo:'autogestion', motivo:'liberado'};
   return {tipo:'integral', motivo:'test'};
@@ -3140,9 +3179,10 @@ function bvInit(nip){
     try{ if(retoAccesoCerrado()){ retoCerradoMostrar(); return; } }catch(e){}
     try{ if(esNoAplicaAlumno()){ renderExercises(currentDay||'lunes'); renderAprobPorDia(); } }catch(e){} // autogestión por test de ingreso
     if(ing.pausa===true || /pausa=1/.test(location.search)&&FT_PRUEBA){ pausaMostrar(); return; }
-    if(ing.bienvenida&&ing.bienvenida.completada&&!forzar) return;
+    var _rtT=null; try{ _rtT=_reto(); }catch(e){} var _team=!!(_rtT&&_rtT.team&&!forzar); // regla 220-team
+    if(ing.bienvenida&&ing.bienvenida.completada&&!forzar){ if(_team) retoPresInit(nip); return; }
     var nuevo = forzar || ing.pendiente===true || (BIENV_DESDE.indexOf('__')<0 && String(a.fechaInicio||'')>=BIENV_DESDE);
-    if(!nuevo) return;
+    if(!nuevo){ if(_team) retoPresInit(nip); return; }
     bvMostrar(nip, _gestion().tipo==='integral');
   }).catch(function(){});
 }
@@ -3176,7 +3216,7 @@ function bvVal(){
 }
 var _bvT=null;
 function bvGuardarAvance(){
-  if(!_bv||_bv.terminado) return; var g={i:_bv.i, ref:_bv.ref, paso:_bv.paso, resp:_bv.resp, marcas:_bv.marcas, en:new Date().toISOString()};
+  if(!_bv||_bv.terminado) return; if(_bv.team) return retoPresGuardar(); var g={i:_bv.i, ref:_bv.ref, paso:_bv.paso, resp:_bv.resp, marcas:_bv.marcas, en:new Date().toISOString()};
   try{ localStorage.setItem('ft_bv_'+_bv.nip, JSON.stringify(g)); }catch(e){}
   clearTimeout(_bvT); var nip=_bv.nip; _bvT=setTimeout(function(){ try{ db.ref('fittrack_ingreso/'+nip+'/bienvenidaProgreso').set(g); }catch(e){} }, 600);
 }
@@ -3208,6 +3248,7 @@ function bvResumen(){
 }
 function bvTerminar(){
   if(_bv.terminado) return; _bv.terminado=true;
+  if(_bv.team) return retoPresTerminar(); // regla 220-team: no toca fittrack_ingreso/<nip>/bienvenida
   var ahora=new Date().toISOString();
   var rep={completada:true, en:ahora, aptitud:_bv.apto?'apto':'no_apto', compromisos:Object.keys(_BV_TXT).filter(function(k){return _bv.marcas[k];}).map(function(k){return _BV_TXT[k];}), pasoAPaso:_bv.paso, politicasAceptadas:_bv.marcas.politicas?ahora:null};
   if(FT_PRUEBA) rep.prueba=true;
