@@ -3064,11 +3064,11 @@ function retoCierre(nip){
   retoModal('🏁 ¡Terminaste el Reto Body Art 3!','<p>Gracias por tu constancia y tu compromiso durante estas 8 semanas. Lo que lograste es tuyo y se nota.</p><p><b>No pierdas tu avance.</b> Si quieres seguir conmigo en el coaching (plan completo, solo entrenamiento o solo alimentación), dímelo en el formulario <b>"Cuéntame qué te pareció el reto"</b> o por WhatsApp y te paso los detalles.</p><div class="bv-firma">— Coach Noé García Ibarra<small>Haz arte con tu cuerpo</small></div>', "try{localStorage.setItem('ft_reto_cierre_"+nip+"','1')}catch(e){};");
 }
 function retoChqDetalle(it){
-  var f=function(x,u){ return (x>0?'+':x<0?'−':'')+Math.abs(Math.round(x*10)/10)+' '+u; };
+  var f=function(x,u){ return (x>0?'+':x<0?'−':'')+Math.abs(Math.round(x*10)/10)+' '+(u==='%'?'puntos':u); };
   var col=function(m,x){ if(x==null||Math.abs(x)<0.05) return 'var(--text3)'; var ok=m.bueno==='baja'?x<0:m.bueno==='sube'?x>0:Math.abs(x)<=1; return ok?'#1A7F4B':'#B45309'; };
   var tl='';
   (it.marcadores||[]).forEach(function(m){
-    tl+='<div class="rt-t"><small>'+_esc(m.k.replace(' (suma)',''))+'</small><b>'+_esc(m.v)+' '+_esc(m.u)+'</b>'+
+    tl+='<div class="rt-t"><small>'+_esc(m.k==='% grasa'?'% de grasa (estimado)':m.k.replace(' (suma)',''))+'</small><b>'+_esc(m.v)+(m.u==='%'?'%':' '+_esc(m.u))+'</b>'+
       (m.tot!=null?'<small style="color:'+col(m,m.tot)+';font-weight:700">'+f(m.tot,m.u)+' desde el inicio</small>':'')+
       (m.ant!=null?'<small style="color:'+col(m,m.ant)+'">'+f(m.ant,m.u)+' en 2 semanas</small>':'')+'</div>';
   });
