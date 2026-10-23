@@ -712,6 +712,7 @@ body{display:flex;justify-content:center;height:100%}
           <div id="sug-cal"></div>
           <div id="sug-list" style="margin-bottom:18px"></div>
           <div id="r177-lista" style="display:none;margin-bottom:6px"></div>
+          <div id="r235-fija" style="display:none;margin-bottom:12px"></div>
           <details class="notas-acc" open><summary>🔔 Notas de tu coach</summary>
           <div id="estado-dinamico" style="margin-bottom:14px"></div>
           <div id="notas-chart-card" style="display:none"></div>
@@ -1508,7 +1509,7 @@ function renderNotas(notas){
   renderDiagnostico(notas);
   renderNotasChart(notas);
   var el = document.getElementById('notas-list'); if(!el) return;
-  if(!notas||!notas.length){el.innerHTML='<p style="color:var(--text3);font-size:13px;text-align:center;padding:16px 0">Sin notas registradas</p>';return;}
+  if(!notas||!notas.length){el.innerHTML='<p style="color:var(--text3);font-size:13px;text-align:center;padding:16px 0">Sin notas registradas</p>';try{ r235Pintar(); }catch(e){}return;}
   var html='';
   var hasNew=false;
   notas.forEach(function(n){
@@ -1523,6 +1524,7 @@ function renderNotas(notas){
     '</div>';
   });
   el.innerHTML=html;
+  try{ r235Pintar(); }catch(e){} // regla 235
   var dot=document.getElementById('notif-dot');
   if(dot) dot.style.display=hasNew?'block':'none';
 }
@@ -1804,6 +1806,7 @@ function doLogin(){
   navTo('rutina');
   try{ ftInit(nip); }catch(e){}
   try{ r174Entrada(nip); }catch(e){} // regla 174: registro de acceso + aviso de plan de acción
+  try{ r235Cargar(nip); }catch(e){} // regla 235: plan de acción no presentado fijo en Notas
   // Check for celebration after renders settle
   setTimeout(function(){ checkCelebrations(a, calcAprobGeneral()); }, 1000);
   // Show notification popup if there are new or positive notes
@@ -3626,6 +3629,43 @@ function tiendaAbrir(origen){document.getElementById('tienda-ov').classList.add(
 function tiendaCerrar(){document.getElementById('tienda-ov').classList.remove('on');}
 function tiendaVer(){var c=document.getElementById('tienda-code'),on=c.textContent==='ARTFIT10';if(!on)_r185Log('verCodigo');c.textContent=on?'••••••••':'ARTFIT10';document.getElementById('tienda-copy').style.display=on?'none':'';document.getElementById('tienda-hint').textContent=on?'Toca el ojito para ver tu código':'Tu código de descuento';}
 function tiendaCopiar(){_r185Log('copio');try{navigator.clipboard.writeText('ARTFIT10');document.getElementById('tienda-hint').textContent='¡Código copiado!';}catch(e){}}
+</script>
+
+<script>
+// ══ REGLA 235 (Noé · 23 oct 2026) ═══════════════════════════════════════════
+// Plan de acción NO presentado: nota FIJA arriba de "Notas de tu coach" (último chequeo)
+// y registro permanente en la lista de notas (todos los chequeos no presentados).
+// Lee (solo lectura) fittrack_chequeos/planAccion/<nip> = {pendiente, desde, hasta, chequeo, estado, noPresentados:{<chequeo>:{desde,hasta}}}
+var _r235 = {nip:null, lista:[]};
+function _r235Fecha(f){ try{ var d=new Date(String(f).slice(0,10)+'T12:00:00'); return d.toLocaleDateString('es-MX',{day:'numeric',month:'short'}); }catch(e){ return f; } }
+function r235Cargar(nip){
+  _r235 = {nip:nip, lista:[]};
+  try{
+    db.ref('fittrack_chequeos/planAccion/'+nip).once('value').then(function(s){
+      var p=s&&s.val(); if(!p || currentAlumno!==nip) return;
+      var L=[], vistos={};
+      var np=p.noPresentados||{};
+      Object.keys(np).forEach(function(k){ var x=np[k]||{}; vistos[k]=1; L.push({chequeo:k, desde:x.desde, hasta:x.hasta}); });
+      var hoy=_r174HoyMx(), hasta=String(p.hasta||'').slice(0,10);
+      var vencido = (p.estado==='no_presentado') || (p.pendiente===true && /^\d{4}-\d{2}-\d{2}$/.test(hasta) && hoy>hasta);
+      if(vencido && p.chequeo!=null && !vistos[p.chequeo]) L.push({chequeo:String(p.chequeo), desde:p.desde, hasta:p.hasta});
+      L.sort(function(a,b){ return String(b.hasta||'').localeCompare(String(a.hasta||'')); });
+      _r235.lista=L; r235Pintar();
+    }).catch(function(){});
+  }catch(e){}
+}
+function _r235Txt(x){ return '📋 <b>No presentaste tu plan de acción del chequeo #'+x.chequeo+'.</b> Te lo pedí en el feedback'+(x.desde?' del '+_r235Fecha(x.desde):'')+' y el plazo venció el '+_r235Fecha(x.hasta)+'. Se toma en cuenta en tu siguiente chequeo (rendición de cuentas).'; }
+function r235Pintar(){
+  var fija=document.getElementById('r235-fija'); if(!fija) return;
+  if(!_r235.lista.length || _r235.nip!==currentAlumno){ fija.style.display='none'; fija.innerHTML=''; return; }
+  fija.innerHTML='<div class="warn-msg-item new" style="border-left:4px solid #d9534f"><div class="warn-msg-text">📌 '+_r235Txt(_r235.lista[0])+'</div><div class="warn-msg-meta">Nota fija de tu coach</div></div>';
+  fija.style.display='block';
+  var el=document.getElementById('notas-list'); if(!el) return;
+  var vacio=el.querySelector('p'); if(vacio && !el.querySelector('.warn-msg-item')) el.innerHTML='';
+  Array.prototype.slice.call(el.querySelectorAll('.r235-item')).forEach(function(n){ n.remove(); });
+  var html=_r235.lista.map(function(x){ return '<div class="warn-msg-item seen r235-item"><div class="warn-msg-text">'+_r235Txt(x)+'</div><div class="warn-msg-meta">⏰ <span class="sem-tag">Chequeo #'+x.chequeo+'</span> · Registrada</div></div>'; }).join('');
+  el.insertAdjacentHTML('afterbegin', html);
+}
 </script>
 </body>
 </html>
