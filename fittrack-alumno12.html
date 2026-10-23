@@ -558,6 +558,7 @@ body{display:flex;justify-content:center;height:100%}
 .ex-item.ex-ref .ex-name-txt{color:var(--text2);font-weight:500}
 .ex-ref-tag{font-size:11px;color:var(--text3);margin-top:2px}
 /* regla 220 reto */
+.rt-tg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.rt-t{background:var(--teal-light,#e6f6f8);border-radius:12px;padding:10px;display:flex;flex-direction:column}.rt-t small{font-size:11px;color:var(--text3)}.rt-t b{font-size:20px;color:var(--teal-dark,#0A5560)}
 .rt-card{margin:10px 16px 0;padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,#0A2126,#138C9C);color:#fff;box-shadow:0 6px 18px rgba(10,33,38,.25)}
 .rt-h{font-weight:800;font-size:15px;letter-spacing:.3px}.rt-av{margin-top:8px;background:rgba(255,255,255,.14);border-radius:10px;padding:8px 10px;font-size:13px}
 .rt-g{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.rt-g>div{background:rgba(255,255,255,.1);border-radius:12px;padding:8px 10px;display:flex;flex-direction:column}
@@ -2658,6 +2659,7 @@ function chqTab(btn,cual){ var box=btn.closest('.chq-in'); box.querySelectorAll(
 function _lista(t,arr,ic){ arr=_vals(arr); return arr.length?'<div class="chq-blk"><div class="chq-blk-t">'+ic+' '+t+'</div><ul>'+arr.map(function(x){return '<li>'+_esc(x)+'</li>';}).join('')+'</ul></div>':''; }
 function _chqId(it){ return Object.keys(_chq.items).filter(function(k){return _chq.items[k]===it;})[0]; }
 function _chqDetalle(it){
+  if(it.reto) return retoChqDetalle(it); // regla 220
   var m=_metaDe(it);
   var res='<div class="chq-sub" style="margin-top:0">Tus resultados</div>'+_objetivo(it)+
       '<div class="chq-sub">Cumplimiento</div><div class="chq-tiles'+(it.registro!=null?' c4':'')+'">'+_pctChip('Pesas',it.pesas,m,it.pesasDet)+_pctChip('Cardio',it.cardio,m,it.cardioDet)+_pctChip('Dieta',it.dieta,m,it.dietaDet)+_pctChip('Registro a tiempo',it.registro,m,it.confiabilidad?'confiabilidad '+it.confiabilidad:'')+'</div>'+_faltas(it)+_conducta(it)+
@@ -3060,6 +3062,14 @@ function retoCierre(nip){
   var I=_retoInfo||_RETO_DEF, hoy=_retoDia(_retoHoy()); if(hoy<I.fin) return;
   try{ if(localStorage.getItem('ft_reto_cierre_'+nip)) return; }catch(e){}
   retoModal('🏁 ¡Terminaste el Reto Body Art 3!','<p>Gracias por tu constancia y tu compromiso durante estas 8 semanas. Lo que lograste es tuyo y se nota.</p><p><b>No pierdas tu avance.</b> Si quieres seguir conmigo en el coaching (plan completo, solo entrenamiento o solo alimentación), dímelo en el formulario <b>"Cuéntame qué te pareció el reto"</b> o por WhatsApp y te paso los detalles.</p><div class="bv-firma">— Coach Noé García Ibarra<small>Haz arte con tu cuerpo</small></div>', "try{localStorage.setItem('ft_reto_cierre_"+nip+"','1')}catch(e){};");
+}
+function retoChqDetalle(it){
+  var d=it.datos||{}, tl='';
+  if(d.peso!=null) tl+='<div class="rt-t"><small>Peso</small><b>'+_esc(d.peso)+' kg</b>'+(d.dPeso!=null?'<small>'+(d.dPeso>0?'+':'')+_esc(d.dPeso)+' kg desde tu punto de partida</small>':'')+'</div>';
+  if(d.cintura!=null) tl+='<div class="rt-t"><small>Cintura</small><b>'+_esc(d.cintura)+' cm</b>'+(d.dCintura!=null?'<small>'+(d.dCintura>0?'+':'')+_esc(d.dCintura)+' cm desde tu punto de partida</small>':'')+'</div>';
+  if(it.lugar) tl+='<div class="rt-t"><small>Tu lugar en el reto</small><b>'+_esc(it.lugar)+'º</b></div>';
+  return '<div class="chq-in"><div class="chq-fb"><div class="chq-sub" style="margin-top:0">🏆 Reto Body Art 3</div>'+(tl?'<div class="rt-tg">'+tl+'</div>':'')+
+    (it.mensaje?'<div class="chq-blk" style="margin-top:16px"><div class="chq-blk-t">💬 Mensaje de tu coach</div><div class="chq-msg">'+_esc(it.mensaje)+'</div></div>':'')+'</div></div>';
 }
 function retoExcluirCargar(){ return db.ref('fittrack_publico/reto/excluir').once('value').then(function(s){ _retoExcl=s.val()||{}; }).catch(function(){}); }
 
