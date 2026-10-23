@@ -713,6 +713,7 @@ body{display:flex;justify-content:center;height:100%}
           <div id="sug-list" style="margin-bottom:18px"></div>
           <div id="r177-lista" style="display:none;margin-bottom:6px"></div>
           <div id="r235-fija" style="display:none;margin-bottom:12px"></div>
+          <div id="r236-fija" style="display:none;margin-bottom:12px"></div>
           <details class="notas-acc" open><summary>🔔 Notas de tu coach</summary>
           <div id="estado-dinamico" style="margin-bottom:14px"></div>
           <div id="notas-chart-card" style="display:none"></div>
@@ -1509,7 +1510,7 @@ function renderNotas(notas){
   renderDiagnostico(notas);
   renderNotasChart(notas);
   var el = document.getElementById('notas-list'); if(!el) return;
-  if(!notas||!notas.length){el.innerHTML='<p style="color:var(--text3);font-size:13px;text-align:center;padding:16px 0">Sin notas registradas</p>';try{ r235Pintar(); }catch(e){}return;}
+  if(!notas||!notas.length){el.innerHTML='<p style="color:var(--text3);font-size:13px;text-align:center;padding:16px 0">Sin notas registradas</p>';try{ r235Pintar(); }catch(e){}try{ r236Pintar(); }catch(e){}return;}
   var html='';
   var hasNew=false;
   notas.forEach(function(n){
@@ -1525,6 +1526,7 @@ function renderNotas(notas){
   });
   el.innerHTML=html;
   try{ r235Pintar(); }catch(e){} // regla 235
+  try{ r236Pintar(); }catch(e){} // regla 236
   var dot=document.getElementById('notif-dot');
   if(dot) dot.style.display=hasNew?'block':'none';
 }
@@ -1807,6 +1809,7 @@ function doLogin(){
   try{ ftInit(nip); }catch(e){}
   try{ r174Entrada(nip); }catch(e){} // regla 174: registro de acceso + aviso de plan de acción
   try{ r235Cargar(nip); }catch(e){} // regla 235: plan de acción no presentado fijo en Notas
+  try{ r236Cargar(nip); }catch(e){} // regla 236: seguimiento de la adaptación (2 semanas sin videos)
   // Check for celebration after renders settle
   setTimeout(function(){ checkCelebrations(a, calcAprobGeneral()); }, 1000);
   // Show notification popup if there are new or positive notes
@@ -3664,6 +3667,44 @@ function r235Pintar(){
   var vacio=el.querySelector('p'); if(vacio && !el.querySelector('.warn-msg-item')) el.innerHTML='';
   Array.prototype.slice.call(el.querySelectorAll('.r235-item')).forEach(function(n){ n.remove(); });
   var html=_r235.lista.map(function(x){ return '<div class="warn-msg-item seen r235-item"><div class="warn-msg-text">'+_r235Txt(x)+'</div><div class="warn-msg-meta">⏰ <span class="sem-tag">Chequeo #'+x.chequeo+'</span> · Registrada</div></div>'; }).join('');
+  el.insertAdjacentHTML('afterbegin', html);
+}
+</script>
+
+<script>
+// ══ REGLA 236 (Noé · 23 oct 2026) ═══════════════════════════════════════════
+// Seguimiento de la adaptación del entrenamiento: si el alumno está "En proceso de adaptación" (status 'activo')
+// y lleva más de 14 días sin enviar videos (ni recibir feedback), Claude escribe
+// fittrack_chequeos/seguimiento/<nip> = {estado:'sin_reporte', ultimoReporte, dias, desde, historial:{<desde>:{desde,ultimoReporte,retomo}}}.
+// Aquí (solo lectura): nota FIJA arriba de las notas mientras siga sin reportarse; se quita sola cuando vuelve a mandar videos
+// (estado 'al_dia'). Si ya está liberado (o graduado) no se le pide. El historial queda en la lista de notas.
+var _r236 = {nip:null, s:null};
+function r236Cargar(nip){
+  _r236 = {nip:nip, s:null};
+  try{
+    db.ref('fittrack_chequeos/seguimiento/'+nip).once('value').then(function(s){
+      if(currentAlumno!==nip) return; _r236.s = s&&s.val(); r236Pintar();
+    }).catch(function(){});
+  }catch(e){}
+}
+function r236Pintar(){
+  var fija=document.getElementById('r236-fija'); if(!fija) return;
+  var S=_r236.s, a=(typeof ALL_ALUMNOS!=='undefined' && ALL_ALUMNOS[currentAlumno])||{};
+  var enAdapt = a.status==='activo';
+  var el=document.getElementById('notas-list');
+  if(el) Array.prototype.slice.call(el.querySelectorAll('.r236-item')).forEach(function(n){ n.remove(); });
+  if(!S || _r236.nip!==currentAlumno){ fija.style.display='none'; fija.innerHTML=''; return; }
+  if(S.estado==='sin_reporte' && enAdapt){
+    var dias = +S.dias || 15;
+    fija.innerHTML='<div class="warn-msg-item new" style="border-left:4px solid #d9534f"><div class="warn-msg-text">📌 🎥 <b>Llevas '+dias+' días sin enviarme los videos de tu entrenamiento</b>'+(S.ultimoReporte?' (tu último envío fue el '+_r235Fecha(S.ultimoReporte)+')':'')+', sin justificación. Mándamelos por WhatsApp para retomar el seguimiento de la adaptación de tu entrenamiento. Si no te reportas, pasas a autogestión y pierdes la revisión de tus videos y la adaptación de tu entrenamiento.</div><div class="warn-msg-meta">Nota fija de tu coach</div></div>';
+    fija.style.display='block';
+  } else { fija.style.display='none'; fija.innerHTML=''; }
+  if(!el) return;
+  var H=S.historial||{}, ks=Object.keys(H).sort().reverse();
+  if(!ks.length) return;
+  var vacio=el.querySelector('p'); if(vacio && !el.querySelector('.warn-msg-item')) el.innerHTML='';
+  var html=ks.map(function(k){ var x=H[k]||{};
+    return '<div class="warn-msg-item seen r236-item"><div class="warn-msg-text">🎥 Perdiste el seguimiento de tu adaptación: pasaste más de 2 semanas sin enviar videos'+(x.ultimoReporte?' (último envío '+_r235Fecha(x.ultimoReporte)+')':'')+'.'+(x.retomo?' Lo retomaste el '+_r235Fecha(x.retomo)+'.':'')+'</div><div class="warn-msg-meta">⏰ <span class="sem-tag">'+_r235Fecha(x.desde||k)+'</span> · Registrada</div></div>'; }).join('');
   el.insertAdjacentHTML('afterbegin', html);
 }
 </script>
