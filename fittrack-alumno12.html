@@ -676,6 +676,7 @@ body{display:flex;justify-content:center;height:100%}
 
       <!-- ② RUTINA -->
       <div class="screen active" id="sc-rutina">
+        <div id="r240-cd" style="display:none;margin-top:14px"></div>
         <div id="no-aplica-banner" class="na-banner" style="display:none"></div>
         <div id="rev-parcial-info" class="rev-info" style="display:none"></div>
         <div id="rend-semana" style="display:none;margin-top:16px"></div>
@@ -1810,6 +1811,7 @@ function doLogin(){
   try{ r174Entrada(nip); }catch(e){} // regla 174: registro de acceso + aviso de plan de acción
   try{ r235Cargar(nip); }catch(e){} // regla 235: plan de acción no presentado fijo en Notas
   try{ r236Cargar(nip); }catch(e){} // regla 236: seguimiento de la adaptación (2 semanas sin videos)
+  try{ r240Cargar(nip); }catch(e){} // regla 240: cuenta regresiva del chequeo
   // Check for celebration after renders settle
   setTimeout(function(){ checkCelebrations(a, calcAprobGeneral()); }, 1000);
   // Show notification popup if there are new or positive notes
@@ -3706,6 +3708,56 @@ function r236Pintar(){
   var html=ks.map(function(k){ var x=H[k]||{};
     return '<div class="warn-msg-item seen r236-item"><div class="warn-msg-text">🎥 Perdiste el seguimiento de tu adaptación: pasaste más de 2 semanas sin enviar videos'+(x.ultimoReporte?' (último envío '+_r235Fecha(x.ultimoReporte)+')':'')+'.'+(x.retomo?' Lo retomaste el '+_r235Fecha(x.retomo)+'.':'')+'</div><div class="warn-msg-meta">⏰ <span class="sem-tag">'+_r235Fecha(x.desde||k)+'</span> · Registrada</div></div>'; }).join('');
   el.insertAdjacentHTML('afterbegin', html);
+}
+// ══ REGLA 240 (Noé · 24 oct 2026) ═══════════════════════════════════════════
+// Cuenta regresiva del chequeo en la pantalla inicial (solo a quien le toca chequeo).
+// Claude escribe fittrack_chequeos/proximo/<nip> = {fecha:'AAAA-MM-DD', estado:'pendiente'|'reportado'|'cerrado', sesion, reportadoEn}.
+// Hora de referencia: 10:00 a.m. de México (UTC-6). Desde 2 días antes: "Ve preparándote"; últimas 24 h: horas/min/seg;
+// a las 10:00: verde si ya se reportó (se quita cuando le llega su feedback → estado 'cerrado'); rojo "vencido" si no.
+var _r240={nip:null,p:null,t:null,ref:null};
+var _R240_DIAS=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+var _R240_MES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+function r240Cargar(nip){
+  try{ if(_r240.ref) _r240.ref.off(); }catch(e){}
+  if(_r240.t){ clearInterval(_r240.t); _r240.t=null; }
+  _r240={nip:nip,p:null,t:null,ref:null};
+  try{
+    var ref=db.ref('fittrack_chequeos/proximo/'+nip); _r240.ref=ref;
+    ref.on('value',function(s){ if(currentAlumno!==nip) return; _r240.p=s&&s.val(); r240Pintar();
+      if(!_r240.t) _r240.t=setInterval(r240Pintar,1000); });
+  }catch(e){}
+}
+function _r240hoyMx(ms){ var d=new Date(ms-6*3600000); return Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()); }
+function r240Pintar(){
+  var box=document.getElementById('r240-cd'); if(!box) return;
+  var P=_r240.p, a=(typeof ALL_ALUMNOS!=='undefined'&&ALL_ALUMNOS[currentAlumno])||{};
+  var off=function(){ box.style.display='none'; box.innerHTML=''; };
+  if(!P||!P.fecha||_r240.nip!==currentAlumno||P.estado==='cerrado'||a.estado==='archivado'){ off(); return; }
+  var m=String(P.fecha).match(/^(\d{4})-(\d{2})-(\d{2})$/); if(!m){ off(); return; }
+  var y=+m[1], mo=+m[2]-1, d=+m[3];
+  var meta=Date.UTC(y,mo,d,16,0,0), inicio=Date.UTC(y,mo,d-2,6,0,0), now=Date.now();
+  if(now<inicio){ off(); return; }
+  var dia=new Date(Date.UTC(y,mo,d)), ftxt=_R240_DIAS[dia.getUTCDay()]+' '+d+' de '+_R240_MES[mo]+' · 10:00 a.m. (hora CDMX)';
+  var card=function(bg,t,big,f,tip){ return '<div style="border-radius:14px;padding:14px 14px 12px;color:#fff;background:'+bg+';box-shadow:0 2px 16px rgba(10,143,168,.2)"><div style="font-size:12px;font-weight:600;opacity:.92">'+t+'</div>'+big+'<div style="font-size:12px;opacity:.95">'+f+'</div><div style="margin-top:8px;font-size:12px;background:rgba(255,255,255,.16);border-radius:8px;padding:6px 8px">'+tip+'</div></div>'; };
+  var bigT=function(x){ return '<div style="font-size:24px;font-weight:800;margin:6px 0 2px;line-height:1.15">'+x+'</div>'; };
+  var html;
+  if(now<meta){
+    var seg=Math.floor((meta-now)/1000);
+    if(seg>86400){
+      var n=Math.round((Date.UTC(y,mo,d)-_r240hoyMx(now))/86400000); if(n<1) n=1;
+      html=card('linear-gradient(135deg,#0A8FA8,#14B8D4)','📋 Tu próximo chequeo','<div style="font-size:32px;font-weight:800;margin:6px 0 2px">'+(n===1?'Falta 1 día':'Faltan '+n+' días')+'</div>',ftxt,'Ve preparándote.');
+    } else {
+      var pp=function(v){ return (v<10?'0':'')+v; }, u=function(v,l){ return '<div style="background:rgba(255,255,255,.18);border-radius:10px;padding:6px 0;flex:1;text-align:center"><b style="display:block;font-size:24px;font-variant-numeric:tabular-nums;line-height:1.1">'+pp(v)+'</b><span style="font-size:10px;opacity:.9">'+l+'</span></div>'; };
+      var esHoy=_r240hoyMx(now)===Date.UTC(y,mo,d);
+      html=card('linear-gradient(135deg,#C46F00,#E8920A)','⏳ Tu chequeo es '+(esHoy?'hoy':'mañana'),'<div style="display:flex;gap:8px;margin:8px 0 6px">'+u(Math.floor(seg/3600),'horas')+u(Math.floor(seg%3600/60),'min')+u(seg%60,'seg')+'</div>',ftxt,'Ya puedes ir adelantando tu chequeo: fotos, peso y medidas en ayunas, y formulario de chequeo. Si no te aparecen tus tareas de chequeo, coméntale a tu coach para que te las reprograme el día de hoy.');
+    }
+  } else if(P.estado==='reportado'){
+    html=card('linear-gradient(135deg,#1A7F4B,#25a866)','✅ ¡Hoy es tu chequeo!',bigT('Es hora de tu chequeo'),ftxt,'Cuando tu coach te envíe tu feedback de chequeo, este aviso se quita solo.');
+  } else {
+    html=card('linear-gradient(135deg,#A8231A,#D93025)','⚠️ Chequeo vencido',bigT('No se recibió tu chequeo'),'Era el '+ftxt.charAt(0).toLowerCase()+ftxt.slice(1),'Tu coach no recibió tu chequeo a tiempo. Comunícate con él lo antes posible.');
+  }
+  if(box.innerHTML!==html) box.innerHTML=html;
+  box.style.display='block';
 }
 </script>
 </body>
