@@ -115,6 +115,7 @@ body{display:flex;justify-content:center;height:100%}
 .cal-todas{display:block;margin:8px auto 0;border:none;background:none;color:var(--teal-dark);font-weight:700;font-family:inherit;font-size:12.5px;cursor:pointer}
 .notas-acc>summary{cursor:pointer;font-size:15px;font-weight:700;color:var(--text);padding:10px 2px;list-style:none}.notas-acc>summary::-webkit-details-marker{display:none}
 .chq-tabs{display:flex;gap:6px;margin:4px 0 10px}.chq-tab{flex:1;border:1px solid var(--teal-light);background:var(--surface);color:var(--teal-dark);font-family:inherit;font-weight:700;font-size:12.5px;padding:9px 6px;border-radius:10px;cursor:pointer}.chq-tab.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+.uft{border:1px solid var(--border2);border-left:4px solid var(--uc);border-radius:12px;padding:12px;margin:4px 0 6px;background:var(--surface,#fff)}.uft-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}.uft-h i{width:11px;height:11px;border-radius:50%;background:var(--uc);display:inline-block;flex:none}.uft-h b{font-size:14.5px;color:var(--text)}.uft-h span{font-size:12px;color:var(--text3)}.uft-s{display:grid;grid-template-columns:repeat(28,1fr);gap:2px}.uft-s i{aspect-ratio:1;border-radius:3px;background:var(--surface2,#e9eef1)}.uft-s i.on{background:var(--green)}.uft-s i.na{background:transparent;border:1px dashed var(--border2)}.uft-s i.hoy{outline:2px solid var(--text2);outline-offset:1px}.uft-l{display:flex;justify-content:space-between;font-size:10.5px;color:var(--text3);margin:3px 0 8px}.uft-n{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--text2)}.uft-n b{color:var(--text)}.uft-a{display:inline-block;padding:1px 8px;border-radius:10px;font-weight:700}.uft-x{font-size:11.5px;color:var(--text3);margin-top:8px;line-height:1.45}
 .rp-sec{border-top:1px solid var(--border2);padding:12px 0 4px}.rp-t{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:8px}
 .rp-bar{display:grid;grid-template-columns:118px 1fr 38px;align-items:center;gap:8px;font-size:12px;color:var(--text2);margin:5px 0}.rp-bar div{height:8px;background:var(--surface2);border-radius:5px;overflow:hidden}.rp-bar i{display:block;height:100%;border-radius:5px}.rp-bar b{text-align:right;color:var(--text)}
 .rp-ul{padding-left:18px;font-size:12.5px;color:var(--text2);line-height:1.5}.rp-prev{font-size:10.5px;font-weight:700;letter-spacing:.5px;color:#26307A;background:#E3E8FF;border-radius:8px;padding:5px 8px;margin-bottom:8px;text-align:center}
@@ -2633,7 +2634,27 @@ function _desglose(dg){
 }
 var _MET={ef:'Efectividad',es:'Nivel de esfuerzo',in:'Intensidad',fu:'Fuerza',re:'Resistencia',rm:'Rango de movimiento',ca:'Cadencia',tc:'Técnica',ud:'Umbral de dolor'};
 function _bar(lbl,v,c){ return '<div class="rp-bar"><span>'+_esc(lbl)+'</span><div><i style="width:'+Math.max(0,Math.min(100,v))+'%;background:'+c+'"></i></div><b>'+Math.round(v)+'%</b></div>'; }
-function _reporteHTML(r){
+// Regla 264 (24 oct): el alumno ve en su reporte su uso y aprovechamiento de FitTrack, como la tarjeta "Uso de FitTrack" del panel del coach.
+function _usoFT(u){
+  if(!u||!u.dias) return '';
+  var C={verde:['var(--green)','var(--green-light)'],amarillo:['var(--amber)','var(--amber-light)'],rojo:['var(--red)','var(--red-light)']};
+  var ac=C[u.acceso]||C.rojo, sc=C[u.semaforo]||ac;
+  var MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  var fd=function(k){ var p=k.split('-'); return (+p[2])+' '+MES[+p[1]-1]+' '+p[0]; };
+  var tit = !u.ultimo ? (u.inicioRegistro ? 'Sin entradas registradas desde el '+fd(u.inicioRegistro) : 'Sin entradas registradas') : u.acceso==='verde' ? 'La usas con constancia' : u.acceso==='amarillo' ? 'Uso irregular' : 'Casi no la estás usando';
+  var ult='';
+  if(u.ultimo){ var n=u.diasSin; ult='Último acceso a FitTrack: '+(n===0?'hoy':n===1?'ayer':'hace '+n+' días'); }
+  var ks=Object.keys(u.dias).sort(), st='';
+  ks.forEach(function(k,i){ var v=+u.dias[k]||0, na=u.inicioRegistro&&k<u.inicioRegistro; st+='<i class="'+(na?'na':v?'on':'')+(i===ks.length-1?' hoy':'')+'" title="'+fd(k)+(na?' · aún no se registraba':v?' · '+v+(v===1?' entrada':' entradas'):' · sin entrar')+'"></i>'; });
+  var en28=ks.filter(function(k){return +u.dias[k];}).length, pr=u.progresiones;
+  var nums='<span><b>'+(u.diasPorSemana!=null?u.diasPorSemana:0)+'</b> días por semana</span><span><b>'+en28+'</b> de 28 días</span><span><b>'+(u.veces||0)+'</b> entradas en total</span>'+
+    (pr&&pr.sugeridas?'<span><b>'+pr.atendidas+'/'+pr.sugeridas+'</b> progresiones aplicadas ('+pr.pct+'%)</span>':'')+
+    (u.aprovechamiento?'<span>Aprovechamiento: <span class="uft-a" style="background:'+sc[1]+';color:'+sc[0]+'">'+_esc(u.aprovechamiento)+'</span></span>':'');
+  var x='El aprovechamiento combina qué tan seguido entras con cuántas de las progresiones que te sugerimos aplicaste. Entrar 2 o más días por semana y aplicar tus progresiones te lleva a <b>Alto</b>.';
+  if(u.inicioRegistro && ks[0]<u.inicioRegistro) x+=' El registro de tus entradas empezó el '+fd(u.inicioRegistro)+' (los cuadros punteados son días sin registro).';
+  return '<div class="uft" style="--uc:'+ac[0]+'"><div class="uft-h"><i></i><b>'+tit+'</b>'+(ult?'<span>'+ult+'</span>':'')+'</div><div class="uft-s">'+st+'</div><div class="uft-l"><span>hace 4 semanas</span><span>hoy</span></div><div class="uft-n">'+nums+'</div><div class="uft-x">'+x+'</div></div>';
+}
+function _reporteHTML(r, it){
   if(!r) return '<p style="font-size:13px;color:var(--text3);padding:8px 0">Este chequeo no tiene reporte del periodo.</p>';
   var h='';
   var sec=function(ic,t,body){ h+='<div class="rp-sec"><div class="rp-t">'+ic+' '+t+'</div>'+body+'</div>'; };
@@ -2646,6 +2667,7 @@ function _reporteHTML(r){
     '<div style="font-size:12px;color:var(--text2);margin:8px 0">Nivel <b>'+_esc(r.nivel||'')+'</b>'+(r.estatus?' · '+_esc(r.estatus):'')+' · rendimiento esperado para tu nivel: '+med+'%</div>'+
     (rd.metricas?'<div class="rp-st">LAS 9 MÉTRICAS</div>'+_metLista(rd.metricas,med)+_radar(rd.metricas):'')+
     (rd.nota?'<div class="rd-nota">'+_esc(rd.nota)+'</div>':''));
+  if(it&&it.usoFittrack&&it.usoFittrack.dias) sec('📲','Tu uso de FitTrack',_usoFT(it.usoFittrack));
   if(r.desglose) sec('📅','Desglose de aprobación por día, semana tras semana',(r.desglose.nota?'<div style="font-size:11.5px;color:var(--text3);margin-bottom:6px">'+_esc(r.desglose.nota)+'</div>':'')+_desglose(r.desglose));
   var a=r.actividad;
   if(a) sec('🚶','Nivel de actividad','<div class="rd-niv">'+['Sedentario','Moderado','Activo','Muy activo'].map(function(n){return '<span class="'+(n===a.nivel?'on':'')+'">'+n+'</span>';}).join('')+'</div><div class="rd-big"><b>'+Number(a.pasosProm).toLocaleString('es-MX')+'</b> pasos/día en el periodo</div>'+(a.nota?'<div class="rd-nota">'+_esc(a.nota)+'</div>':''));
@@ -2671,7 +2693,7 @@ function _chqDetalle(it){
   if(it.reto) return retoChqDetalle(it); // regla 220
   var m=_metaDe(it);
   var res='<div class="chq-sub" style="margin-top:0">Tus resultados</div>'+_objetivo(it)+
-      '<div class="chq-sub">Cumplimiento</div><div class="chq-tiles'+(it.registro!=null?' c4':'')+'">'+_pctChip('Pesas',it.pesas,m,it.pesasDet)+_pctChip('Cardio',it.cardio,m,it.cardioDet)+_pctChip('Dieta',it.dieta,m,it.dietaDet)+_pctChip('Registro a tiempo',it.registro,m,it.confiabilidad?'confiabilidad '+it.confiabilidad:'')+'</div>'+_faltas(it)+_conducta(it)+
+      '<div class="chq-sub">Cumplimiento</div><div class="chq-tiles'+(it.registro!=null?' c4':'')+'">'+_pctChip('Pesas',it.pesas,m,it.pesasDet)+_pctChip('Cardio',it.cardio,m,it.cardioDet)+_pctChip('Dieta',it.dieta,m,it.dietaDet)+_pctChip('Registro a tiempo',it.registro,m,it.confiabilidad?'confiabilidad '+it.confiabilidad:'')+'</div>'+_faltas(it)+_conducta(it)+(!it.reporte&&it.usoFittrack&&it.usoFittrack.dias?'<div class="chq-sub">Tu uso de FitTrack</div>'+_usoFT(it.usoFittrack):'')+
       (it.pctGrasa?'<div style="font-size:12px;color:var(--text2);margin:8px 0">Grasa estimada: <b>'+_esc(it.pctGrasa)+'</b></div>':'')+
       '<div style="font-size:11.5px;color:var(--text3);margin-top:8px;line-height:1.45">Exigencia por objetivo: Bienestar y salud 75% · Fitness alto rendimiento 85% · Atletas 95%. Si tu objetivo cambia, se aplica a partir de tu siguiente chequeo.</div>';
   var fb='<div class="chq-fb">'+res+
@@ -2680,7 +2702,7 @@ function _chqDetalle(it){
       (it.reporte?'<button class="chq-sig" onclick="chqIr(this,\'rp\')">Ya leí mi mensaje · Ver mi reporte del periodo ›</button>':'')+
     '</div>';
   var tabs = it.reporte ? '<div class="chq-tabs big"><button class="chq-tab on" onclick="chqTab(this,\'fb\')">📋 Resultados y mensaje</button><button class="chq-tab" onclick="chqTab(this,\'rp\')">📊 Reporte del periodo</button></div>' : '';
-  return '<div class="chq-in">'+tabs+fb+'<div class="chq-rp" style="display:none">'+_reporteHTML(it.reporte)+'<button class="chq-sig alt" onclick="chqIr(this,\'fb\')">‹ Volver a mis resultados y mensaje</button></div></div>';
+  return '<div class="chq-in">'+tabs+fb+'<div class="chq-rp" style="display:none">'+_reporteHTML(it.reporte,it)+'<button class="chq-sig alt" onclick="chqIr(this,\'fb\')">‹ Volver a mis resultados y mensaje</button></div></div>';
 }
 function renderChequeos(abrirId){
   var el=document.getElementById('chq-body'); if(!el) return;
