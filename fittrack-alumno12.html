@@ -2610,6 +2610,9 @@ function _conducta(it){
     var ud=[]; if(u.diasPorSemana!=null) ud.push('entras '+u.diasPorSemana+(+u.diasPorSemana===1?' día':' días')+' por semana'); if(u.progresiones && u.progresiones.sugeridas) ud.push(u.progresiones.atendidas+' de '+u.progresiones.sugeridas+' progresiones aplicadas');
     t.push('<div class="chq-tile" style="background:'+ub+';color:'+uc+'"><b style="font-size:15px;line-height:1.5">'+(sm==='verde'?'🟢':sm==='amarillo'?'🟡':sm==='rojo'?'🔴':'⚪')+' '+_esc(u.aprovechamiento||'')+'</b><span>Aprovechamiento de FitTrack</span>'+(ud.length?'<small>'+_esc(ud.join(' · '))+'</small>':'')+'</div>');
   }
+  // regla 269: avisos del grupo del Team leídos; 3 seguidos sin leer = canal ignorado
+  var gt=it.grupoTeam;
+  if(gt && gt.avisos){ var gp=Math.round(100*(gt.leidos||0)/gt.avisos); t.push(gt.canalIgnorado?'<div class="chq-tile" style="background:var(--red-light);color:var(--red)"><b style="font-size:15px;line-height:1.5">🔴 Canal ignorado</b><span>Grupo de WhatsApp del Team</span><small>'+_esc((gt.leidos||0)+' leídos de '+gt.avisos+' avisos')+'<br>'+_esc(gt.sinLeerSeguidos+' seguidos sin leer')+'</small></div>':_pctChip('Avisos del grupo de WhatsApp leídos',gp,75,(gt.leidos||0)+' leídos de '+gt.avisos+' avisos')); }
   var av=it.avisos;
   if(av && av.avisos){ var pa=Math.round(100*(av.atendidos||0)/av.avisos); t.push(_pctChip('Avisos atendidos',pa,75,(av.atendidos||0)+' de '+av.avisos)); }
   return t.length?'<div class="chq-sub">Evaluación conductual</div><div class="chq-tiles">'+t.join('')+'</div>':'';
@@ -2668,6 +2671,11 @@ function _reporteHTML(r, it){
     (rd.metricas?'<div class="rp-st">LAS 9 MÉTRICAS</div>'+_metLista(rd.metricas,med)+_radar(rd.metricas):'')+
     (rd.nota?'<div class="rd-nota">'+_esc(rd.nota)+'</div>':''));
   if(it&&it.usoFittrack&&it.usoFittrack.dias) sec('📲','Tu uso de FitTrack',_usoFT(it.usoFittrack));
+  var gt=it&&it.grupoTeam;
+  if(gt&&gt.avisos){ var gc=gt.canalIgnorado?['var(--red)','var(--red-light)']:(gt.leidos/gt.avisos>=0.75?['var(--green)','var(--green-light)']:['var(--amber)','var(--amber-light)']);
+    sec('💬','Avisos del grupo de WhatsApp del Team','<div class="chq-tiles" style="grid-template-columns:1fr 1fr"><div class="chq-tile" style="background:'+gc[1]+';color:'+gc[0]+'"><b>'+gt.leidos+' leídos</b><span>de '+gt.avisos+' avisos del grupo de WhatsApp</span></div><div class="chq-tile" style="background:'+(gt.canalIgnorado?'var(--red-light)':'var(--surface2)')+';color:'+(gt.canalIgnorado?'var(--red)':'var(--text2)')+'"><b>'+gt.sinLeerSeguidos+'</b><span>avisos seguidos sin leer</span>'+(gt.canalIgnorado?'<small>🔴 Canal ignorado: grupo de WhatsApp</small>':'')+'</div></div>'
+      
+      +'<div class="rd-nota">El grupo de WhatsApp del Team no es de conversación: ahí comparto información importante de tu proceso (chequeos, listas, cambios). Leerlo forma parte de tu compromiso y cuenta en tu evaluación conductual. Tres avisos seguidos sin leer en el grupo de WhatsApp se registran como canal ignorado.</div>'); }
   if(r.desglose) sec('📅','Desglose de aprobación por día, semana tras semana',(r.desglose.nota?'<div style="font-size:11.5px;color:var(--text3);margin-bottom:6px">'+_esc(r.desglose.nota)+'</div>':'')+_desglose(r.desglose));
   var a=r.actividad; if(typeof a==='string') a=null;
   if(a) sec('🚶','Nivel de actividad','<div class="rd-niv">'+['Sedentario','Moderado','Activo','Muy activo'].map(function(n){return '<span class="'+(n===a.nivel?'on':'')+'">'+n+'</span>';}).join('')+'</div><div class="rd-big"><b>'+Number(a.pasosProm).toLocaleString('es-MX')+'</b> pasos/día en el periodo</div>'+(a.nota?'<div class="rd-nota">'+_esc(a.nota)+'</div>':''));
@@ -3445,7 +3453,7 @@ function r174Entrada(nip){ r174RegistrarAcceso(nip); r174AvisoPlan(nip); try{ r1
 // Activo = estado!=='cerrado' y desde <= hoy(MX) <= hasta. Modal al entrar (sin entendido), después del
 // plan de acción y sin encimarse con otros modales. Lista en Progresiones con todos los activos.
 var _r177 = {nip:null, avisos:{}, vistos:{}, timer:null, gen:0, cargado:-1, ok:{}};
-var R177_AREAS = {nutricion:['🥗','Nutrición'], cardio:['🏃','Cardio'], actividad:['👣','Nivel de actividad'], farma:['💊','Farmacología'], tienda:['🛍️','ArtFit Supplements']};
+var R177_AREAS = {nutricion:['🥗','Nutrición'], cardio:['🏃','Cardio'], actividad:['👣','Nivel de actividad'], farma:['💊','Farmacología'], tienda:['🛍️','ArtFit Supplements'], grupo:['💬','Grupo de WhatsApp del Team']};
 function _r177Esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
 function _r177Fecha(x){ x=String(x||'').slice(0,10); return /^\d{4}-\d{2}-\d{2}$/.test(x)?x:''; }
 function _r177Activos(){ // [{id,a,v}] vigentes hoy, ordenados por nivel desc y fecha de creación
