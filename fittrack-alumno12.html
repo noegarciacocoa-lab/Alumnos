@@ -120,6 +120,13 @@ body{display:flex;justify-content:center;height:100%}
 .rp-bar{display:grid;grid-template-columns:118px 1fr 38px;align-items:center;gap:8px;font-size:12px;color:var(--text2);margin:5px 0}.rp-bar div{height:8px;background:var(--surface2);border-radius:5px;overflow:hidden}.rp-bar i{display:block;height:100%;border-radius:5px}.rp-bar b{text-align:right;color:var(--text)}
 .rp-ul{padding-left:18px;font-size:12.5px;color:var(--text2);line-height:1.5}.rp-prev{font-size:10.5px;font-weight:700;letter-spacing:.5px;color:#26307A;background:#E3E8FF;border-radius:8px;padding:5px 8px;margin-bottom:8px;text-align:center}
 .rp-st{font-size:12px;font-weight:800;letter-spacing:.6px;color:#3F6270;margin:10px 0 4px}
+.rp-exp{font-size:12px;color:var(--text2);line-height:1.45;margin:2px 0 6px}.chq-tiles.t4{grid-template-columns:repeat(4,1fr);gap:6px}.chq-tiles.t4 .chq-tile{padding:9px 4px}.chq-tiles.t4 .chq-tile b{font-size:19px}.chq-tiles.t4 .chq-tile span{font-size:10.5px}
+.rp-dia{font-weight:800;font-size:13px;color:var(--text);margin:10px 0 4px}.rp-ej{font-size:12.5px;padding:5px 0;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:baseline;gap:8px;color:var(--text)}.rp-ej>span:last-child{white-space:nowrap;font-weight:700;text-align:right}
+.chq-tiles.t5{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}.chq-tiles.t5 .chq-tile{padding:8px 2px;min-width:0}.chq-tiles.t5 .chq-tile b{font-size:18px}.chq-tiles.t5 .chq-tile i{display:block;font-style:normal;font-size:13px;line-height:1.2;margin-top:1px}.chq-tiles.t5 .chq-tile span{display:block;font-size:9.5px;line-height:1.15;letter-spacing:-.1px}.ap-sni{color:#7A6A4F}.rp-ej.fr{flex-wrap:wrap}.rp-ej.fr>span:last-child{white-space:normal;text-align:right;margin-left:auto}.ap-fr{color:var(--red);font-weight:700}
+.chq-tiles.t3s{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.chq-tiles.t3s .chq-tile{padding:9px 4px}.chq-tiles.t3s .chq-tile b{font-size:19px}.chq-tiles.t3s .chq-tile span{display:block;font-size:11px}.rp-ej.sg{flex-wrap:wrap}.rp-ej.sg>span:nth-child(2){white-space:nowrap;font-weight:700;text-align:right;margin-left:auto}.rp-ej.sg.fr>span:nth-child(2){white-space:normal}.rp-ej.sg>span:first-child{flex:1 1 0;min-width:0}.rp-ej.sg.fr>span:first-child{flex:1 1 34%}.rp-ej.sg.fr>span:nth-child(2){max-width:60%}.rp-sug{flex-basis:100%;font-size:12px;color:var(--text2);line-height:1.4;margin-top:2px}.rp-sug b{color:var(--text)}.ap-sd{color:var(--text3);font-weight:600}
+.ap-ok{color:var(--green)}.ap-rev{color:var(--amber)}.ap-pro{color:var(--teal)}.ap-mes{color:#6B5BD2}.ap-sin{color:var(--amber)}.ap-baj{color:var(--red)}
+.rp-ley{display:grid;gap:4px;font-size:11.5px;color:var(--text2);background:var(--surface2);border-radius:10px;padding:8px 10px;margin-top:10px;line-height:1.35}
+@media (max-width:360px){.chq-tiles.t4{grid-template-columns:repeat(2,1fr)}.chq-tiles.t5{grid-template-columns:repeat(3,minmax(0,1fr))}.rp-ej{flex-wrap:wrap}.rp-ej>span:last-child{white-space:normal}}
 .rp-met{display:grid;grid-template-columns:30px 1fr auto;align-items:center;gap:6px;font-size:13.5px;color:var(--text2);padding:6px 0}.rp-mi{font-size:20px}.rp-met b{font-size:14px}
 .rp-tbl{overflow-x:auto}.rp-tbl table{border-collapse:collapse;width:100%;font-size:11.5px;text-align:center}.rp-tbl th{color:var(--text3);font-weight:700;padding:4px 2px;border-bottom:1px solid var(--border2)}.rp-tbl td{padding:5px 2px;border-bottom:1px solid var(--border2);font-weight:700}.rp-tbl td.na{color:var(--text3);font-weight:400}
 .rp-notas{margin-top:10px;border-top:1px solid var(--border2);padding-top:6px}.rp-notas summary{cursor:pointer;font-size:12px;font-weight:700;color:var(--teal-dark);list-style:none;padding:4px 0}.rp-notas summary::-webkit-details-marker{display:none}
@@ -2657,12 +2664,80 @@ function _usoFT(u){
   if(u.inicioRegistro && ks[0]<u.inicioRegistro) x+=' Empecé a registrar tus entradas el '+fd(u.inicioRegistro)+' (los cuadros punteados son días anteriores).';
   return '<div class="uft" style="--uc:'+ac[0]+'"><div class="uft-h"><i></i><b>'+tit+'</b>'+(ult?'<span>'+ult+'</span>':'')+'</div><div class="uft-s">'+st+'</div><div class="uft-l"><span>hace 4 semanas</span><span>hoy</span></div><div class="uft-n">'+nums+'</div><div class="uft-x">'+x+'</div></div>';
 }
+// Regla 277 (Noé 26 oct, maqueta A3): cuadros Aprobación · Nivel de aprovechamiento · Rendimiento, NIVEL DE APROVECHAMIENTO,
+// EJERCICIOS DE TU RUTINA POR DÍA y leyenda. Graduado sin revisión en el periodo (tecnica.aplica=false): solo rendimiento, sin "No aplica".
+// r277c (Noé 26 oct 10:55–11:01): + 😐 Sin intención (progresó pero sus últimas 3 sesiones son idénticas) y aviso de fuera de rango.
+var _APV={progresando:['📈','Progresando','ap-pro'],meseta:['🏔️','Meseta','ap-mes'],sin_intencion:['😐','Sin intención','ap-sni'],sin_progreso:['⏸️','Sin progreso','ap-sin'],bajo:['📉','Bajó','ap-baj']};
+// r277d (Noé 26 oct 11:15 "aplícalo a todos", maqueta G): sin revisión de técnica en el periodo (tecnica.aplica=false) el
+// aprovechamiento viene en r.aprovechamiento (inicio del periodo vs últimas sesiones): cuadros Rendimiento + Nivel de
+// aprovechamiento, explicación, 5 estados, PROGRESIONES QUE TE SUGERÍ, nota, lista por día con su estado y la línea 💡
+// (progresión sugerida en FitTrack y si la aplicó) y leyenda; sin aprobación, sin marcas "✅ Sem." y sin tabla.
+// Con revisión: igual que antes + la línea 💡 y los cuadros de progresiones sugeridas.
+function _kg(w){ w=Number(w); return isNaN(w)?'':String(Math.round(w*10)/10); }
+function _fdm(iso){ var d=/^\d{4}-\d{2}-\d{2}$/.test(String(iso||''))?_fechaLocal(iso):null; return (!d||isNaN(d))?'':d.toLocaleDateString('es-MX',{day:'numeric',month:'short'}).replace('.',''); }
+function _sugLinea(g){
+  if(!g||!g.estado||g.estado==='sin_sesion') return '';
+  var u=g.u?' '+_esc(g.u):'', x;
+  x=g.tipo==='reps'?'Te sugerí '+_esc(g.reps0)+' → '+_esc(g.meta)+' reps con '+_kg(g.de)+u:'Te sugerí '+_kg(g.de)+' → '+_kg(g.a)+u;
+  if(g.estado==='aplicada') x+=' · <b>✅ lo aplicaste</b>';
+  else if(g.estado==='intentada') x+=' · lo intentaste ('+_kg(g.intento[0])+' × '+_esc(g.intento[1])+') y regresaste a '+_kg(g.ultima[0])+' × '+_esc(g.ultima[1]);
+  else{
+    if(g.fecha&&_fdm(g.fecha)) x+=' el '+_fdm(g.fecha);
+    if(g.igual3&&g.ultima) x+=' · <b>❌ sigues con '+_kg(g.ultima[0])+u+' × '+_esc(g.ultima[1])+' en tus últimas 3 sesiones</b>';
+    else if(g.estado==='parcial'&&g.intento) x+=' · lo intentaste ('+_kg(g.intento[0])+' × '+_esc(g.intento[1])+') sin llegar a '+(g.tipo==='reps'?_esc(g.meta)+' reps':_kg(g.a)+u);
+    else x+=' · <b>❌ no lo aplicaste</b>';
+  }
+  return '<div class="rp-sug">💡 '+x+'</div>';
+}
+function _tecnica277(r,T,on,med){
+  var ap=r.aprobacion||{}, rd=r.rendimiento||{}, t=[], h='';
+  var per=!T.aplica&&r.aprovechamiento&&typeof r.aprovechamiento==='object';   // r277d: sin revisión en el periodo
+  var A=per?r.aprovechamiento:T.aprovechamiento, EJ=per?A.ejercicios:T.ejercicios;
+  var verAprob=T.aplica&&on('aprobacion')&&(T.pct!=null||ap.pct!=null), verApv=(T.aplica||per)&&on('aprovechamiento')&&A&&typeof A==='object', verEj=(T.aplica||per)&&on('ejercicios')&&EJ&&Object.keys(EJ).length;
+  if(verAprob) t.push(_pctChip('Aprobación de técnica',T.pct!=null?T.pct:ap.pct,95));
+  if(per&&on('rendimiento')&&rd.pct!=null) t.push(_pctChip('Rendimiento',rd.pct,med));
+  if(verApv) t.push('<div class="chq-tile" style="background:var(--teal-light);color:var(--teal-dark)"><b>'+(A.total?(A.progresando||0)+'/'+A.total:'—')+'</b><span>Nivel de aprovechamiento</span></div>');
+  if(!per&&on('rendimiento')&&rd.pct!=null) t.push(_pctChip('Rendimiento',rd.pct,med));
+  t=t.filter(Boolean);
+  if(t.length) h+='<div class="chq-tiles" style="grid-template-columns:repeat('+t.length+',1fr)">'+t.join('')+'</div>';
+  h+='<div style="font-size:12px;color:var(--text2);margin:8px 0">Nivel <b>'+_esc(r.nivel||'')+'</b>'+(r.estatus?' · '+_esc(r.estatus):'')+(on('criterio')?' · rendimiento esperado para tu nivel: '+med+'%':'')+'</div>';
+  if(rd.metricas&&on('metricas')) h+='<div class="rp-st">LAS 9 MÉTRICAS</div>'+_metLista(rd.metricas,med);
+  if(rd.metricas&&on('radar')) h+=(on('metricas')?'':'<div class="rp-st">LAS 9 MÉTRICAS</div>')+_radar(rd.metricas);
+  if(rd.nota&&on('resumen')) h+='<div class="rd-nota">'+_esc(rd.nota)+'</div>';
+  if(per&&(verApv||verEj)) h+='<!--APV-->';
+  var S=verApv&&A.sugerencias&&typeof A.sugerencias==='object'?A.sugerencias:null, haySug=false;
+  if(verApv){
+    h+='<div class="rp-st" style="margin-top:'+(per?'2':'14')+'px">NIVEL DE APROVECHAMIENTO</div><div class="rp-exp">'+(per?_esc(A.explicacion||'Ya dominas la técnica de tus ejercicios: tu esfuerzo debe verse en más peso o más repeticiones dentro de tu rango. Se compara el inicio de tu periodo contra tus últimas sesiones, y si aplicaste las progresiones que te sugerí en FitTrack.'):'Qué tanto le estás sacando provecho a los ejercicios que ya dominas: una vez aprobada tu técnica, tu esfuerzo debe verse en más peso o más repeticiones.')+'</div>'+
+      '<div class="chq-tiles t5">'+[['progresando','var(--teal-light)','var(--teal-dark)'],['meseta','#EEEBFB','#6B5BD2'],['sin_intencion','#F1EFEA','#7A6A4F'],['sin_progreso','var(--amber-light)','var(--amber)'],['bajo','var(--red-light)','var(--red)']].map(function(x){ var d=_APV[x[0]]; return '<div class="chq-tile" style="background:'+x[1]+';color:'+x[2]+'"><b>'+(A[x[0]]||0)+'</b><i>'+d[0]+'</i><span>'+d[1]+'</span></div>'; }).join('')+'</div>';
+    if(S) h+='<div class="rp-st" style="margin-top:12px">PROGRESIONES QUE TE SUGERÍ</div><div class="chq-tiles t3s">'+[['sugeridas','💡 Sugeridas','var(--surface2)','var(--teal-dark)'],['aplicadas','✅ Aplicadas','var(--green-light)','var(--green)'],['noAplicadas','❌ No aplicadas','#FDEBDD','#C2531B']].map(function(x){ return '<div class="chq-tile" style="background:'+x[2]+';color:'+x[3]+'"><b>'+(S[x[0]]||0)+'</b><span>'+x[1]+'</span></div>'; }).join('')+'</div>';
+    if(A.nota) h+='<div class="rd-nota">'+_esc(A.nota)+'</div>';
+  }
+  if(verEj){
+    h+='<div class="rp-st" style="margin-top:14px">EJERCICIOS DE TU RUTINA POR DÍA</div>';
+    ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'].concat(Object.keys(EJ)).filter(function(d,i,arr){ return EJ[d]&&arr.indexOf(d)===i; }).forEach(function(d){
+      h+='<div class="rp-dia">'+_esc(d)+'</div>'+EJ[d].map(function(e){
+        var der='', x=_APV[e.aprov], fr=e.fueraRango&&on('aprovechamiento')&&(per||e.estado==='aprobado');
+        if(per){ der=x&&on('aprovechamiento')?'<span class="'+x[2]+'">'+x[0]+' '+x[1]+'</span>':'<span class="ap-sd">Sin datos</span>'; }
+        else if(e.estado==='aprobado'){ der='<span class="ap-ok">✅ '+(e.sem!=null?'Sem. '+_esc(e.sem):'Aprobado')+'</span>'+(x&&on('aprovechamiento')?' · <span class="'+x[2]+'">'+x[0]+' '+x[1]+'</span>':''); }
+        else der='<span class="ap-rev">🎥 En revisión</span>';
+        if(fr) der+=(e.aprov==='bajo'?'<span class="ap-fr"> · te saliste del rango'+(e.max?' (máx '+_esc(e.max)+')':'')+'</span>':' · <span class="ap-fr">⚠️ pasaste el rango'+(e.max?' (máx '+_esc(e.max)+')':'')+': sube el peso</span>');
+        var sg=on('aprovechamiento')?_sugLinea(e.sug):''; if(sg) haySug=true;
+        return '<div class="rp-ej'+(fr?' fr':'')+(sg?' sg':'')+'"><span>'+_esc(e.n)+'</span><span>'+der+'</span>'+sg+'</div>'; }).join('');
+    });
+  }
+  if(verApv||verEj) h+='<div class="rp-ley">'+(verApv?(per?'<span>📈 Progresando = desde el inicio de tu periodo subiste peso o repeticiones</span><span>🏔️ Meseta = subiste y en tus últimas 3 sesiones ya no, pero lo sigues intentando (más peso, llegas al tope de tu rango o tus números se mueven hacia arriba): tope natural</span><span>😐 Sin intención = subiste, pero en tus últimas 3 sesiones no intentaste subir (por ejemplo, 3 sesiones idénticas: mismo peso y mismas repeticiones), o repites lo mismo aunque te sugerí subir</span><span>⏸️ Sin progreso = desde el inicio de tu periodo no has subido</span><span>📉 Bajó = hoy mueves menos que al inicio de tu periodo</span>':'<span>📈 Progresando = después de aprobarlo subiste peso o repeticiones</span><span>🏔️ Meseta = subiste y en tus últimas 3 sesiones ya no, pero lo sigues intentando (más peso, llegas al tope de tu rango o tus números se mueven hacia arriba): tope natural</span><span>😐 Sin intención = subiste, pero en tus últimas 3 sesiones no intentaste subir (por ejemplo, 3 sesiones idénticas: mismo peso y mismas repeticiones, debajo del tope de tu rango)</span><span>⏸️ Sin progreso = desde que se aprobó no has subido</span><span>📉 Bajó = hoy mueves menos que cuando se aprobó</span>')+(A.fueraRango?'<span>⚠️ Fuera de rango = pasaste el máximo de repeticiones de tu rango: progresa dentro de tu rango y, cuando pases el máximo, sube el peso</span>':'')+(S||haySug?'<span>💡 = progresión que te sugerí en FitTrack y si la aplicaste</span>':''):'')+(verEj&&!per?'<span>🎥 En revisión = aún esperando aprobación de técnica</span>':'')+'</div>';
+  return h;
+}
 function _reporteHTML(r, it){
   if(!r) return '<p style="font-size:13px;color:var(--text3);padding:8px 0">Este chequeo no tiene reporte del periodo.</p>';
   var h='';
   var sec=function(ic,t,body){ h+='<div class="rp-sec"><div class="rp-t">'+ic+' '+t+'</div>'+body+'</div>'; };
   if(r.vistaPrevia) h+='<div class="rp-prev">VISTA PREVIA con datos actuales de FitTrack y Harbiz</div>';
   var ap=r.aprobacion||{}, rd=r.rendimiento||{}, med=rd.medio||75;
+  // Regla 277: reportes nuevos traen r.tecnica (y r.vars). Los anteriores se dibujan exactamente como antes.
+  var Tq=r.tecnica, V=null; if(Array.isArray(r.vars)){ V={}; r.vars.forEach(function(k){V[k]=1;}); }
+  var on=function(k){ return !V||!!V[k]; };
+  if(!Tq){
   sec('🏋️','Técnica y rendimiento',
     '<div class="chq-tiles" style="grid-template-columns:1fr 1fr">'+
       (ap.aplica===false?'<div class="chq-tile" style="background:var(--surface2);color:var(--text2)"><b style="font-size:15px;line-height:1.5">No aplica</b><span>Aprobación de técnica</span></div>':_pctChip('Aprobación de técnica',ap.pct,95))+
@@ -2670,26 +2745,29 @@ function _reporteHTML(r, it){
     '<div style="font-size:12px;color:var(--text2);margin:8px 0">Nivel <b>'+_esc(r.nivel||'')+'</b>'+(r.estatus?' · '+_esc(r.estatus):'')+' · rendimiento esperado para tu nivel: '+med+'%</div>'+
     (rd.metricas?'<div class="rp-st">LAS 9 MÉTRICAS</div>'+_metLista(rd.metricas,med)+_radar(rd.metricas):'')+
     (rd.nota?'<div class="rd-nota">'+_esc(rd.nota)+'</div>':''));
+  } else { var _tq=_tecnica277(r,Tq,on,med).split('<!--APV-->');   // r277d: sin revisión → "Rendimiento" + tarjeta del aprovechamiento
+    sec('🏋️',_tq.length>1||(!Tq.aplica&&r.aprovechamiento)?'Rendimiento':'Técnica y rendimiento',_tq[0]);
+    if(_tq[1]) h+='<div class="rp-sec">'+_tq[1]+'</div>'; }
   if(it&&it.usoFittrack&&it.usoFittrack.dias) sec('📲','Tu uso de FitTrack',_usoFT(it.usoFittrack));
   var gt=it&&it.grupoTeam;
   if(gt&&gt.avisos){ var gc=gt.canalIgnorado?['var(--red)','var(--red-light)']:(gt.leidos/gt.avisos>=0.75?['var(--green)','var(--green-light)']:['var(--amber)','var(--amber-light)']);
     sec('💬','Avisos del grupo de WhatsApp del Team','<div class="chq-tiles" style="grid-template-columns:1fr 1fr"><div class="chq-tile" style="background:'+gc[1]+';color:'+gc[0]+'"><b>'+gt.leidos+' leídos</b><span>de '+gt.avisos+' avisos del grupo de WhatsApp</span></div><div class="chq-tile" style="background:'+(gt.canalIgnorado?'var(--red-light)':'var(--surface2)')+';color:'+(gt.canalIgnorado?'var(--red)':'var(--text2)')+'"><b>'+gt.sinLeerSeguidos+'</b><span>avisos seguidos sin leer</span>'+(gt.canalIgnorado?'<small>🔴 Canal ignorado: grupo de WhatsApp</small>':'')+'</div></div>'
       
       +'<div class="rd-nota">El grupo de WhatsApp del Team no es de conversación: ahí comparto información importante de tu proceso (chequeos, listas, cambios). Leerlo forma parte de tu compromiso y cuenta en tu evaluación conductual. Tres avisos seguidos sin leer en el grupo de WhatsApp se registran como canal ignorado.</div>'); }
-  if(r.desglose) sec('📅','Desglose de aprobación por día, semana tras semana',(r.desglose.nota?'<div style="font-size:11.5px;color:var(--text3);margin-bottom:6px">'+_esc(r.desglose.nota)+'</div>':'')+_desglose(r.desglose));
-  var a=r.actividad; if(typeof a==='string') a=null;
+  if(r.desglose && (!Tq || (Tq.aplica && on('desglose')))) sec('📅','Desglose de aprobación por día, semana tras semana',(r.desglose.nota?'<div style="font-size:11.5px;color:var(--text3);margin-bottom:6px">'+_esc(r.desglose.nota)+'</div>':'')+_desglose(r.desglose));
+  var a=on('semana')?r.actividad:null; if(typeof a==='string') a=null;
   if(a) sec('🚶','Nivel de actividad','<div class="rd-niv">'+['Sedentario','Moderado','Activo','Muy activo'].map(function(n){return '<span class="'+(n===a.nivel?'on':'')+'">'+n+'</span>';}).join('')+'</div><div class="rd-big"><b>'+Number(a.pasosProm).toLocaleString('es-MX')+'</b> pasos/día en el periodo</div>'+(a.nota?'<div class="rd-nota">'+_esc(a.nota)+'</div>':''));
-  var c=r.cardio; if(typeof c==='string') c={nota:c};
-  if(c) sec('❤️','Rendimiento del cardio',(c.kcalProm==null&&c.minProm==null&&c.lpmProm==null?'':'<div class="rd-grid">'+[['🔥',c.kcalProm,'kcal'],['⏱️',c.minProm,'min'],['💓',c.lpmProm,'lpm']].map(function(x){return '<div><span>'+x[0]+'</span><b>'+(x[1]!=null?Math.round(x[1]):'—')+'</b><small>'+x[2]+' prom.</small></div>';}).join('')+'</div>')+(c.total?'<div class="rd-meta">Sesiones con datos: <b>'+c.conDatos+' de '+c.total+'</b></div>':'')+(c.nota?'<div class="rd-nota">'+_esc(c.nota)+'</div>':''));
-  var p=r.pesas; if(typeof p==='string') p={nota:p};
-  if(p) sec('📒','Registros de pesas',(p.total?'<div class="rd-meta">Ejercicios con peso y repeticiones: <b>'+p.conDatos+' de '+p.total+'</b></div>':'')+(p.nota?'<div class="rd-nota">'+_esc(p.nota)+'</div>':''));
-  var g=r.progresiones; if(typeof g==='string') g={nota:g};
+  var c=on('semana')?r.cardio:null; if(typeof c==='string') c={nota:c};
+  if(c) sec('❤️','Rendimiento del cardio',(c.kcalProm==null&&c.minProm==null&&c.lpmProm==null?'':'<div class="rd-grid">'+[['🔥',c.kcalProm,'kcal'],['⏱️',c.minProm,'min'],['💓',c.lpmProm,'lpm']].map(function(x){return '<div><span>'+x[0]+'</span><b>'+(x[1]!=null?Math.round(x[1]):'—')+'</b><small>'+x[2]+' prom.</small></div>';}).join('')+'</div>')+(c.total&&c.conDatos!=null?'<div class="rd-meta">Sesiones con datos: <b>'+c.conDatos+' de '+c.total+'</b></div>':'')+(c.nota?'<div class="rd-nota">'+_esc(c.nota)+'</div>':''));
+  var p=on('semana')?r.pesas:null; if(typeof p==='string') p={nota:p};
+  if(p) sec('📒','Registros de pesas',(p.total&&p.conDatos!=null?'<div class="rd-meta">Ejercicios con peso y repeticiones: <b>'+p.conDatos+' de '+p.total+'</b></div>':'')+(p.nota?'<div class="rd-nota">'+_esc(p.nota)+'</div>':''));
+  var g=on('progresiones')?r.progresiones:null; if(typeof g==='string') g={nota:g};
   if(g) sec('📈','Progresiones del periodo','<div class="chq-tiles" style="grid-template-columns:repeat(4,1fr)">'+
       [['Recibidas',g.total,'var(--teal-dark)','var(--teal-xlight)'],['Aplicadas',g.aplicadas,'var(--green)','var(--green-light)'],['Vencidas',g.vencidas,'var(--amber)','var(--amber-light)'],['Llamados',g.llamados,'var(--red)','var(--red-light)']].map(function(x){return '<div class="chq-tile" style="background:'+x[3]+';color:'+x[2]+'"><b>'+(x[1]||0)+'</b><span>'+x[0]+'</span></div>';}).join('')+'</div>'+
       (g.total?'<div class="rd-meta">Aplicaste el <b>'+Math.round((g.aplicadas||0)/g.total*100)+'%</b> de las sugerencias.</div>':'')+(g.nota?'<div class="rd-nota">'+_esc(g.nota)+'</div>':''));
   if(r.faltantes&&r.faltantes.length) sec('⚠️','Datos que faltaron','<ul class="rp-ul">'+r.faltantes.map(function(x){return '<li>'+_esc(x)+'</li>';}).join('')+'</ul>');
-  if(r.notas&&r.notas.length) h+='<details class="rp-notas"><summary>🔔 Ver notas de tu coach ('+r.notas.length+') ›</summary>'+r.notas.map(function(n){return '<div class="rp-nota"><span>'+_fcorta(n.fecha)+'</span>'+_esc(n.txt)+'</div>';}).join('')+'</details>';
-  if(r.revisiones&&r.revisiones.length) sec('🗂️','Revisiones de técnica del periodo','<ul class="rp-ul">'+r.revisiones.map(function(x){return '<li>'+_esc(x)+'</li>';}).join('')+'</ul>');
+  if(on('notas')&&r.notas&&r.notas.length) h+='<details class="rp-notas"><summary>🔔 Ver notas de tu coach ('+r.notas.length+') ›</summary>'+r.notas.map(function(n){return '<div class="rp-nota"><span>'+_fcorta(n.fecha)+'</span>'+_esc(n.txt)+'</div>';}).join('')+'</details>';
+  if(on('historialRutinas')&&r.revisiones&&r.revisiones.length) sec('🗂️','Revisiones de técnica del periodo','<ul class="rp-ul">'+r.revisiones.map(function(x){return '<li>'+_esc(x)+'</li>';}).join('')+'</ul>');
   return h;
 }
 function chqIr(el,cual){ var box=el.closest('.chq-in'); var b=box.querySelectorAll('.chq-tab')[cual==='fb'?0:1]; chqTab(b,cual); var v=document.getElementById('chq-view'), t=box.querySelector('.chq-tabs'); if(v&&t) v.scrollTop=Math.max(0, t.getBoundingClientRect().top - v.getBoundingClientRect().top + v.scrollTop - 4); }
