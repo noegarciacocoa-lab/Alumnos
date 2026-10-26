@@ -983,7 +983,7 @@ function selectLang(code){
   try{ if(typeof r278AlElegir==='function') r278AlElegir(code); }catch(e){} // regla 278
   if(typeof onLangChange==='function')onLangChange();
 }
-function openLangModal(){document.getElementById('lang-modal').style.display='flex';buildLangGrid();}
+function openLangModal(){ if(typeof r281Mostrar==='function'&&currentAlumno){ r281Mostrar(true); return; } document.getElementById('lang-modal').style.display='flex';buildLangGrid();} // r281: con alumno dentro, elegir + confirmar
 function closeLangModal(){document.getElementById('lang-modal').style.display='none';}
 // ────────────────────────────────────────────────────────────
 // ── SHARED DATA (mirrors coach app) ──────────────────────────────────────────
@@ -4009,7 +4009,7 @@ function _r278Elegido(){ try{ var l=localStorage.getItem('fittrack_lang'); retur
 function r278GuardarIdioma(nip,l){
   try{ if(!nip||!l||!LANGS[l]||typeof db==='undefined') return;
     var r=db.ref('fittrack_vistos/'+nip+'/idioma');
-    r.once('value').then(function(s){ var v=s&&s.val(); if(v&&v.lang===l) return; return r.set({lang:l, en:new Date().toISOString()}); }).catch(function(){});
+    r.once('value').then(function(s){ var v=s&&s.val(); if(v&&(v.lang===l||v.confirmado===true)) return; return r.set({lang:l, en:new Date().toISOString()}); /* r281: lo confirmado solo cambia con Confirmar */ }).catch(function(){});
   }catch(e){}
 }
 function r278AlElegir(code){ _r278.coach=false; if(currentAlumno) r278GuardarIdioma(currentAlumno, code); }
@@ -4030,7 +4030,60 @@ function r278Entrada(nip){
     }
   }catch(e){}
   try{ r278CanalesAuto(nip); }catch(e){}
+  try{ r281Entrada(nip); }catch(e){} // regla 281
 }
+
+// ── Regla 281 (Noé 26 oct 16:39): pantalla "Elige tu idioma" con explicación + CONFIRMAR. Para TODOS (coaching, reto, cualquier modo).
+//    Sale al entrar si fittrack_vistos/<nip>/idioma.confirmado !== true (nuevos: antes de la introducción; los que ya estaban: una vez).
+//    Solo al confirmar se guarda: localStorage fittrack_lang + fittrack_vistos/<nip>/idioma {lang, en, confirmado:true}. El botón 🌐 abre la misma pantalla (con Cancelar).
+var R281T={"es": ["Elige tu idioma", "En este idioma te va a llegar todo: tus reportes, el feedback de tus chequeos, tus propuestas de progresión y los avisos de tu coach.", "Puedes cambiarlo cuando quieras con el botón 🌐.", "Confirmar idioma", "Cancelar"], "en": ["Choose your language", "Everything will reach you in this language: your reports, your check-in feedback, your progression suggestions and your coach's notices.", "You can change it anytime with the 🌐 button.", "Confirm language", "Cancel"], "pt": ["Escolha seu idioma", "Tudo vai chegar para você neste idioma: seus relatórios, o feedback das suas avaliações, suas sugestões de progressão e os avisos do seu coach.", "Você pode mudar quando quiser no botão 🌐.", "Confirmar idioma", "Cancelar"], "it": ["Scegli la tua lingua", "Riceverai tutto in questa lingua: i tuoi report, il feedback dei tuoi check, le proposte di progressione e gli avvisi del tuo coach.", "Puoi cambiarla quando vuoi con il pulsante 🌐.", "Conferma lingua", "Annulla"], "fr": ["Choisis ta langue", "Tu recevras tout dans cette langue : tes rapports, le feedback de tes bilans, tes propositions de progression et les messages de ton coach.", "Tu peux la changer quand tu veux avec le bouton 🌐.", "Confirmer la langue", "Annuler"], "zh_tw": ["選擇你的語言", "你的報告、檢查回饋、進階建議和教練通知都會以這個語言提供給你。", "你可以隨時用 🌐 按鈕更改。", "確認語言", "取消"], "zh_cn": ["选择你的语言", "你的报告、检查反馈、进阶建议和教练通知都会用这个语言发给你。", "你可以随时用 🌐 按钮更改。", "确认语言", "取消"], "de": ["Wähle deine Sprache", "Alles erhältst du in dieser Sprache: deine Berichte, das Feedback zu deinen Check-ins, deine Steigerungsvorschläge und die Hinweise deines Coaches.", "Du kannst sie jederzeit mit dem 🌐-Button ändern.", "Sprache bestätigen", "Abbrechen"], "ru": ["Выбери язык", "На этом языке ты будешь получать всё: отчёты, отзывы по проверкам, предложения по прогрессии и сообщения тренера.", "Ты можешь изменить его в любое время кнопкой 🌐.", "Подтвердить язык", "Отмена"], "pl": ["Wybierz swój język", "W tym języku otrzymasz wszystko: raporty, feedback z kontroli, propozycje progresji i komunikaty od trenera.", "Możesz go zmienić w każdej chwili przyciskiem 🌐.", "Potwierdź język", "Anuluj"], "ar": ["اختر لغتك", "ستصلك كل الأشياء بهذه اللغة: تقاريرك، وملاحظات فحوصاتك، واقتراحات التقدّم، وإشعارات مدربك.", "يمكنك تغييرها في أي وقت من زر 🌐.", "تأكيد اللغة", "إلغاء"]};
+var _r281={sel:null, cerrable:false};
+function _r281Tx(l){ return R281T[l]||R281T.en; }
+function r281Mostrar(cerrable){
+  _r281.cerrable=!!cerrable; _r281.sel=currentLang||'es';
+  var o=document.getElementById('r281'); if(!o){ o=document.createElement('div'); o.id='r281'; document.body.appendChild(o); }
+  o.style.display='flex'; r281Pinta();
+}
+function r281Pinta(){
+  var o=document.getElementById('r281'); if(!o) return; var l=_r281.sel, x=_r281Tx(l), L=LANGS[l]||{};
+  var h='<div class="r281-c" dir="'+(L.dir||'ltr')+'"><div class="r281-ic">🌐</div><h2>'+x[0]+'</h2><p class="r281-p">'+x[1]+'</p><div class="r281-g">';
+  Object.keys(LANGS).forEach(function(k){ var M=LANGS[k]; h+='<button class="r281-l'+(k===l?' on':'')+'" onclick="r281Sel(\''+k+'\')"><span>'+M.flag+'</span><b>'+M.name+'</b>'+(k===l?'<i>✓</i>':'')+'</button>'; });
+  h+='</div><p class="r281-n">'+x[2]+'</p><button class="r281-ok" onclick="r281Confirmar()">'+x[3]+' · '+(L.flag||'')+' '+(L.name||'')+'</button>'+(_r281.cerrable?'<button class="r281-x" onclick="r281Cerrar()">'+x[4]+'</button>':'')+'</div>';
+  o.innerHTML=h;
+}
+function r281Sel(k){ if(LANGS[k]){ _r281.sel=k; r281Pinta(); } }
+function r281Cerrar(){ var o=document.getElementById('r281'); if(o) o.style.display='none'; }
+function r281Confirmar(){
+  var l=_r281.sel||'es'; r281Cerrar();
+  currentLang=l; try{ localStorage.setItem('fittrack_lang',l); localStorage.setItem('ft_idioma_ok_'+(currentAlumno||''),'1'); }catch(e){}
+  try{ applyLang(); if(typeof onLangChange==='function') onLangChange(); }catch(e){}
+  try{ if(typeof _bv!=='undefined'&&_bv&&_bv.mk&&document.getElementById('bv').classList.contains('on')){ _bv.P=_bv.mk(); bvRender(); } }catch(e){}
+  _r278.coach=false;
+  try{ if(currentAlumno&&typeof db!=='undefined') db.ref('fittrack_vistos/'+currentAlumno+'/idioma').set({lang:l, en:new Date().toISOString(), confirmado:true}).catch(function(){}); }catch(e){}
+}
+function r281Entrada(nip){
+  try{
+    if(typeof db==='undefined') return;
+    db.ref('fittrack_vistos/'+nip+'/idioma').once('value').then(function(s){
+      if(currentAlumno!==nip) return; var v=s&&s.val();
+      if(v&&v.confirmado===true){ if(LANGS[v.lang]&&v.lang!==currentLang){ try{ localStorage.setItem('fittrack_lang',v.lang); }catch(e){} _r278Aplicar(v.lang); } return; }
+      setTimeout(function(){ if(currentAlumno===nip) r281Mostrar(false); }, 700);
+    }).catch(function(){});
+  }catch(e){}
+}
+(function(){ var st=document.createElement('style'); st.textContent=
+ '#r281{position:fixed;inset:0;z-index:2147483000;background:rgba(10,30,40,.72);display:none;align-items:center;justify-content:center;padding:16px}'+
+ '#r281 .r281-c{background:#fff;border-radius:22px;max-width:420px;width:100%;max-height:92vh;overflow:auto;padding:22px 18px;box-shadow:0 20px 50px rgba(0,0,0,.35);text-align:center}'+
+ '#r281 .r281-ic{font-size:38px}#r281 h2{margin:6px 0 8px;font-size:21px;color:#0e4f5c}'+
+ '#r281 .r281-p{font-size:14.5px;line-height:1.45;color:#2b3f45;margin:0 0 14px}'+
+ '#r281 .r281-g{display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:start}'+
+ '#r281 .r281-l{display:flex;align-items:center;gap:8px;border:1.5px solid #d6e6ea;background:#f7fbfc;border-radius:12px;padding:9px 10px;font-size:13.5px;cursor:pointer;color:#22343a}'+
+ '#r281 .r281-l span{font-size:20px}#r281 .r281-l b{flex:1;font-weight:600}#r281 .r281-l i{color:#0b8a9a;font-style:normal;font-weight:800}'+
+ '#r281 .r281-l.on{border-color:#0b8a9a;background:#e3f5f7}'+
+ '#r281 .r281-n{font-size:12.5px;color:#61777d;margin:12px 0}'+
+ '#r281 .r281-ok{width:100%;border:0;border-radius:14px;padding:14px;background:#0b8a9a;color:#fff;font-size:15.5px;font-weight:700;cursor:pointer}'+
+ '#r281 .r281-x{width:100%;border:0;background:none;color:#61777d;padding:10px;margin-top:4px;font-size:14px;cursor:pointer}';
+ document.head.appendChild(st); })();
 function r278Salir(){ r278Cerrar(true); if(_r278.coach){ _r278.coach=false; var l=_r278Elegido()||'es'; if(l!==currentLang){ currentLang=l; try{ applyLang(); }catch(e){} } } }
 (function(){ var st=document.createElement('style'); st.textContent=
  '.r278-bar{flex:none;margin:8px 16px 6px;background:var(--teal-xlight);border:1.5px solid var(--teal);border-radius:14px;padding:9px 12px;display:flex;align-items:center;gap:10px;text-align:start;font-family:inherit;cursor:pointer;width:calc(100% - 32px);color:inherit}'+
