@@ -882,7 +882,7 @@ html:not([lang^="es"]) .sug-gd,html:not([lang^="es"]) .cal-h b{text-transform:no
             <div id="metrics-perfil"></div>
           </div>
           <div class="divider"></div>
-          <button class="btn btn-outline" type="button" onclick="r278Canales()" style="margin-bottom:10px">💬 <span data-i18n="can_bar_t">¿Por dónde me comunico con mi coach?</span></button>
+          <button class="btn btn-outline" type="button" id="r278-perfil" onclick="r278Canales()" style="margin-bottom:10px">💬 <span data-i18n="can_bar_t">¿Por dónde me comunico con mi coach?</span></button>
           <button class="btn btn-outline" onclick="doLogout()" data-i18n="prof_cerrar">Cerrar sesión</button>
         </div>
       </div>
@@ -3381,6 +3381,7 @@ function bvInit(nip){
     if(est==='archivado'){ inactivoMostrar(); return; }
     if(est==='pausa'){ pausaMostrar(); return; }
     _ing=ing; renderHerrEntreno(); renderConstancia(); try{ retoInit(nip); }catch(e){} // regla 220
+    try{ _r278Vis(); }catch(e){} // Noé 26 oct: canales ocultos para inscritos del reto (no Team)
     try{ if(retoAccesoCerrado()){ retoCerradoMostrar(); return; } }catch(e){}
     try{ if(esNoAplicaAlumno()){ renderExercises(currentDay||'lunes'); renderAprobPorDia(); } }catch(e){} // autogestión por test de ingreso
     if(ing.pausa===true || /pausa=1/.test(location.search)&&FT_PRUEBA){ pausaMostrar(); return; }
@@ -4044,7 +4045,7 @@ function r278Salir(){ r278Cerrar(true); if(_r278.coach){ _r278.coach=false; var 
  '.r278-r{background:var(--text);color:#fff;border-radius:12px;padding:10px 12px;font-size:12.5px;line-height:1.5}'+
  '.r278-btn{margin-top:12px;width:100%;background:var(--teal);color:#fff;border:0;border-radius:10px;padding:11px;font-weight:700;font-size:14px;font-family:inherit;cursor:pointer}';
  document.head.appendChild(st); })();
-function r278Canales(){
+function r278Canales(){ if(_r278Oculto()) return;
   var o=document.getElementById('r278-overlay');
   if(!o){ o=document.createElement('div'); o.id='r278-overlay'; o.addEventListener('click',function(e){ if(e.target===o) r278Cerrar(); });
     document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&o.classList.contains('on')) r278Cerrar(); }); document.body.appendChild(o); }
@@ -4075,7 +4076,11 @@ function _r278Ocupado(){
   for(var i=0;i<L.length;i++){ var e=L[i]; if(e.id==='r278-overlay') continue; var cs=getComputedStyle(e); if(e.getClientRects().length&&cs.display!=='none'&&cs.visibility!=='hidden') return true; }
   return false;
 }
+// Noé 26 oct 14:14: a los inscritos del Reto Body Art 3 (no Team) NO se les muestra lo de canales de comunicación
+function _r278Oculto(){ try{ var r=(typeof _reto==='function')?_reto():null; return !!(r&&!r.team); }catch(e){ return false; } }
+function _r278Vis(){ var oc=_r278Oculto(); ['r278-bar','r278-perfil'].forEach(function(id){ var e=document.getElementById(id); if(e) e.style.display=oc?'none':''; }); return oc; }
 function r278CanalesAuto(nip){
+  if(_r278Vis()) return;
   try{ if(localStorage.getItem('ft_canales_'+nip)) return; }catch(e){}
   var n=0, libre=0, go=function(){ if(currentAlumno!==nip||_r278.visto[nip]) return; if(_r278Ocupado()){ libre=0; if(++n<200) setTimeout(go,3000); return; }
     if(++libre<2){ setTimeout(go,2000); return; } r278Canales(); };   // 2 revisiones seguidas sin otro aviso abierto (no se encima con r174/r177/novedades)
