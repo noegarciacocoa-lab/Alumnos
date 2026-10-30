@@ -597,6 +597,19 @@ body{display:flex;justify-content:center;height:100%}
 .tienda-md ol{padding-left:20px;margin:0 0 16px;font-size:14px;line-height:1.5}
 .tienda-md .tm-btn{display:block;text-align:center;background:linear-gradient(135deg,#C9971C,#FFD54A);color:#1a1a1a;font-weight:800;text-decoration:none;border-radius:14px;padding:14px;font-size:15px}
 .tienda-md .tm-x{display:block;width:100%;margin-top:10px;background:none;border:none;color:var(--text3,#666);font-size:13px;cursor:pointer;padding:8px}
+
+/* Regla 327 (Noé 29 oct 21:15): pestaña Progresiones intermitente con pendientes + flechita de scroll sutil */
+@keyframes r327pulso{0%,100%{background:transparent;box-shadow:none}50%{background:rgba(255,193,7,.28);box-shadow:0 0 0 3px rgba(255,193,7,.35)}}
+@keyframes r327campana{0%,100%{transform:rotate(0)}10%{transform:rotate(14deg)}20%{transform:rotate(-12deg)}30%{transform:rotate(8deg)}40%{transform:rotate(0)}}
+#nav-alertas.r327-pend .nav-pill{border-radius:20px;animation:r327pulso 1.6s ease-in-out infinite}
+#nav-alertas.r327-pend .nav-icon{animation:r327campana 1.6s ease-in-out infinite;display:inline-block}
+#nav-alertas.r327-pend [data-i18n="nav_alertas"]{color:#B7791F;font-weight:700}
+.device{position:relative}
+#r327-flecha{position:absolute;left:50%;transform:translateX(-50%);bottom:86px;width:34px;height:34px;border-radius:50%;border:none;background:rgba(10,143,168,.82);color:#fff;font-size:17px;line-height:34px;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.18);z-index:150;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .35s;padding:0}
+#r327-flecha.on{opacity:.85;pointer-events:auto;animation:r327bota 2.2s ease-in-out infinite}
+#r327-flecha.sin-nav{bottom:18px}
+@keyframes r327bota{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,5px)}}
+@media (prefers-reduced-motion:reduce){#nav-alertas.r327-pend .nav-pill,#nav-alertas.r327-pend .nav-icon,#r327-flecha.on{animation:none}}
 </style>
 <style id="i18n-rtl">
 /* i18n (26 oct 2026): ajustes para idiomas de derecha a izquierda (árabe). Solo aplican con <html dir="rtl">. */
@@ -4270,6 +4283,37 @@ function r278CanalesAuto(nip){
        .catch(function(){ setTimeout(go,3500); }); }
   catch(e){ setTimeout(go,3500); }
 }
+</script>
+
+<script>
+// ── Regla 327 (Noé 29 oct 21:15) ──
+// 1) La pestaña Progresiones parpadea mientras haya pendientes (lo mismo que enciende el punto rojo: progresiones o notas sin ver).
+// 2) Flechita de scroll sutil cuando hay contenido abajo en la vista visible (pantallas, Nutrición, Mis chequeos).
+(function(){
+  function pend(){ var d=document.getElementById('notif-dot'), b=document.getElementById('nav-alertas'); if(!d||!b) return;
+    var v=d.style.display==='block' && !b.classList.contains('active'); if(b.classList.contains('r327-pend')!==v) b.classList.toggle('r327-pend', v); }
+  function arranca(){
+    var d=document.getElementById('notif-dot'); if(d) new MutationObserver(pend).observe(d,{attributes:true,attributeFilter:['style']});
+    var b=document.getElementById('nav-alertas'); if(b) new MutationObserver(pend).observe(b,{attributes:true,attributeFilter:['class']});
+    pend();
+    var dev=document.querySelector('.device'); if(!dev) return;
+    var f=document.createElement('button'); f.id='r327-flecha'; f.type='button'; f.setAttribute('aria-label','scroll'); f.textContent='⌄'; dev.appendChild(f);
+    function visible(el){ return el && el.offsetParent!==null && el.clientHeight>0; }
+    function scroller(){ var c=['chq-view','nut-view'].map(function(i){return document.getElementById(i);}).filter(visible);
+      if(c.length) return c[0]; var x=document.querySelector('.device .content'); return visible(x)?x:null; }
+    var _t=0;
+    function check(){ var s=scroller(); var nav=document.querySelector('.bottom-nav');
+      var hay=s && (s.scrollHeight - s.scrollTop - s.clientHeight > 60);
+      var sn=!visible(nav); if(f.classList.contains('sin-nav')!==sn) f.classList.toggle('sin-nav', sn);
+      if(f.classList.contains('on')!==!!hay) f.classList.toggle('on', !!hay); }
+    f.addEventListener('click', function(){ var s=scroller(); if(s) s.scrollBy({top:Math.round(s.clientHeight*0.7),behavior:'smooth'}); });
+    document.addEventListener('scroll', function(){ clearTimeout(_t); _t=setTimeout(check,80); }, true);
+    window.addEventListener('resize', check);
+    document.addEventListener('click', function(){ clearTimeout(_t); _t=setTimeout(check,250); }, true);
+    setInterval(check,800); check();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',arranca); else arranca();
+})();
 </script>
 </body>
 </html>
