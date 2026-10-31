@@ -1314,7 +1314,9 @@ function esNoAplicaAlumno(){
   var a = currentAlumno ? ALL_ALUMNOS[currentAlumno] : null;
   if(!a) return false;
   if(a.tipoRevision === 'no_aplica') return true;
-  try{ return typeof _gestion === 'function' && _gestion().tipo === 'autogestion'; }catch(e){ return false; }
+  try{ if(typeof _gestion === 'function' && _gestion().tipo === 'autogestion') return true; }catch(e){}
+  try{ if(typeof r357Rev==='function' && !r357Rev(a)) return true; }catch(e){} // r357: sin revisión asignada → sin estados/% de aprobación por ejercicio
+  return false;
 }
 // Ejercicios "en revisión" (a.enRevision = {dia:[nombres]}). Sin enRevision →
 // todos en revisión (igual que siempre).
