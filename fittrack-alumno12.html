@@ -4092,6 +4092,8 @@ function r321RevActiva(a){ // regla 321: ¿tiene revisión activa? (mismo criter
     var n=0; Object.keys(a.enRevision).forEach(function(d){ var l=a.enRevision[d]; if(l&&l.length) n+=l.length; });
     if(!n) return false;
   }
+  // 321-bis (Noé 1 nov 12:22): con 100% de aprobación (mismo cálculo que la tarjeta: calcAprobGeneral) no se pinta la nota de videos
+  try{ if(typeof calcAprobGeneral==='function' && typeof ALL_ALUMNOS!=='undefined' && currentAlumno && ALL_ALUMNOS[currentAlumno]===a && calcAprobGeneral()>=100) return false; }catch(e){}
   return true;
 }
 function r236Pintar(){
