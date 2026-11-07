@@ -4253,7 +4253,9 @@ function r240Pintar(){
   var card=function(bg,t,big,f,tip){ return '<div style="border-radius:14px;padding:14px 14px 12px;color:#fff;background:'+bg+';box-shadow:0 2px 16px rgba(10,143,168,.2)"><div style="font-size:12px;font-weight:600;opacity:.92">'+t+'</div>'+big+'<div style="font-size:12px;opacity:.95">'+f+'</div><div style="margin-top:8px;font-size:12px;background:rgba(255,255,255,.16);border-radius:8px;padding:6px 8px">'+tip+'</div></div>'; };
   var bigT=function(x){ return '<div style="font-size:24px;font-weight:800;margin:6px 0 2px;line-height:1.15">'+x+'</div>'; };
   var html;
-  if(now<meta){
+  if(P.estado==='reportado'){
+    html=card('linear-gradient(135deg,#1A7F4B,#25a866)',t('r240_rep_t'),bigT(t('r240_rep_big')),ftxt,t('r240_rep_tip'));
+  } else if(now<meta){
     var seg=Math.floor((meta-now)/1000);
     if(seg>86400){
       var n=Math.round((Date.UTC(y,mo,d)-_r240hoyMx(now))/86400000); if(n<1) n=1;
@@ -4749,6 +4751,237 @@ function _mvPeriodo(P){
       ks.map(function(k){ var g = G[k], c = g.color || 'g'; return '<div class="mv-row"><div class="mv-rh"><b><i class="mv-dot ' + MV_CLS[c] + '"></i>' + _esc(N[k]) + (g.prio ? ' <span class="mv-st">' + _mvStars(g.prio) + '</span>' : '') + '</b><span class="mv-chip ' + MV_CLS[c] + '">' + (g.pct != null ? g.pct + ' %' : '—') + '</span></div><div class="mv-rs">' + t('mv_pe_row', {h: _mvR(g.hechas), p: _mvR(g.programadas)}) + '</div><div class="mv-bar"><i class="' + MV_CLS[c] + '" style="width:' + Math.max(2, Math.min(100, g.pct || 0)) + '%"></i></div></div>'; }).join('') +
     '</div></details></div>';
 }
+
+</script>
+<script>
+/* r374 (Noé 7 nov 12:45, plan único sección C): Nutrición (simplificada · detallada · lista del súper),
+   entrenamiento simplificado (autogestión), aviso «Revisa tu Nutrición» con puntito rojo y «Chequeo entregado».
+   Datos: fittrack_nutricion/<nip>/plan y /rutinaSimple (los publica la carga de altas y chequeos, tools/nutricion_fittrack.py
+   y tools/rutina_simple_fittrack.py). Visto: fittrack_vistos/<nip>/nutricion = {v, dieta, lista}.
+   ALCANCE: solo de ahora en adelante. Sin nodo → FitTrack se ve igual que antes. */
+(function(K){ Object.keys(K).forEach(function(l){ if(LANGS[l]) Object.keys(K[l]).forEach(function(k){ LANGS[l][k]=K[l][k]; }); }); })({
+ "es": {"r240_rep_t":"✅ Chequeo entregado","r240_rep_big":"¡Gracias, ya lo recibí!",
+  "r374_plan_t":"🍽️ Mi plan de alimentación","r374_plan_p":"Tu dieta para imprimir y pegar en tu cocina, la versión detallada y tu lista del súper.",
+  "r374_simple":"Simplificada","r374_det":"Detallada","r374_super":"Lista del súper","r374_print":"🖨️ Descargar PDF / Imprimir",
+  "r374_simple_t":"📄 Mi dieta simplificada","r374_det_t":"📖 Mi dieta detallada","r374_super_t":"🛒 Mi lista del súper",
+  "r374_como":"<b>Cómo leerla:</b> la cantidad de la derecha es la que pesas o cuentas. Abajo va su <b>medida casera</b> y, en carnes, arroz y leguminosas, el equivalente <span class=\"r374-cc\">crudo / cocido</span>. Las verduras se pesan crudas.",
+  "r374_desc":"📝 Descripción de tu plan","r374_nota":"📝 Nota de tu coach","r374_receta":"🍳 Preparación","r374_op":"Opción","r374_op1":"Opción 1",
+  "r374_tienda":"🛒 Ver en la tienda","r374_kcal":"kcal","r374_cerrar":"✕ Cerrar",
+  "r374_sup_sub":"Para 7 días · pesos en crudo","r374_carrito":"{n}/{t} en el carrito","r374_reset":"🔄 Nueva compra (desmarcar todo)",
+  "r374_alt":"Si eliges otras opciones (por porción)","r374_ok":"Toca un artículo para marcarlo. Se guarda en tu teléfono.",
+  "r374_av_t":"🥗 Revisa tu apartado de Nutrición","r374_av_p":"Ya está tu dieta y tu lista del súper. Ábrelas para quitar este aviso.","r374_av_btn":"Ir a Nutrición →",
+  "r374_av_dieta":"Abrir mi dieta","r374_av_lista":"Abrir mi lista del súper",
+  "r374_ent_t":"📋 Entrenamiento simplificado","r374_ent_p":"Tu semana de pesas en una sola vista, con series y repeticiones.","r374_ent_btn":"Ver entrenamiento simplificado",
+  "r374_ent_sem":"Semana {n} de {t}","r374_ent_harbiz":"📲 También la ves en <b>Harbiz</b>, donde cada ejercicio tiene su <b>video de ejemplo</b>. Tu agenda se sigue programando con tu entrenamiento.",
+  "r374_ent_reg":"✍️ Registrar tus marcas es <b>opcional</b>: si quieres llevar un registro de tu progreso, puedes; si no, está en tu derecho.",
+  "r374_series":"series","r374_desc_s":"descanso","r374_calent":"Calentamiento: lo indicado en el video de Harbiz.","r374_fr":"Frente","r374_es":"Espalda",
+  "r374_leyenda":"<i class=\"r374-c1\"></i> músculo principal <i class=\"r374-c2\"></i> secundario"},
+ "en": {"r240_rep_t":"✅ Check-in delivered","r240_rep_big":"Thank you, I got it!",
+  "r374_plan_t":"🍽️ My meal plan","r374_plan_p":"Your diet to print and stick in your kitchen, the detailed version and your grocery list.",
+  "r374_simple":"Simple","r374_det":"Detailed","r374_super":"Grocery list","r374_print":"🖨️ Download PDF / Print",
+  "r374_simple_t":"📄 My simple diet","r374_det_t":"📖 My detailed diet","r374_super_t":"🛒 My grocery list",
+  "r374_como":"<b>How to read it:</b> the amount on the right is what you weigh or count. Below is the <b>household measure</b> and, for meat, rice and legumes, the <span class=\"r374-cc\">raw / cooked</span> equivalent. Vegetables are weighed raw.",
+  "r374_desc":"📝 Plan description","r374_nota":"📝 Coach's note","r374_receta":"🍳 How to make it","r374_op":"Option","r374_op1":"Option 1",
+  "r374_tienda":"🛒 See in the store","r374_kcal":"kcal","r374_cerrar":"✕ Close",
+  "r374_sup_sub":"For 7 days · raw weights","r374_carrito":"{n}/{t} in the cart","r374_reset":"🔄 New shopping trip (uncheck all)",
+  "r374_alt":"If you choose other options (per serving)","r374_ok":"Tap an item to check it off. It's saved on your phone.",
+  "r374_av_t":"🥗 Check your Nutrition section","r374_av_p":"Your diet and grocery list are ready. Open them to clear this notice.","r374_av_btn":"Go to Nutrition →",
+  "r374_av_dieta":"Open my diet","r374_av_lista":"Open my grocery list",
+  "r374_ent_t":"📋 Simplified training","r374_ent_p":"Your weight-training week in one view, with sets and reps.","r374_ent_btn":"See simplified training",
+  "r374_ent_sem":"Week {n} of {t}","r374_ent_harbiz":"📲 You can also see it in <b>Harbiz</b>, where every exercise has its <b>example video</b>. Your calendar keeps scheduling your training.",
+  "r374_ent_reg":"✍️ Logging your numbers is <b>optional</b>: if you want to track your progress you can; if not, that's your right.",
+  "r374_series":"sets","r374_desc_s":"rest","r374_calent":"Warm-up: as shown in the Harbiz video.","r374_fr":"Front","r374_es":"Back",
+  "r374_leyenda":"<i class=\"r374-c1\"></i> main muscle <i class=\"r374-c2\"></i> secondary"}
+});
+var _nPlan=null, _nRut=null, _nVis=null, _r374tab='simple';
+var R374_NOMB={gluteo:'Glúteos',aductores:'Aductores',antebrazo:'Antebrazos',pecho:'Pecho',hombros:'Hombros',deltPost:'Hombro posterior',cuadriceps:'Cuádriceps',isquios:'Isquiotibiales',abdomen:'Abdomen',oblicuos:'Oblicuos',biceps:'Bíceps',triceps:'Tríceps',dorsal:'Dorsales',espaldaMedia:'Espalda media',trapecio:'Trapecio',lumbar:'Lumbares',pantorrilla:'Pantorrillas'};
+(function(){
+  var css=''
+  +'#r374-box{padding:10px 16px 0}#r374-box:empty{display:none}'
+  +'.r374-card{background:var(--surface,#fff);border:1px solid var(--teal-light,#cdeef2);border-radius:14px;padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 6px rgba(6,86,102,.06)}'
+  +'.r374-card h4{margin:0 0 4px;font-size:15px;color:var(--teal-dark,#065666)}.r374-card p{margin:0 0 8px;font-size:12.5px;color:var(--text2,#4b5563)}'
+  +'.r374-btn{display:block;width:100%;border:0;border-radius:12px;padding:11px 12px;font-weight:700;font-size:14px;background:var(--teal-dark,#065666);color:#fff;cursor:pointer;margin-top:6px}'
+  +'.r374-btn.alt{background:#fff;color:var(--teal-dark,#065666);border:1.5px solid var(--teal-dark,#065666)}'
+  +'.r374-av{background:linear-gradient(135deg,#FEF3DC,#FFF9EE);border:1.5px solid #F2B84B}.r374-av h4{color:#8a5a00}'
+  +'.r374-dotv{position:relative}.r374-dotv:after{content:"";position:absolute;top:2px;right:4px;width:9px;height:9px;border-radius:50%;background:#D93025;box-shadow:0 0 0 2px #fff}'
+  +'#r374-ov{position:absolute;inset:0;background:var(--surface,#fff);z-index:80;overflow:auto;-webkit-overflow-scrolling:touch;display:none}#r374-ov.on{display:block}'
+  +'.r374-top{position:sticky;top:0;background:var(--surface,#fff);padding:12px 14px 8px;border-bottom:1px solid #e3ecef;z-index:2}'
+  +'.r374-x{float:right;border:0;background:#EEF2F4;border-radius:10px;padding:6px 10px;font-weight:700;cursor:pointer}'
+  +'.r374-tabs{display:flex;gap:6px;margin-top:8px}.r374-tabs button{flex:1;border:1.5px solid #cfe3e7;background:#fff;border-radius:12px;padding:8px 4px;font-weight:700;font-size:12.5px;color:var(--teal-dark,#065666);cursor:pointer}'
+  +'.r374-tabs button.on{background:var(--teal-dark,#065666);color:#fff;border-color:var(--teal-dark,#065666)}'
+  +'.r374-in{padding:10px 14px 30px}.r374-in h2{font-size:19px;margin:6px 0 2px}.r374-mut{font-size:12px;color:var(--text3,#6b7280);margin-bottom:8px}'
+  +'.r374-mh{display:flex;justify-content:space-between;align-items:baseline;margin:14px 0 4px;border-bottom:2px solid var(--teal-dark,#065666);padding-bottom:3px}.r374-mh b{color:var(--teal-dark,#065666);font-size:14px}.r374-mh span{font-size:11.5px;color:var(--text2,#4b5563)}'
+  +'.r374-fl{border-bottom:1px solid #e3ecef;padding:6px 2px}.r374-fl .a{display:flex;justify-content:space-between;gap:8px;font-size:13px}.r374-fl .q{font-weight:700;color:var(--teal-dark,#065666);white-space:nowrap}.r374-fl .c{font-size:11.5px;color:var(--text2,#4b5563);margin-top:2px}'
+  +'.r374-cc{display:inline-block;background:#FEF3DC;color:#8a5a00;border-radius:6px;padding:0 6px;margin-left:4px;font-size:11px;font-weight:700}'
+  +'.r374-hz{background:#EEF6FF;border:1px solid #BFD7FB;border-radius:10px;padding:7px 10px;font-size:12px;color:#1e3a8a;margin:6px 0;white-space:pre-line}'
+  +'.r374-rc{background:#F4FBF7;border:1px solid #CBEBD8;border-radius:10px;padding:7px 10px;font-size:12px;color:#14532d;margin:6px 0;white-space:pre-line}'
+  +'.r374-reg{background:#F1F5F9;border-radius:10px;padding:8px 10px;font-size:11.5px;color:#334155;margin:8px 0}'
+  +'.r374-op{margin:6px 0 0;padding-left:8px;border-left:3px solid #cfe3e7}.r374-op>b{font-size:12px;color:#334155}'
+  +'.r374-sm{display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:3px 0}.r374-sm span:last-child{font-weight:700;color:var(--teal-dark,#065666);white-space:nowrap}'
+  +'.r374-pas{margin:12px 0 4px;font-size:13px;font-weight:800;color:var(--teal-dark,#065666)}'
+  +'.r374-it{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid #e3ecef;font-size:13.5px;cursor:pointer;user-select:none}'
+  +'.r374-it .bx{width:20px;height:20px;border:2px solid #9bb7bd;border-radius:6px;flex:none;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff}'
+  +'.r374-it.on .bx{background:#1A7F4B;border-color:#1A7F4B}.r374-it.on .nm{text-decoration:line-through;color:#9ca3af}.r374-it .qq{margin-left:auto;font-weight:700;color:var(--teal-dark,#065666);white-space:nowrap}.r374-it.on .qq{color:#9ca3af}'
+  +'.r374-it small{display:block;font-size:11px;color:#8a5a00}'
+  +'.r374-cnt{display:flex;align-items:center;gap:10px;margin:6px 0}.r374-cnt b{font-size:14px}.r374-bar{flex:1;height:8px;background:#e5eef0;border-radius:6px;overflow:hidden}.r374-bar i{display:block;height:100%;background:#1A7F4B}'
+  +'.r374-dia{margin:14px 0 6px;font-weight:800;font-size:15px;color:var(--teal-dark,#065666)}.r374-dia span{font-weight:600;font-size:12px;color:var(--text3,#6b7280);margin-left:6px}'
+  +'.r374-ej{display:flex;gap:10px;align-items:center;border:1px solid #e3ecef;border-radius:12px;padding:8px;margin-bottom:8px}'
+  +'.r374-fig{display:flex;gap:2px;flex:none;width:92px}.r374-fig svg{width:45px;height:auto}.r374-fig text{display:none}'
+  +'.r374-ej b{font-size:13.5px}.r374-ej .sr{font-size:12.5px;color:#1E5BD8;font-weight:700;margin-top:2px}.r374-ej .mm{font-size:11px;color:var(--text3,#6b7280);margin-top:2px}'
+  +'.r374-c1,.r374-c2{display:inline-block;width:10px;height:10px;border-radius:3px;background:#1E5BD8;margin:0 3px 0 8px;vertical-align:-1px}.r374-c2{background:#9CC2F4}'
+  +'#r374-print{display:none}'
+  +'@media print{body>*:not(#r374-print){display:none!important}#r374-print{display:block!important;font:12px/1.35 Arial,sans-serif;color:#000;padding:8mm}'
+  +'#r374-print .r374-it{cursor:default}#r374-print .r374-it .bx{background:#fff!important;border-color:#555!important;color:#fff!important}#r374-print .r374-it .nm{text-decoration:none!important;color:#000!important}#r374-print .r374-it .qq{color:#000!important}'
+  +'#r374-print .r374-btn,#r374-print .r374-tabs,#r374-print .r374-x,#r374-print .r374-cnt,#r374-print .noprint{display:none!important}#r374-print .r374-mh,#r374-print .r374-fl,#r374-print .r374-ej{break-inside:avoid}}';
+  var st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+})();
+function _r374tx(k,o){ var s=t(k); if(o) Object.keys(o).forEach(function(x){ s=s.split('{'+x+'}').join(o[x]); }); return s; }
+function _r374vals(o){ return Array.isArray(o)?o.filter(function(x){return x!=null;}):(o&&typeof o==='object'?Object.keys(o).sort(function(a,b){return (+a)-(+b);}).map(function(k){return o[k];}):[]); }
+function _r374ver(){ return _nPlan&&_nPlan.version?String(_nPlan.version):''; }
+function _r374pend(){ if(!_nPlan||!_r374ver()) return false; var v=_nVis||{}; return !(v.v===_r374ver()&&v.dieta&&v.lista); }
+function _r374marcar(cual){
+  if(!_nPlan||!currentAlumno) return; var v=_nVis&&_nVis.v===_r374ver()?_nVis:{v:_r374ver()};
+  if(v[cual]) return; v[cual]=new Date().toISOString(); _nVis=v;
+  try{ db.ref('fittrack_vistos/'+currentAlumno+'/nutricion').set(v).catch(function(){}); }catch(e){}
+  r374Pintar();
+}
+var _r374oldInit=nutricionInit;
+nutricionInit=function(nip){
+  _nPlan=null; _nRut=null; _nVis=null;
+  var g=function(p){ return db.ref(p).once('value').then(function(s){return s.val();}).catch(function(){return null;}); };
+  return Promise.all([_r374oldInit(nip), g('fittrack_nutricion/'+nip+'/plan'), g('fittrack_nutricion/'+nip+'/rutinaSimple'), g('fittrack_vistos/'+nip+'/nutricion')]).then(function(r){
+    if(currentAlumno!==nip) return; _nPlan=r[1]||null; _nRut=r[2]||null; _nVis=r[3]||null; r374Pintar();
+    setTimeout(function(){ if(currentAlumno===nip) r374Pintar(); },1500);
+  });
+};
+var _r374oldRender=renderNutricion;
+renderNutricion=function(){
+  _r374oldRender();
+  var el=document.getElementById('nut-body'); if(!el||!_nPlan) return;
+  var pend=_r374pend(), v=_nVis&&_nVis.v===_r374ver()?_nVis:{};
+  var h='<div class="r374-card'+(pend?' r374-av':'')+'"><h4>'+t('r374_plan_t')+'</h4><p>'+t('r374_plan_p')+'</p>'
+    +'<button class="r374-btn'+(pend&&!v.dieta?' r374-dotv':'')+'" onclick="r374Abrir(\'simple\')">📄 '+t('r374_simple')+'</button>'
+    +'<button class="r374-btn alt'+(pend&&!v.dieta?' r374-dotv':'')+'" onclick="r374Abrir(\'det\')">📖 '+t('r374_det')+'</button>'
+    +'<button class="r374-btn alt'+(pend&&!v.lista?' r374-dotv':'')+'" onclick="r374Abrir(\'super\')">🛒 '+t('r374_super')+'</button></div>';
+  el.insertAdjacentHTML('afterbegin',h);
+};
+function r374Pintar(){
+  var d=_device(); if(!d) return;
+  var dot=document.getElementById('sw-nut-dot'); if(dot){ if(_r374pend()){ dot.style.display='block'; dot.classList.add('r374-on'); } else if(dot.classList.contains('r374-on')){ dot.style.display='none'; dot.classList.remove('r374-on'); } }
+  var box=document.getElementById('r374-box');
+  if(!box){ var c=d.querySelector('.content'); if(!c) return; box=document.createElement('div'); box.id='r374-box'; c.insertBefore(box,c.firstChild); }
+  var h='';
+  if(_r374pend()) h+='<div class="r374-card r374-av"><h4>'+t('r374_av_t')+'</h4><p>'+t('r374_av_p')+'</p><button class="r374-btn" onclick="ftModo(\'nut\')">'+t('r374_av_btn')+'</button></div>';
+  var ag=false; try{ ag=_gestion().tipo==='autogestion'; }catch(e){}
+  if(ag&&_nRut&&_r374vals(_nRut.dias).length) h+='<div class="r374-card"><h4>'+t('r374_ent_t')+'</h4><p>'+t('r374_ent_p')+'</p><button class="r374-btn" onclick="r374Abrir(\'ent\')">'+t('r374_ent_btn')+'</button></div>';
+  if(box.innerHTML!==h) box.innerHTML=h;
+  var ov=document.getElementById('r374-ov');
+  if(typeof _modo!=='undefined'&&_modo==='nut'&&!(ov&&ov.classList.contains('on'))) renderNutricion();
+}
+function _r374ov(){ var o=document.getElementById('r374-ov'); if(!o){ o=document.createElement('div'); o.id='r374-ov'; _device().appendChild(o); } return o; }
+function r374Cerrar(){ var o=document.getElementById('r374-ov'); if(o) o.classList.remove('on'); if(typeof _modo!=='undefined'&&_modo==='nut') renderNutricion(); }
+function r374Abrir(tab){
+  _r374tab=tab; var o=_r374ov(), nom='';
+  try{ nom=(_ing&&_ing.nombre)||''; }catch(e){}
+  var top='<div class="r374-top"><button class="r374-x" onclick="r374Cerrar()">'+t('r374_cerrar')+'</button>';
+  if(tab!=='ent') top+='<div style="font-weight:800;font-size:15px;color:var(--teal-dark,#065666)">'+t('r374_plan_t')+'</div><div class="r374-tabs">'
+    +['simple','det','super'].map(function(k){ return '<button class="'+(k===tab?'on':'')+'" onclick="r374Abrir(\''+k+'\')">'+t('r374_'+k)+'</button>'; }).join('')+'</div>';
+  else top+='<div style="font-weight:800;font-size:15px;color:var(--teal-dark,#065666)">'+t('r374_ent_t')+'</div>';
+  top+='</div>';
+  var body=tab==='simple'?_r374simple():tab==='det'?_r374det():tab==='super'?_r374super():_r374ent();
+  o.innerHTML=top+'<div class="r374-in" id="r374-in">'+body+'</div>'; o.classList.add('on'); o.scrollTop=0;
+  if(tab==='simple'||tab==='det') _r374marcar('dieta'); if(tab==='super') _r374marcar('lista');
+}
+function r374Imprimir(){
+  var src=document.getElementById('r374-in'); if(!src) return;
+  var p=document.getElementById('r374-print'); if(!p){ p=document.createElement('div'); p.id='r374-print'; document.body.appendChild(p); }
+  p.innerHTML=src.innerHTML; p.querySelectorAll('.r374-it').forEach(function(x){ x.classList.remove('on'); });
+  try{ window.print(); }catch(e){}
+}
+function _r374pb(){ return '<button class="r374-btn noprint" onclick="r374Imprimir()">'+t('r374_print')+'</button>'; }
+function _r374cant(a){ return _esc(a.texto||((a.cantidad||'')+' '+(a.unidad||''))); }
+function _r374simple(){
+  var D=(_nPlan&&_nPlan.dieta)||{}, h='<h2>'+t('r374_simple_t')+'</h2><div class="r374-mut">'+_esc(D.nombre||'')+(D.kcal?' · ~'+D.kcal+' '+t('r374_kcal'):'')+'</div>'+_r374pb();
+  _r374vals(D.comidas).forEach(function(c){
+    h+='<div class="r374-mh"><b>'+_esc(c.nombre)+'</b><span>'+(c.kcal?c.kcal+' '+t('r374_kcal'):'')+'</span></div>';
+    var al=_r374vals(c.alimentos), ops=_r374vals(c.opciones);
+    if(ops.length) h+='<div class="r374-op"><b>'+t('r374_op1')+(c.receta?' · '+_esc(c.receta):'')+'</b>';
+    al.forEach(function(a){ h+='<div class="r374-sm"><span>'+_esc(a.nombre)+(a.casera?' <small style="color:#6b7280">('+_esc(a.casera)+')</small>':'')+'</span><span>'+_r374cant(a)+'</span></div>'; });
+    if(ops.length) h+='</div>';
+    ops.forEach(function(o,i){ h+='<div class="r374-op"><b>'+t('r374_op')+' '+(i+2)+' · '+_esc(o.nombre||'')+'</b>'+_r374vals(o.alimentos).map(function(a){ return '<div class="r374-sm"><span>'+_esc(a.nombre)+'</span><span>'+_r374cant(a)+'</span></div>'; }).join('')+'</div>'; });
+  });
+  return h+_r374pb();
+}
+function _r374ali(a){
+  var nm=_esc(a.nombre), extra=[];
+  if(a.suplemento&&a.link) nm+=' <a href="'+_esc(a.link)+'" target="_blank" rel="noopener">'+t('r374_tienda')+'</a>';
+  if(a.casera) extra.push(_esc(a.casera)); if(a.suplemento&&a.marcas) extra.push(_esc(a.marcas));
+  return '<div class="r374-fl"><div class="a"><b>'+nm+'</b><span class="q">'+_r374cant(a)+'</span></div>'+((extra.length||a.crudoCocido)?'<div class="c">'+extra.join(' · ')+(a.crudoCocido?'<span class="r374-cc">'+_esc(a.crudoCocido)+'</span>':'')+'</div>':'')+'</div>';
+}
+function _r374det(){
+  var D=(_nPlan&&_nPlan.dieta)||{}, h='<h2>'+t('r374_det_t')+'</h2><div class="r374-mut">'+_esc(D.nombre||'')+(D.kcal?' · ~'+D.kcal+' '+t('r374_kcal'):'')+'</div>'+_r374pb()
+    +'<div class="r374-reg">'+t('r374_como')+'</div>';
+  if(D.descripcion) h+='<div class="r374-hz"><b>'+t('r374_desc')+'</b>\n'+_esc(D.descripcion)+'</div>';
+  _r374vals(D.comidas).forEach(function(c){
+    h+='<div class="r374-mh"><b>'+_esc(c.nombre)+'</b><span>'+(c.kcal?c.kcal+' '+t('r374_kcal'):'')+'</span></div>';
+    var ops=_r374vals(c.opciones);
+    if(ops.length) h+='<div style="font-size:12px;font-weight:700;color:#334155;margin-top:4px">'+t('r374_op1')+(c.receta?' · '+_esc(c.receta):'')+'</div>';
+    _r374vals(c.alimentos).forEach(function(a){ h+=_r374ali(a); });
+    if(c.preparacion) h+='<div class="r374-rc"><b>'+t('r374_receta')+'</b>\n'+_esc(c.preparacion)+'</div>';
+    ops.forEach(function(o,i){ h+='<div class="r374-op"><b>'+t('r374_op')+' '+(i+2)+' · '+_esc(o.nombre||'')+'</b>'+_r374vals(o.alimentos).map(_r374ali).join('')+(o.receta?'<div class="r374-rc"><b>'+t('r374_receta')+'</b>\n'+_esc(o.receta)+'</div>':'')+'</div>'; });
+    if(c.nota) h+='<div class="r374-hz"><b>'+t('r374_nota')+'</b>\n'+_esc(c.nota)+'</div>';
+  });
+  return h+_r374pb();
+}
+function _r374key(){ return 'ft_super_'+(currentAlumno||'x')+'_'+_r374ver(); }
+function _r374get(){ try{ return JSON.parse(localStorage.getItem(_r374key())||'{}')||{}; }catch(e){ return {}; } }
+function _r374set(o){ try{ localStorage.setItem(_r374key(),JSON.stringify(o)); }catch(e){} }
+function r374Tog(el){ var k=el.getAttribute('data-k'), o=_r374get(); if(o[k]) delete o[k]; else o[k]=1; _r374set(o); el.classList.toggle('on',!!o[k]); _r374cnt(); }
+function r374Reset(){ _r374set({}); document.querySelectorAll('#r374-in .r374-it').forEach(function(x){ x.classList.remove('on'); }); _r374cnt(); }
+function _r374cnt(){ var all=document.querySelectorAll('#r374-in .r374-it'), on=document.querySelectorAll('#r374-in .r374-it.on'), c=document.getElementById('r374-cnt');
+  if(c) c.innerHTML='<b>'+_r374tx('r374_carrito',{n:on.length,t:all.length})+'</b><div class="r374-bar"><i style="width:'+(all.length?Math.round(on.length*100/all.length):0)+'%"></i></div>'; }
+function _r374super(){
+  var S=(_nPlan&&_nPlan.super)||{}, o=_r374get(), n=0, tot=0, h='<h2>'+t('r374_super_t')+'</h2><div class="r374-mut">'+t('r374_sup_sub')+'</div>'+_r374pb()
+    +'<div class="r374-cnt" id="r374-cnt"></div><div class="r374-mut noprint">'+t('r374_ok')+'</div><button class="r374-btn alt noprint" onclick="r374Reset()">'+t('r374_reset')+'</button>';
+  _r374vals(S.pasillos).forEach(function(p,pi){
+    h+='<div class="r374-pas">'+_esc(p.nombre)+'</div>';
+    _r374vals(p.items).forEach(function(it,ii){ var k=pi+'_'+ii; tot++; if(o[k]) n++;
+      h+='<div class="r374-it'+(o[k]?' on':'')+'" data-k="'+k+'" onclick="r374Tog(this)"><span class="bx">✓</span><span class="nm">'+_esc(it.nombre)+(it.nota?'<small>'+_esc(it.nota)+'</small>':'')+'</span><span class="qq">'+_esc(it.cantidad||'')+'</span></div>'; });
+  });
+  var alt=_r374vals(S.alternativas); if(alt.length){ h+='<div class="r374-pas">'+t('r374_alt')+'</div>'; alt.forEach(function(a){ h+='<div class="r374-reg"><b>'+_esc(a.comida)+' · '+_esc(a.opcion)+'</b><br>'+_r374vals(a.items).map(function(i){return _esc(i.nombre)+' — '+_esc(i.cantidad);}).join('<br>')+'</div>'; }); }
+  if(S.nota) h+='<div class="r374-reg">'+_esc(S.nota)+'</div>';
+  setTimeout(_r374cnt,0);
+  return h+_r374pb();
+}
+function _r374semana(){
+  var R=_nRut||{}, n=1; try{ if(R.inicio){ var i=new Date(R.inicio+'T12:00:00'), d=Math.floor((Date.now()-i.getTime())/86400000); n=Math.max(1,Math.floor(d/7)+1); } }catch(e){}
+  if(R.semanas&&n>R.semanas) n=R.semanas; return n;
+}
+function _r374fig(e,mujer){
+  var est={}; _r374vals(e.musculo).forEach(function(k){ est[k]={color:'v'}; }); _r374vals(e.secundarios).forEach(function(k){ if(!est[k]) est[k]={color:'a'}; });
+  var s=''; try{ s=mvFigura('f',mujer,est,R374_NOMB)+mvFigura('b',mujer,est,R374_NOMB); }catch(x){ return ''; }
+  return '<div class="r374-fig">'+s.split('#1A7F4B').join('#1E5BD8').split('#E3B008').join('#9CC2F4')+'</div>';
+}
+function _r374ent(){
+  var R=_nRut||{}, sem=_r374semana(), mujer=!!R.mujer, h='<h2>'+t('r374_ent_t')+'</h2>';
+  if(R.semanas) h+='<div class="r374-mut">'+_r374tx('r374_ent_sem',{n:sem,t:R.semanas})+'</div>';
+  h+='<div class="r374-mut">'+t('r374_leyenda')+'</div>'+_r374pb();
+  _r374vals(R.dias).forEach(function(d){
+    var fs=_r374vals(d.fases), f=fs.filter(function(x){ return _r374vals(x.semanas).indexOf(sem)>=0; })[0]||fs[0]; if(!f) return;
+    h+='<div class="r374-dia">'+_esc(d.nombreDia||'')+(f.titulo?'<span>'+_esc(f.titulo)+'</span>':'')+'</div>';
+    if(f.calentamiento) h+='<div class="r374-mut">🔥 '+t('r374_calent')+'</div>';
+    _r374vals(f.ejercicios).forEach(function(e){
+      var mm=_r374vals(e.musculo).map(function(k){return R374_NOMB[k]||k;}).join(', ');
+      h+='<div class="r374-ej">'+_r374fig(e,mujer)+'<div><b>'+_esc(e.nombre)+'</b><div class="sr">'+_esc(e.series)+' '+t('r374_series')+' × '+_esc(e.reps)+(e.descanso?' · '+t('r374_desc_s')+' '+_esc(e.descanso):'')+'</div>'+(mm?'<div class="mm">'+_esc(mm)+'</div>':'')+'</div></div>';
+    });
+  });
+  h+='<div class="r374-hz">'+t('r374_ent_harbiz')+'</div><div class="r374-reg">'+t('r374_ent_reg')+'</div>';
+  return h+_r374pb();
+}
+var _r374oldModo=ftModo;
+ftModo=function(m){ var o=document.getElementById('r374-ov'); if(o) o.classList.remove('on'); _r374oldModo(m); };
+var _r374oldReset=ftReset;
+ftReset=function(){ _nPlan=null; _nRut=null; _nVis=null; var o=document.getElementById('r374-ov'); if(o) o.classList.remove('on'); var b=document.getElementById('r374-box'); if(b) b.innerHTML=''; _r374oldReset(); };
 
 </script>
 </body>
