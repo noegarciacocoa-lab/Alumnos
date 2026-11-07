@@ -581,6 +581,12 @@ body{display:flex;justify-content:center;height:100%}
 /* Flechas de "hay más": bienvenida (abajo) y días de la rutina (derecha) */
 #bv-flecha{position:absolute;left:50%;bottom:86px;transform:translateX(-50%);z-index:3;display:none;align-items:center;gap:6px;background:var(--teal);color:#fff;border:none;border-radius:999px;padding:8px 16px 8px 14px;font:600 13px/1 inherit;box-shadow:0 6px 18px rgba(0,0,0,.22);cursor:pointer;animation:flechaRebote 1.4s ease-in-out infinite}
 #bv-flecha.on{display:flex}
+/* Flecha «desliza» en las vistas de Nutrición / entrenamiento simplificado (Noé 7 nov 13:42) */
+#r374-flecha{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:82;display:none;align-items:center;gap:6px;background:var(--teal);color:#fff;border:none;border-radius:999px;padding:8px 16px 8px 14px;font:600 13px/1 inherit;box-shadow:0 6px 18px rgba(0,0,0,.22);cursor:pointer;animation:flechaRebote 1.4s ease-in-out infinite}
+#r374-flecha.on{display:flex}
+#r327-flecha.r374-tapa{display:none!important}
+#r374-flecha i{font-style:normal;font-size:16px;line-height:1}
+@media print{#r374-flecha{display:none!important}}
 #bv-flecha i{font-style:normal;font-size:16px;line-height:1}
 @keyframes flechaRebote{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,6px)}}
 .dt-flecha{position:absolute;right:-4px;width:30px;height:30px;margin-top:-15px;display:none;align-items:center;justify-content:center;border-radius:50%;background:var(--teal);color:#fff;font-size:20px;font-weight:700;line-height:1;padding-bottom:2px;box-shadow:0 3px 10px rgba(0,0,0,.25);pointer-events:none;animation:flechaLado 1.2s ease-in-out infinite;z-index:2}
@@ -4879,7 +4885,16 @@ function r374Pintar(){
   if(typeof _modo!=='undefined'&&_modo==='nut'&&!(ov&&ov.classList.contains('on'))) renderNutricion();
 }
 function _r374ov(){ var o=document.getElementById('r374-ov'); if(!o){ o=document.createElement('div'); o.id='r374-ov'; _device().appendChild(o); } return o; }
-function r374Cerrar(){ var o=document.getElementById('r374-ov'); if(o) o.classList.remove('on'); if(typeof _modo!=='undefined'&&_modo==='nut') renderNutricion(); }
+function r374Flecha(){ var o=document.getElementById('r374-ov'), f=document.getElementById('r374-flecha'); if(!o) return;
+  if(!f){ f=document.createElement('button'); f.id='r374-flecha'; f.type='button'; f.onclick=r374Bajar; f.innerHTML='<i>⌄</i> <span>'+t('bv_desliza')+'</span>'; f.setAttribute('aria-label',t('bv_desliza')); (o.parentNode||document.body).appendChild(f); }
+  var abierto=o.classList.contains('on'), mas=abierto && (o.scrollHeight - o.clientHeight - o.scrollTop > 40);
+  var nav=document.querySelector('.bottom-nav'), pr=(f.parentNode&&f.parentNode.getBoundingClientRect)?f.parentNode.getBoundingClientRect():null, extra=22;
+  if(nav && nav.offsetParent!==null && pr){ var nr=nav.getBoundingClientRect(); if(nr.height>0 && nr.top<pr.bottom) extra=Math.round(pr.bottom-nr.top)+14; }
+  f.style.bottom=extra+'px';
+  var r3=document.getElementById('r327-flecha'); if(r3) r3.classList.toggle('r374-tapa', abierto);
+  f.classList.toggle('on', !!mas); }
+function r374Bajar(){ var o=document.getElementById('r374-ov'); if(o) o.scrollBy({top:Math.round(o.clientHeight*0.8),behavior:'smooth'}); }
+function r374Cerrar(){ var o=document.getElementById('r374-ov'); if(o) o.classList.remove('on'); var _f=document.getElementById('r374-flecha'); if(_f) _f.classList.remove('on'); var _r3=document.getElementById('r327-flecha'); if(_r3) _r3.classList.remove('r374-tapa'); if(typeof _modo!=='undefined'&&_modo==='nut') renderNutricion(); }
 function r374Abrir(tab){
   _r374tab=tab; var o=_r374ov(), nom='';
   try{ nom=(_ing&&_ing.nombre)||''; }catch(e){}
@@ -4890,6 +4905,8 @@ function r374Abrir(tab){
   top+='</div>';
   var body=tab==='simple'?_r374simple():tab==='det'?_r374det():tab==='super'?_r374super():_r374ent();
   o.innerHTML=top+'<div class="r374-in" id="r374-in">'+body+'</div>'; o.classList.add('on'); o.scrollTop=0;
+  if(!o._r374fl){ o._r374fl=1; o.addEventListener('scroll',r374Flecha,{passive:true}); try{ new MutationObserver(function(){ setTimeout(r374Flecha,30); }).observe(o,{childList:true,subtree:true}); }catch(e){} window.addEventListener('resize',r374Flecha); }
+  setTimeout(r374Flecha,60);
   if(tab==='simple'||tab==='det') _r374marcar('dieta'); if(tab==='super') _r374marcar('lista');
 }
 function r374Imprimir(){
@@ -4978,6 +4995,103 @@ function _r374ent(){
   h+='<div class="r374-hz">'+t('r374_ent_harbiz')+'</div><div class="r374-reg">'+t('r374_ent_reg')+'</div>';
   return h+_r374pb();
 }
+/* r375 (Noé 7 nov 13:25): dietas flexibles → en la Lista del súper el alumno elige por comida «Opción 1», «Opción 2»…
+   o «Ambas» (reparte los 7 días; por defecto 4/3, con +/−). Las cantidades se recalculan solas con super.calc
+   (catálogo de artículos + aporte diario por opción, lo arma tools/nutricion_fittrack.py). Elección en localStorage
+   ft_superop_<nip>_<versión>. Sin super.calc o sin opciones → la lista de siempre (pasillos fijos). */
+(function(K){ Object.keys(K).forEach(function(l){ if(LANGS[l]) Object.keys(K[l]).forEach(function(k){ LANGS[l][k]=K[l][k]; }); }); })({
+ "es": {"r375_t":"🍽️ ¿Qué opción vas a usar esta semana?","r375_p":"Elige en cada comida y tu lista se ajusta sola.",
+  "r375_ambas":"Ambas","r375_comb":"Combinar","r375_dias":"{n} días","r375_dia":"1 día",
+  "r375_sub":"Para 7 días según las opciones que elegiste · pesos en crudo","r375_imp":"Opciones de esta semana: ",
+  "r375_nota":"Cantidades para 7 días según las opciones que elegiste. Carnes y verduras se compran en crudo.","r375_rinde":"en {e} · rinde ≈{q} ya cocido","r375_coc":"en {e} · ya cocido ≈{q} g","r375_crudo":"crudo","r375_seco":"seco","r375_yac":"ya cocido"},
+ "en": {"r375_t":"🍽️ Which option will you use this week?","r375_p":"Choose for each meal and your list adjusts by itself.",
+  "r375_ambas":"Both","r375_comb":"Combine","r375_dias":"{n} days","r375_dia":"1 day",
+  "r375_sub":"For 7 days based on the options you chose · raw weights","r375_imp":"This week's options: ",
+  "r375_nota":"Amounts for 7 days based on the options you chose. Buy meat and vegetables raw.","r375_rinde":"{e} · yields ≈{q} cooked","r375_coc":"{e} · cooked ≈{q} g","r375_crudo":"raw","r375_seco":"dry","r375_yac":"already cooked"}
+});
+function _r375calc(){ var S=(_nPlan&&_nPlan.super)||{}, C=S.calc; if(!C||!C.catalogo) return null;
+  var com=_r374vals(C.comidas); if(!com.some(function(c){ return _r374vals(c.opciones).length>1; })) return null; return C; }
+function _r375key(){ return 'ft_superop_'+(currentAlumno||'x')+'_'+_r374ver(); }
+function _r375get(){ try{ return JSON.parse(localStorage.getItem(_r375key())||'{}')||{}; }catch(e){ return {}; } }
+function _r375set(o){ try{ localStorage.setItem(_r375key(),JSON.stringify(o)); }catch(e){} }
+function _r375dias(c,ci,sel){ // días por opción de la comida ci
+  var n=_r374vals(c.opciones).length, d=[], s=sel[ci]; for(var i=0;i<n;i++) d.push(0);
+  if(n<2){ d[0]=7; return d; }
+  if(s&&s.m==='mix'&&Array.isArray(s.d)&&s.d.length===n){ var t=0; s.d.forEach(function(x){ t+=(+x||0); }); if(t===7) return s.d.map(function(x){ return +x||0; }); }
+  if(s&&s.m==='mix'){ var b=Math.floor(7/n), r=7-b*n; for(var j=0;j<n;j++) d[j]=b+(j<r?1:0); return d; }
+  var o=(s&&s.m==='o'&&+s.o>=0&&+s.o<n)?+s.o:0; d[o]=7; return d;
+}
+function _r375rnd(x){ var f=Math.floor(x), r=x-f; if(Math.abs(r-0.5)<1e-9) return (f%2===0)?f:f+1; return Math.round(x); } // = round() de Python
+function _r375g(q){ return String(parseFloat((+q).toPrecision(6))); }
+function _r375fmt(q,u){
+  if(u==='g'&&q>=1000) return (q/1000).toFixed(2).replace(/\.00$/,'')+' kg';
+  if(u==='pz') return _r375g(q)+(q===1?' pieza':' piezas');
+  if(u==='ml'&&q>=1000) return (q/1000).toFixed(2)+' L';
+  return _r375g(q)+' '+u;
+}
+function _r375norm(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').trim(); }
+function _r375lista(){ // [{pasillo, items:[{k,nombre,cantidad,nota}]}]
+  var C=_r375calc(), cat=C.catalogo, sel=_r375get(), tot={};
+  _r374vals(C.comidas).forEach(function(c,ci){ var ds=_r375dias(c,ci,sel);
+    _r374vals(c.opciones).forEach(function(o,oi){ var dd=ds[oi]||0; if(!dd) return;
+      _r374vals(o.items).forEach(function(it){ if(!cat[it.id]) return; tot[it.id]=(tot[it.id]||0)+(+it.d||0)*dd; }); }); });
+  var pas={};
+  Object.keys(tot).forEach(function(id){ var e=cat[id], q=Math.round(tot[id]*1e6)/1e6; if(!(q>0)) return;
+    var txt=_r375fmt(q,e.unidad), it={k:'c:'+id, nombre:e.nombre, cantidad:txt};
+    if(e.factor){ var raw=5*_r375rnd(q*e.factor/5); it.cantidad=raw>=1000?(raw/1000).toFixed(2).replace(/\.00$/,'')+' kg':_r375g(raw)+' g';
+      it.nota=_r374tx('r375_rinde',{e:t(e.compra==='seco'?'r375_seco':'r375_crudo'),q:txt}); }
+    else if(e.cocido){ it.nota=_r374tx('r375_coc',{e:t(e.estado==='seco'?'r375_seco':'r375_crudo'),q:_r375g(5*_r375rnd(q*e.cocido/5))}); }
+    else if(e.nota) it.nota=t('r375_yac');
+    (pas[e.pasillo]=pas[e.pasillo]||[]).push(it); });
+  var orden=_r374vals(C.pasillos); Object.keys(pas).forEach(function(p){ if(orden.indexOf(p)<0) orden.push(p); });
+  return orden.filter(function(p){ return pas[p]; }).map(function(p){ return {pasillo:p, items:pas[p].sort(function(a,b){ var x=_r375norm(a.nombre), y=_r375norm(b.nombre); return x<y?-1:x>y?1:0; })}; });
+}
+function _r375selector(){
+  var C=_r375calc(), sel=_r375get(), h='', resumen=[];
+  _r374vals(C.comidas).forEach(function(c,ci){ var ops=_r374vals(c.opciones); if(ops.length<2) return;
+    var ds=_r375dias(c,ci,sel), mix=!!(sel[ci]&&sel[ci].m==='mix'), cur=mix?-1:ds.indexOf(7);
+    h+='<div class="r375-row"><div class="r375-cn">'+_esc(c.nombre)+'</div><div class="r375-bt">';
+    ops.forEach(function(o,oi){ h+='<button class="'+(cur===oi?'on':'')+'" onclick="r375Sel('+ci+','+oi+')">'+t('r374_op')+' '+(oi+1)+'</button>'; });
+    h+='<button class="'+(mix?'on':'')+'" onclick="r375Sel('+ci+',-1)">'+t(ops.length===2?'r375_ambas':'r375_comb')+'</button></div>';
+    if(mix){ h+='<div class="r375-mx">'; ops.forEach(function(o,oi){ var n=ds[oi];
+      h+='<div class="r375-dl"><span>'+t('r374_op')+' '+(oi+1)+'</span><button onclick="r375Dia('+ci+','+oi+',-1)"'+(n<=1?' disabled':'')+'>−</button><b>'+(n===1?t('r375_dia'):_r374tx('r375_dias',{n:n}))+'</b><button onclick="r375Dia('+ci+','+oi+',1)"'+(n>=8-ops.length?' disabled':'')+'>+</button></div>'; });
+      h+='</div>'; resumen.push(_esc(c.nombre)+': '+ops.map(function(o,oi){ return t('r374_op')+' '+(oi+1)+' '+(ds[oi]===1?t('r375_dia'):_r374tx('r375_dias',{n:ds[oi]})); }).join(' + ')); }
+    else resumen.push(_esc(c.nombre)+': '+t('r374_op')+' '+(cur+1));
+    h+='</div>'; });
+  return '<details class="r375 noprint" id="r375-box"'+(_r375abierto?' open':'')+' ontoggle="_r375abierto=this.open"><summary>'+t('r375_t')+'</summary><div class="r374-mut">'+t('r375_p')+'</div>'+h+'</details>'
+    +'<div class="r375-imp">'+t('r375_imp')+resumen.join(' · ')+'</div>';
+}
+var _r375abierto=true;
+function r375Sel(ci,oi){ var s=_r375get(), C=_r375calc(); if(!C) return; var n=_r374vals(_r374vals(C.comidas)[ci].opciones).length;
+  if(oi<0){ var b=Math.floor(7/n), r=7-b*n, d=[]; for(var j=0;j<n;j++) d.push(b+(j<r?1:0)); s[ci]={m:'mix',d:d}; } else s[ci]={m:'o',o:oi};
+  _r375set(s); _r375repinta(); }
+function r375Dia(ci,oi,delta){ var s=_r375get(), C=_r375calc(); if(!C) return; var c=_r374vals(C.comidas)[ci], ds=_r375dias(c,ci,s).slice(), n=ds.length;
+  if(delta>0){ if(ds[oi]>=8-n) return; var k=-1; for(var j=n-1;j>=0;j--){ if(j!==oi&&ds[j]>1&&(k<0||ds[j]>ds[k])) k=j; } if(k<0) return; ds[oi]++; ds[k]--; }
+  else { if(ds[oi]<=1) return; var m=-1; for(var j2=0;j2<n;j2++){ if(j2!==oi&&(m<0||ds[j2]<ds[m])) m=j2; } ds[oi]--; ds[m]++; }
+  s[ci]={m:'mix',d:ds}; _r375set(s); _r375repinta(); }
+function _r375repinta(){ var o=document.getElementById('r374-ov'), y=o?o.scrollTop:0; r374Abrir('super'); var o2=document.getElementById('r374-ov'); if(o2) o2.scrollTop=y; }
+var _r375oldSuper=_r374super;
+_r374super=function(){
+  if(!_r375calc()) return _r375oldSuper();
+  var L=_r375lista(), o=_r374get(), vivos={}, h='<h2>'+t('r374_super_t')+'</h2><div class="r374-mut">'+t('r375_sub')+'</div>'+_r374pb()
+    +_r375selector()+'<div class="r374-cnt" id="r374-cnt"></div><div class="r374-mut noprint">'+t('r374_ok')+'</div><button class="r374-btn alt noprint" onclick="r374Reset()">'+t('r374_reset')+'</button>';
+  L.forEach(function(p){ h+='<div class="r374-pas">'+_esc(p.pasillo)+'</div>';
+    p.items.forEach(function(it){ vivos[it.k]=1;
+      h+='<div class="r374-it'+(o[it.k]?' on':'')+'" data-k="'+_esc(it.k)+'" onclick="r374Tog(this)"><span class="bx">✓</span><span class="nm">'+_esc(it.nombre)+(it.nota?'<small>'+_esc(it.nota)+'</small>':'')+'</span><span class="qq">'+_esc(it.cantidad)+'</span></div>'; }); });
+  var lim=false; Object.keys(o).forEach(function(k){ if(!vivos[k]){ delete o[k]; lim=true; } }); if(lim) _r374set(o); // palomitas de artículos que ya no están
+  h+='<div class="r374-reg">'+t('r375_nota')+'</div>';
+  setTimeout(_r374cnt,0);
+  return h+_r374pb();
+};
+(function(){ var st=document.createElement('style'); st.textContent=''
+  +'.r375{border:1.5px solid #cfe3e7;border-radius:12px;padding:8px 10px;margin:8px 0;background:#F7FBFC}.r375 summary{font-weight:800;font-size:14px;color:var(--teal-dark,#065666);cursor:pointer}'
+  +'.r375-row{border-top:1px solid #e3ecef;padding:8px 0}.r375-cn{font-weight:700;font-size:13px;margin-bottom:5px}'
+  +'.r375-bt{display:flex;gap:6px;flex-wrap:wrap}.r375-bt button{flex:1;min-width:76px;border:1.5px solid #cfe3e7;background:#fff;border-radius:10px;padding:7px 4px;font-weight:700;font-size:12px;color:var(--teal-dark,#065666);cursor:pointer}'
+  +'.r375-bt button.on{background:var(--teal-dark,#065666);color:#fff;border-color:var(--teal-dark,#065666)}'
+  +'.r375-mx{margin-top:6px}.r375-dl{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:3px 0}.r375-dl span{flex:1}.r375-dl b{min-width:58px;text-align:center}'
+  +'.r375-dl button{width:30px;height:30px;border-radius:8px;border:1.5px solid #cfe3e7;background:#fff;font-size:16px;font-weight:800;color:var(--teal-dark,#065666);cursor:pointer}.r375-dl button:disabled{opacity:.35}'
+  +'.r375-imp{display:none}@media print{#r374-print .r375-imp{display:block!important;font-size:11px;margin:4px 0 6px}}';
+  document.head.appendChild(st); })();
 var _r374oldModo=ftModo;
 ftModo=function(m){ var o=document.getElementById('r374-ov'); if(o) o.classList.remove('on'); _r374oldModo(m); };
 var _r374oldReset=ftReset;
