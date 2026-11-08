@@ -4907,7 +4907,7 @@ function r374Abrir(tab){
   o.innerHTML=top+'<div class="r374-in" id="r374-in">'+body+'</div>'; o.classList.add('on'); o.scrollTop=0;
   if(!o._r374fl){ o._r374fl=1; o.addEventListener('scroll',r374Flecha,{passive:true}); try{ new MutationObserver(function(){ setTimeout(r374Flecha,30); }).observe(o,{childList:true,subtree:true}); }catch(e){} window.addEventListener('resize',r374Flecha); }
   setTimeout(r374Flecha,60);
-  if(tab==='simple'||tab==='det') _r374marcar('dieta'); if(tab==='super') _r374marcar('lista');
+  if(tab==='simple'||tab==='det'){ _r374marcar('dieta'); _r374marcar(tab); } if(tab==='super') _r374marcar('lista');   /* r391: registra también simple/det por separado */
 }
 function r374Imprimir(){
   var src=document.getElementById('r374-in'); if(!src) return;
@@ -5096,6 +5096,118 @@ var _r374oldModo=ftModo;
 ftModo=function(m){ var o=document.getElementById('r374-ov'); if(o) o.classList.remove('on'); _r374oldModo(m); };
 var _r374oldReset=ftReset;
 ftReset=function(){ _nPlan=null; _nRut=null; _nVis=null; var o=document.getElementById('r374-ov'); if(o) o.classList.remove('on'); var b=document.getElementById('r374-box'); if(b) b.innerHTML=''; _r374oldReset(); };
+
+</script>
+<script>
+// ══ REGLA 390 (Noé · 7 nov 2026 18:41) ══════════════════════════════════════
+// Plan de acción DENTRO de FitTrack:
+//  a) Al final del chequeo (debajo de "Resultados y mensaje" / "Reporte") el apartado «📋 Tu plan de acción»:
+//     qué se pide y por qué, fecha límite y los puntos numerados (preguntas concretas) — sale de items/<id>.planAccion
+//     = {porque, hasta, usted, idioma, puntos:[{id, txt, es}]} (lo escribe la subida del chequeo, motor/plan_accion_390.py).
+//  b) Un recuadro por punto + «Enviar mi plan»; no deja enviar con puntos vacíos. Escribe SOLO
+//     fittrack_planes/<nip>/<id> = {respuestas:[{punto, texto}], enviadoEn, idioma, num}. Después: «✅ Recibido…» + lo enviado.
+//  c) Aviso «Plan de acción en espera»: ya no manda a WhatsApp; botón «Ir a mi plan de acción» (abre el chequeo y baja
+//     al apartado). Si ya lo envió desde la app, el aviso no sale (Claude cierra planAccion en su revisión de 15 min).
+(function(K){ Object.keys(K).forEach(function(l){ if(LANGS[l]) Object.keys(K[l]).forEach(function(k){ LANGS[l][k]=K[l][k]; }); }); })({
+"es":{"pa390_t":"📋 Tu plan de acción","pa390_hasta":"Entrégalo antes del {f}","pa390_inst":"Responde cada punto con algo concreto: qué vas a hacer, cuándo y cómo.","pa390_ph":"Escribe aquí tu plan para este punto…","pa390_btn":"Enviar mi plan","pa390_falta":"Te falta responder: {n}.","pa390_env":"Enviando…","pa390_ok":"✅ Recibido, tu coach lo revisa","pa390_ok_sub":"Esto es lo que enviaste el {f}:","pa390_err":"No se pudo enviar. Revisa tu conexión e inténtalo de nuevo.","pa390_venc":"El plazo venció el {f}, pero todavía puedes enviarlo.","pa390_punto":"Punto {n}","r174_txt":"En el feedback de tu chequeo te pedí tu plan de acción y todavía no lo tengo. Entra a tu chequeo: al final está el apartado 📋 Tu plan de acción. Responde cada punto y toca «Enviar mi plan».","r174_btn":"Ir a mi plan de acción",
+ "pa390_hasta_u":"Entréguelo antes del {f}","pa390_inst_u":"Responda cada punto con algo concreto: qué va a hacer, cuándo y cómo.","pa390_ph_u":"Escriba aquí su plan para este punto…","pa390_btn_u":"Enviar mi plan","pa390_falta_u":"Le falta responder: {n}.","pa390_ok_u":"✅ Recibido, su coach lo revisa","pa390_ok_sub_u":"Esto es lo que envió el {f}:","pa390_err_u":"No se pudo enviar. Revise su conexión e inténtelo de nuevo.","pa390_venc_u":"El plazo venció el {f}, pero todavía puede enviarlo.","pa390_t_u":"📋 Su plan de acción","r174_txt_u":"En el feedback de su chequeo le pedí su plan de acción y todavía no lo tengo. Entre a su chequeo: al final está el apartado 📋 Su plan de acción. Responda cada punto y toque «Enviar mi plan».","r174_btn_u":"Ir a mi plan de acción","r174_sub_u":"Su coach está esperando su propuesta"},
+"en":{"pa390_t":"📋 Your action plan","pa390_hasta":"Submit it before {f}","pa390_inst":"Answer each point with something concrete: what you will do, when and how.","pa390_ph":"Write your plan for this point here…","pa390_btn":"Send my plan","pa390_falta":"You still need to answer: {n}.","pa390_env":"Sending…","pa390_ok":"✅ Received, your coach will review it","pa390_ok_sub":"This is what you sent on {f}:","pa390_err":"It couldn't be sent. Check your connection and try again.","pa390_venc":"The deadline was {f}, but you can still send it.","pa390_punto":"Point {n}","r174_txt":"In your check-in feedback I asked you for your action plan and I don't have it yet. Open your check-in: at the end you'll find the section 📋 Your action plan. Answer each point and tap “Send my plan”.","r174_btn":"Go to my action plan"},
+"pt":{"pa390_t":"📋 Seu plano de ação","pa390_hasta":"Entregue antes de {f}","pa390_inst":"Responda cada ponto com algo concreto: o que você vai fazer, quando e como.","pa390_ph":"Escreva aqui seu plano para este ponto…","pa390_btn":"Enviar meu plano","pa390_falta":"Falta responder: {n}.","pa390_env":"Enviando…","pa390_ok":"✅ Recebido, seu coach vai revisar","pa390_ok_sub":"Isto é o que você enviou em {f}:","pa390_err":"Não foi possível enviar. Verifique sua conexão e tente de novo.","pa390_venc":"O prazo venceu em {f}, mas você ainda pode enviar.","pa390_punto":"Ponto {n}","r174_txt":"No feedback do seu check-in eu pedi seu plano de ação e ainda não o recebi. Abra seu check-in: no final está a seção 📋 Seu plano de ação. Responda cada ponto e toque em “Enviar meu plano”.","r174_btn":"Ir ao meu plano de ação"},
+"it":{"pa390_t":"📋 Il tuo piano d'azione","pa390_hasta":"Consegnalo entro il {f}","pa390_inst":"Rispondi a ogni punto con qualcosa di concreto: cosa farai, quando e come.","pa390_ph":"Scrivi qui il tuo piano per questo punto…","pa390_btn":"Invia il mio piano","pa390_falta":"Devi ancora rispondere: {n}.","pa390_env":"Invio…","pa390_ok":"✅ Ricevuto, il tuo coach lo rivedrà","pa390_ok_sub":"Ecco cosa hai inviato il {f}:","pa390_err":"Invio non riuscito. Controlla la connessione e riprova.","pa390_venc":"La scadenza era il {f}, ma puoi ancora inviarlo.","pa390_punto":"Punto {n}","r174_txt":"Nel feedback del tuo check-in ti ho chiesto il tuo piano d'azione e non l'ho ancora ricevuto. Apri il tuo check-in: alla fine c'è la sezione 📋 Il tuo piano d'azione. Rispondi a ogni punto e tocca «Invia il mio piano».","r174_btn":"Vai al mio piano d'azione"},
+"fr":{"pa390_t":"📋 Ton plan d'action","pa390_hasta":"À rendre avant le {f}","pa390_inst":"Réponds à chaque point avec du concret : ce que tu vas faire, quand et comment.","pa390_ph":"Écris ici ton plan pour ce point…","pa390_btn":"Envoyer mon plan","pa390_falta":"Il te reste à répondre : {n}.","pa390_env":"Envoi…","pa390_ok":"✅ Reçu, ton coach va le revoir","pa390_ok_sub":"Voici ce que tu as envoyé le {f} :","pa390_err":"L'envoi a échoué. Vérifie ta connexion et réessaie.","pa390_venc":"Le délai a expiré le {f}, mais tu peux encore l'envoyer.","pa390_punto":"Point {n}","r174_txt":"Dans le retour de ton bilan, je t'ai demandé ton plan d'action et je ne l'ai toujours pas reçu. Ouvre ton bilan : à la fin se trouve la section 📋 Ton plan d'action. Réponds à chaque point et touche « Envoyer mon plan ».","r174_btn":"Aller à mon plan d'action"},
+"zh_tw":{"pa390_t":"📋 你的行動計畫","pa390_hasta":"請在 {f} 前提交","pa390_inst":"每一點都要具體回答：你要做什麼、什麼時候做、怎麼做。","pa390_ph":"在這裡寫下你針對這一點的計畫…","pa390_btn":"送出我的計畫","pa390_falta":"還沒回答：{n}。","pa390_env":"送出中…","pa390_ok":"✅ 已收到，教練會審閱","pa390_ok_sub":"這是你在 {f} 送出的內容：","pa390_err":"無法送出。請檢查網路連線後再試一次。","pa390_venc":"期限已在 {f} 截止，但你仍然可以送出。","pa390_punto":"第 {n} 點","r174_txt":"在你的檢查回饋中，我請你提交行動計畫，但我還沒收到。請打開你的檢查：最後有「📋 你的行動計畫」區塊，回答每一點後按「送出我的計畫」。","r174_btn":"前往我的行動計畫"},
+"zh_cn":{"pa390_t":"📋 你的行动计划","pa390_hasta":"请在 {f} 前提交","pa390_inst":"每一点都要具体回答：你要做什么、什么时候做、怎么做。","pa390_ph":"在这里写下你针对这一点的计划…","pa390_btn":"提交我的计划","pa390_falta":"还没回答：{n}。","pa390_env":"提交中…","pa390_ok":"✅ 已收到，教练会审阅","pa390_ok_sub":"这是你在 {f} 提交的内容：","pa390_err":"无法提交。请检查网络连接后再试一次。","pa390_venc":"期限已在 {f} 截止，但你仍然可以提交。","pa390_punto":"第 {n} 点","r174_txt":"在你的检查回馈中，我请你提交行动计划，但我还没收到。请打开你的检查：最后有「📋 你的行动计划」部分，回答每一点后点「提交我的计划」。","r174_btn":"前往我的行动计划"},
+"de":{"pa390_t":"📋 Dein Aktionsplan","pa390_hasta":"Abgabe bis {f}","pa390_inst":"Beantworte jeden Punkt konkret: was du tun wirst, wann und wie.","pa390_ph":"Schreibe hier deinen Plan für diesen Punkt…","pa390_btn":"Meinen Plan senden","pa390_falta":"Noch offen: {n}.","pa390_env":"Wird gesendet…","pa390_ok":"✅ Erhalten, dein Coach prüft ihn","pa390_ok_sub":"Das hast du am {f} gesendet:","pa390_err":"Senden fehlgeschlagen. Prüfe deine Verbindung und versuche es erneut.","pa390_venc":"Die Frist ist am {f} abgelaufen, du kannst ihn aber noch senden.","pa390_punto":"Punkt {n}","r174_txt":"Im Feedback zu deinem Check-in habe ich dich um deinen Aktionsplan gebeten und habe ihn noch nicht. Öffne deinen Check-in: Am Ende findest du den Abschnitt 📋 Dein Aktionsplan. Beantworte jeden Punkt und tippe auf „Meinen Plan senden“.","r174_btn":"Zu meinem Aktionsplan"},
+"ru":{"pa390_t":"📋 Твой план действий","pa390_hasta":"Отправь до {f}","pa390_inst":"Ответь на каждый пункт конкретно: что ты будешь делать, когда и как.","pa390_ph":"Напиши здесь свой план по этому пункту…","pa390_btn":"Отправить мой план","pa390_falta":"Осталось ответить: {n}.","pa390_env":"Отправка…","pa390_ok":"✅ Получено, тренер его посмотрит","pa390_ok_sub":"Вот что ты отправил(а) {f}:","pa390_err":"Не удалось отправить. Проверь соединение и попробуй ещё раз.","pa390_venc":"Срок истёк {f}, но ты ещё можешь отправить.","pa390_punto":"Пункт {n}","r174_txt":"В обратной связи по отчёту я попросил тебя прислать план действий, но пока его не получил. Открой свой отчёт: в конце есть раздел 📋 Твой план действий. Ответь на каждый пункт и нажми «Отправить мой план».","r174_btn":"Перейти к моему плану"},
+"pl":{"pa390_t":"📋 Twój plan działania","pa390_hasta":"Prześlij przed {f}","pa390_inst":"Odpowiedz konkretnie na każdy punkt: co zrobisz, kiedy i jak.","pa390_ph":"Wpisz tu swój plan dla tego punktu…","pa390_btn":"Wyślij mój plan","pa390_falta":"Brakuje odpowiedzi: {n}.","pa390_env":"Wysyłanie…","pa390_ok":"✅ Odebrano, trener go sprawdzi","pa390_ok_sub":"Oto co wysłano {f}:","pa390_err":"Nie udało się wysłać. Sprawdź połączenie i spróbuj ponownie.","pa390_venc":"Termin minął {f}, ale nadal możesz go wysłać.","pa390_punto":"Punkt {n}","r174_txt":"W feedbacku z check-inu poprosiłem cię o plan działania, a jeszcze go nie mam. Otwórz swój check-in: na końcu jest sekcja 📋 Twój plan działania. Odpowiedz na każdy punkt i dotknij „Wyślij mój plan”.","r174_btn":"Przejdź do mojego planu"},
+"ar":{"pa390_t":"📋 خطة عملك","pa390_hasta":"سلّمها قبل {f}","pa390_inst":"أجب عن كل نقطة بشيء محدد: ماذا ستفعل، ومتى، وكيف.","pa390_ph":"اكتب هنا خطتك لهذه النقطة…","pa390_btn":"أرسل خطتي","pa390_falta":"بقي أن تجيب عن: {n}.","pa390_env":"جارٍ الإرسال…","pa390_ok":"✅ تم الاستلام، سيراجعها مدربك","pa390_ok_sub":"هذا ما أرسلته في {f}:","pa390_err":"تعذّر الإرسال. تحقّق من اتصالك وحاول مرة أخرى.","pa390_venc":"انتهت المهلة في {f}، لكن ما زال بإمكانك إرسالها.","pa390_punto":"النقطة {n}","r174_txt":"طلبت منك في ملاحظات تقييمك خطة العمل ولم تصلني بعد. افتح تقييمك: في نهايته قسم 📋 خطة عملك. أجب عن كل نقطة ثم اضغط «أرسل خطتي».","r174_btn":"اذهب إلى خطة عملي"}
+});
+var _pa390 = {}, _pa390Llenando = false;   // nip|id → {respuestas, enviadoEn} ya enviado (cache de fittrack_planes)
+function _pa390U(it){ try{ return currentLang==='es' && ((it&&it.planAccion&&it.planAccion.usted===true) || r321cUsted()); }catch(e){ return false; } }
+function _pa390T(it,k,v){ if(_pa390U(it) && LANGS.es[k+'_u']!==undefined) return _tFmt(LANGS.es[k+'_u'],v); return t(k,v); }
+function _pa390Puntos(it){ var p=it&&it.planAccion; if(!p) return []; return _vals(p.puntos).filter(function(x){ return x&&String(x.txt||'').trim(); }); }
+function _pa390Html(it){
+  var P=it.planAccion, pts=_pa390Puntos(it), id=_chqId(it); if(!pts.length||!id) return '';
+  var hoy=_r174HoyMx(), hasta=String(P.hasta||'').slice(0,10), env=_pa390[currentAlumno+'|'+id];
+  var h='<div id="pa390" class="pa390" data-id="'+_esc(id)+'" style="margin:18px 0 6px;padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--border2,#e2e8f0);border-inline-start:5px solid #3A47B0">';
+  h+='<div style="font-size:16px;font-weight:800;color:var(--text)">'+_pa390T(it,'pa390_t')+'</div>';
+  if(/^\d{4}-\d{2}-\d{2}$/.test(hasta)) h+='<div style="font-size:12.5px;font-weight:700;color:'+(hoy>hasta?'#d9534f':'#3A47B0')+';margin-top:2px">⏰ '+(hoy>hasta?_pa390T(it,'pa390_venc',{f:_fcorta(hasta)}):_pa390T(it,'pa390_hasta',{f:_fcorta(hasta)}))+'</div>';
+  if(P.porque) h+='<div style="font-size:13px;color:var(--text);line-height:1.5;margin-top:8px">'+_esc(P.porque)+'</div>';
+  if(env){
+    h+='<div style="margin-top:10px;font-weight:800;color:#1f8a4c">'+_pa390T(it,'pa390_ok')+'</div><div style="font-size:12px;color:var(--text2);margin-top:2px">'+_pa390T(it,'pa390_ok_sub',{f:_fcorta(env.enviadoEn)})+'</div>';
+    h+=_vals(env.respuestas).map(function(r,i){ return '<div style="margin-top:8px;padding:8px 10px;border-radius:10px;background:var(--surface2)"><div style="font-size:12.5px;font-weight:700;color:var(--text)">'+(i+1)+'. '+_esc(r.punto)+'</div><div style="font-size:13px;color:var(--text);white-space:pre-wrap;margin-top:3px">'+_esc(r.texto)+'</div></div>'; }).join('');
+    return h+'</div>';
+  }
+  h+='<div style="font-size:12.5px;color:var(--text2);margin-top:6px">'+_pa390T(it,'pa390_inst')+'</div>';
+  pts.forEach(function(p,i){
+    h+='<div style="margin-top:12px"><label for="pa390-r'+i+'" style="display:block;font-size:13px;font-weight:700;color:var(--text);line-height:1.4">'+(i+1)+'. '+_esc(p.txt)+'</label>'
+      +'<textarea id="pa390-r'+i+'" class="pa390-r" data-i="'+i+'" rows="3" placeholder="'+_esc(_pa390T(it,'pa390_ph'))+'" oninput="this.style.borderColor=\'\'" style="width:100%;box-sizing:border-box;margin-top:5px;padding:9px 10px;border-radius:10px;border:1.5px solid var(--border2,#cbd5e1);background:var(--surface2);color:var(--text);font-family:inherit;font-size:14px;line-height:1.4;resize:vertical"></textarea></div>';
+  });
+  h+='<div id="pa390-msg" style="display:none;margin-top:10px;font-size:12.5px;font-weight:700;color:#d9534f"></div>';
+  h+='<button id="pa390-btn" class="chq-sig" type="button" onclick="pa390Enviar()">'+_pa390T(it,'pa390_btn')+'</button>';
+  return h+'</div>';
+}
+function pa390Enviar(){
+  var box=document.getElementById('pa390'); if(!box||!currentAlumno||!_chq) return;
+  var id=box.getAttribute('data-id'), it=_chq.items&&_chq.items[id]; if(!it) return;
+  var pts=_pa390Puntos(it), tas=box.querySelectorAll('textarea.pa390-r'), faltan=[], resp=[];
+  pts.forEach(function(p,i){ var v=String((tas[i]&&tas[i].value)||'').trim(); if(v.length<3){ faltan.push(i+1); if(tas[i]) tas[i].style.borderColor='#d9534f'; } resp.push({punto:p.txt, es:p.es||null, texto:v}); });
+  var msg=document.getElementById('pa390-msg');
+  if(faltan.length){ msg.textContent=_pa390T(it,'pa390_falta',{n:faltan.map(function(n){ return _pa390T(it,'pa390_punto',{n:n}); }).join(', ')}); msg.style.display='block'; try{ tas[faltan[0]-1].focus(); }catch(e){} return; }
+  var b=document.getElementById('pa390-btn'); b.disabled=true; b.textContent=t('pa390_env'); msg.style.display='none';
+  var nip=currentAlumno, rec={respuestas:resp, enviadoEn:new Date().toISOString(), idioma:currentLang, num:it.num||null, chequeo:id};
+  db.ref('fittrack_planes/'+nip+'/'+id).set(rec).then(function(){
+    _pa390[nip+'|'+id]=rec; if(_pa390Llenando){ _pa390Llenando=false; _r174PlanPend=false; } if(currentAlumno!==nip) return;
+    var nb=document.getElementById('pa390'); if(nb){ var d=document.createElement('div'); d.innerHTML=_pa390Html(it); nb.replaceWith(d.firstChild); }
+  }).catch(function(){ b.disabled=false; b.textContent=_pa390T(it,'pa390_btn'); msg.textContent=_pa390T(it,'pa390_err'); msg.style.display='block'; });
+}
+function _pa390Cargar(nip){
+  try{ db.ref('fittrack_planes/'+nip).once('value').then(function(s){
+    var v=(s&&s.val())||{}; Object.keys(v).forEach(function(k){ if(v[k]&&v[k].enviadoEn) _pa390[nip+'|'+k]=v[k]; });
+    var b=document.getElementById('pa390'); if(b&&currentAlumno===nip&&_chq&&_pa390[nip+'|'+b.getAttribute('data-id')]){ var it=_chq.items[b.getAttribute('data-id')]; var d=document.createElement('div'); d.innerHTML=_pa390Html(it); b.replaceWith(d.firstChild); }
+  }).catch(function(){}); }catch(e){}
+}
+// a) apartado al final del chequeo (fuera de las pestañas: se ve con "Resultados y mensaje" y con "Reporte")
+var _pa390oldDet=_chqDetalle;
+_chqDetalle=function(it){ var h=_pa390oldDet(it); try{ if(it&&!it.reto&&_pa390Puntos(it).length){ var x=_pa390Html(it); if(x&&/<\/div>$/.test(h)) h=h.slice(0,-6)+x+'</div>'; } }catch(e){} return h; };
+var _pa390oldChqInit=chequeosInit;
+chequeosInit=function(nip){ _pa390Cargar(nip); return _pa390oldChqInit(nip); };
+// c) aviso: sin WhatsApp, con botón que lleva al apartado; no sale si ya lo envió desde la app
+function _pa390ItemPend(){ var its=_chqItems().filter(function(x){ return _pa390Puntos(x).length; }); return its.length?its[its.length-1]:null; }
+function pa390Ir(){
+  try{ r174Cerrar(); }catch(e){}
+  _r174PlanPend=true; _pa390Llenando=true;   // mientras llena su plan no se le enciman otros avisos (r177/r278); se libera al enviar o al salir de Mis chequeos
+  var it=_pa390ItemPend(), id=it?_chqId(it):null;
+  ftModo('chq'); renderChequeos(id||undefined);
+  setTimeout(function(){ var b=document.getElementById('pa390'), v=document.getElementById('chq-view'); if(b&&v){ v.scrollTop=Math.max(0,b.getBoundingClientRect().top-v.getBoundingClientRect().top+v.scrollTop-8); } else if(b){ b.scrollIntoView({block:'start'}); } var ta=b&&b.querySelector('textarea'); if(ta) try{ ta.focus({preventScroll:true}); }catch(e){} }, 120);
+}
+r174Mostrar=function(){
+  var o=document.getElementById('r174-overlay'); if(o) o.remove();
+  var it=_pa390ItemPend(), u=function(k){ return _pa390T(it,k); };
+  o=document.createElement('div'); o.id='r174-overlay'; o.className='notif-overlay'; o.style.zIndex='10000';
+  o.innerHTML='<div class="notif-popup" role="dialog" aria-modal="true" aria-labelledby="r174-t">'
+    +'<div class="notif-popup-hdr"><div class="notif-bell">⏳</div><div style="flex:1"><div class="notif-popup-title" id="r174-t">'+t('r174_t')+'</div>'
+    +'<div class="notif-popup-sub">'+u('r174_sub')+'</div></div></div>'
+    +'<div class="notif-popup-body"><div class="notif-item seen"><div class="notif-item-txt">'+u('r174_txt')+'</div></div></div>'
+    +'<div class="notif-popup-footer" style="display:flex;gap:8px;flex-wrap:wrap"><button class="notif-btn" type="button" onclick="pa390Ir()" style="flex:1 1 100%">'+u('r174_btn')+'</button><button class="notif-btn" type="button" onclick="r174Cerrar()" style="flex:1 1 100%;background:#E3E8FF;color:#26307A">'+t('entendido')+'</button></div></div>';
+  document.body.appendChild(o); o.style.display='flex';
+};
+var _pa390oldAviso=r174AvisoPlan;
+r174AvisoPlan=function(nip){
+  try{
+    db.ref('fittrack_planes/'+nip).once('value').then(function(s){
+      var v=(s&&s.val())||{}; Object.keys(v).forEach(function(k){ if(v[k]&&v[k].enviadoEn) _pa390[nip+'|'+k]=v[k]; });
+      db.ref('fittrack_chequeos/planAccion/'+nip).once('value').then(function(q){
+        var p=(q&&q.val())||{}, desde=String(p.desde||'').slice(0,10);
+        var ya=Object.keys(v).some(function(k){ return v[k]&&v[k].enviadoEn&&String(v[k].enviadoEn).slice(0,10)>=desde; });
+        if(ya){ _r174PlanPend=false; return; }
+        _pa390oldAviso(nip);
+      }).catch(function(){ _pa390oldAviso(nip); });
+    }).catch(function(){ _pa390oldAviso(nip); });
+  }catch(e){ _pa390oldAviso(nip); }
+};
+var _pa390oldModo=ftModo;
+ftModo=function(m){ if(m!=='chq'&&_pa390Llenando){ _pa390Llenando=false; _r174PlanPend=false; } return _pa390oldModo(m); };
 
 </script>
 </body>
