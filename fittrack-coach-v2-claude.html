@@ -465,6 +465,37 @@ input[type=range]{width:100%;height:4px;border-radius:20px;accent-color:var(--te
 .md-ed-f input{width:100%;min-height:40px;border:1.5px solid #B9E3EC;border-radius:10px;padding:0 10px;font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--text);background:var(--surface)}
 .md-btn.md-sm{min-height:40px;font-size:13px}
 @media (prefers-reduced-motion: reduce){.md-med .md-disc::after,.md-en_riesgo .md-disc{animation:none}}
+/* MEDALLERO DEL RETO · coach (8 nov 2026) */
+.rtc{display:flex;flex-direction:column;gap:12px}
+.rtc-vacio{text-align:left}
+.rtc-hu{margin:0;padding-left:18px;font-size:12.5px;color:var(--text2);line-height:1.45}
+.rtc-tbl{display:flex;flex-direction:column}
+.rtc-tr{display:grid;grid-template-columns:30px minmax(0,1fr) 46px 46px 46px 50px;gap:4px;align-items:center;padding:8px 14px;border-top:1px solid var(--border2);font-size:13px;text-align:right}
+.rtc-tr>span:nth-child(2){text-align:left}
+.rtc-th{font-size:10.5px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.3px;border-top:0;padding-top:0}
+.rtc-l{font-weight:800;color:var(--teal-dark);text-align:left}
+.rtc-nm{display:flex;flex-direction:column;min-width:0}
+.rtc-nm b{overflow-wrap:anywhere;font-size:13.5px}
+.rtc-nm small{font-size:11.5px;color:var(--text2)}
+.rtc-nm .rtc-nota{color:var(--teal-dark)}
+.rtc-meds{display:flex;gap:2px;margin-top:2px}
+@media(max-width:420px){.rtc-tr{grid-template-columns:24px minmax(0,1fr) 38px 38px 38px 44px;padding:8px 10px;font-size:12px}}
+.rtc-dest{font-size:13px;line-height:1.45;margin:6px 0;padding:8px 10px;border-radius:10px;background:var(--teal-xlight)}
+.rtc-sug,.rtc-ord{list-style:none;margin:0;padding:0}
+.rtc-sug li,.rtc-ord li{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--border2)}
+.rtc-sug li:first-child,.rtc-ord li:first-child{border-top:0}
+.rtc-sug .rtc-nm,.rtc-ord .rtc-nm{flex:1}
+.rtc-ord button{width:40px;height:40px;border-radius:10px;border:1px solid var(--border2);background:var(--surface);font-size:14px;cursor:pointer;flex-shrink:0}
+.rtc-ord button[disabled]{opacity:.35;cursor:default}
+.rtc-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.rtc-btns .md-btn{flex:1 1 160px;justify-content:center}
+.rtc-val{display:grid;grid-template-columns:1fr;gap:8px;margin:10px 0}
+.rtc-val label{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13.5px}
+.rtc-val label span{width:52px;flex-shrink:0}
+.rtc-val select{flex:1;min-width:0;min-height:42px;border-radius:10px;border:1px solid var(--border2);padding:0 8px;font-family:inherit;font-size:13.5px;background:var(--surface);color:var(--text)}
+#rtc-validar{width:100%;justify-content:center}
+.rtc-ok{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--green-light);color:var(--text)}
+.rtc-ok ol{margin:6px 0;padding-left:20px}
 </style>
 </head>
 <body>
@@ -5924,7 +5955,7 @@ function mdcMedal(m,e,px,cinta){
 function _mdcNivel(m){ return m==='oro'?'Oro':m==='plata'?'Plata':m==='bronce'?'Bronce':'Sin medalla'; }
 function _mdcEst(a){ var e=a&&a.estado; return e==='en_riesgo'?'<span class="md-tag t-risk">En riesgo</span>':e==='perdida'?'<span class="md-tag t-risk">Perdida</span>':e==='por_confirmar'?'<span class="md-tag t-conf">Por confirmar</span>':e==='sin_asignar'?'<span class="md-tag" style="background:var(--surface2);color:var(--text2)">No aplica</span>':(a&&a.medalla)?'<span class="md-tag" style="background:var(--green-light);color:var(--green)">Ganada</span>':'<span class="md-tag" style="background:var(--surface2);color:var(--text2)">Por ganar</span>'; }
 function _mdcDelta(d){ if(d==null||d==='') return ''; d=+d; if(isNaN(d)) return ''; return d>0?'<span class="md-up">▲ '+d+'</span>':d<0?'<span class="md-dn">▼ '+(-d)+'</span>':'<span class="md-eq">=</span>'; }
-function _mdcAlumnos(){ return _mdcArr(_mdc.coach&&_mdc.coach.alumnos).slice().sort(function(a,b){ return (+a.lugar||9999)-(+b.lugar||9999); }); }
+function _mdcAlumnos(){ return _mdcArr(_mdc.coach&&_mdc.coach.alumnos).map(function(a){ if(!a||a.lugarCategoria==null) return a; var o={}; for(var k in a) o[k]=a[k]; o.lugarGlobal=a.lugar; o.lugar=a.lugarCategoria; if(a.deltaCategoria!==undefined){ o.deltaGlobal=a.delta; o.delta=a.deltaCategoria; } return o; }).sort(function(a,b){ return (+a.lugar||9999)-(+b.lugar||9999); }); }
 function _mdcFlags(x){
   var ar=x.areas||{}, f={risk:false,conf:false,none:true,golds:0};
   MDC_AREAS.forEach(function(k){ var a=ar[k[0]]; if(!a) return; if(a.estado==='en_riesgo'||a.estado==='perdida') f.risk=true; if(a.estado==='por_confirmar') f.conf=true; if(a.medalla&&a.estado!=='perdida'&&a.estado!=='por_confirmar'){ f.none=false; if(a.medalla==='oro') f.golds++; } });
@@ -6158,6 +6189,145 @@ function _mdcRes(){
   nav=function(id){ var r=_mdcNavOld.apply(this,arguments); if(id==='medallero'){ try{ mdcAbrir(); }catch(e){} } return r; };
 })();
 // ── fin MEDALLERO ──────────────────────────────────────────────────────────
+</script>
+<script>
+// ── MEDALLERO DEL RETO Body Art 3 · segmento «🏆 Reto» del Medallero (SOLO el coach; Noé 8 nov 2026 18:04–18:13) ──────
+// Lee: fittrack_medallero_reto/coach (ranking COMPLETO con nombre completo, sugerencia de ganadores y sugerencia de fotos de
+//      Claude — R7: esto NUNCA lo ven los participantes), /actual (lo que ven ellos), /ganadoresValidados y /final.
+// Escribe SOLO (con confirmación): fittrack_medallero_reto/final/c<n> = {orden:[ids], por, en, chequeo}   (R7, orden final del
+//      Top 10/podio que fija Noé) y fittrack_medallero_reto/ganadoresValidados = {lugares:[{lugar,id,nombre}], por, en, chequeo} (R5).
+//      El motor (motor/medallero/reto_medallero.py) los copia en la siguiente revisión y publica a los participantes.
+var _rtc={listo:false, cargando:false, err:false, coach:null, act:null, gv:null, fin:null, orden:null, gan:null, guardando:false};
+var RTC_GR={grasa:'Bajar grasa', musculo:'Ganar músculo', recomposicion:'Recomposición'};
+var RTC_FASE={antes:'Antes del reto', en_curso:'Reto en curso', chequeo:'Chequeo', final:'Chequeo final', ganadores:'Ganadores publicados'};
+function _rtcE(s){ return escH(s==null?'':String(s)); }
+function _rtcN(n){ return _mdcN(n); }
+function _rtcArr(v){ return _mdcArr(v); }
+function _rtcF(iso){ var d=_mdcD(iso); return d?d.toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short'}):''; }
+function rtcCargar(){
+  _rtc.cargando=true; _rtc.err=false; mdcRender();
+  function lee(p){ return db.ref(p).once('value').then(function(s){ return {v:s&&s.val()}; }).catch(function(){ return {v:null,err:true}; }); }
+  return Promise.all([lee('fittrack_medallero_reto/coach'), lee('fittrack_medallero_reto/actual'), lee('fittrack_medallero_reto/ganadoresValidados'), lee('fittrack_medallero_reto/final')]).then(function(r){
+    _rtc.coach=(r[0].v&&typeof r[0].v==='object')?r[0].v:null; _rtc.act=(r[1].v&&typeof r[1].v==='object')?r[1].v:null;
+    _rtc.gv=(r[2].v&&typeof r[2].v==='object')?r[2].v:null; _rtc.fin=(r[3].v&&typeof r[3].v==='object')?r[3].v:null;
+    _rtc.err=!!(r[0].err&&r[1].err); _rtc.listo=true; _rtc.cargando=false; _rtc.orden=null; _rtc.gan=null; mdcRender();
+  });
+}
+function _rtcN0(){ var C=_rtc.coach||{}; return +C.chequeo||0; }
+function _rtcRank(){ return _rtcArr((_rtc.coach||{}).ranking); }
+function _rtcPor(id){ var x=null; _rtcRank().forEach(function(r){ if(r.id===id) x=r; }); return x; }
+function _rtcHtml(){
+  var C=_rtc.coach, A=_rtc.act, h='';
+  if(_rtc.cargando||!_rtc.listo) return '<div class="md-box md-empty">Cargando el reto…</div>';
+  var hoy=new Date(), ini=(C&&C.inicio)||(A&&A.inicio)||'2027-01-11';
+  var antes=(!C&&!A)||(C&&C.fase==='antes')||(!C&&A&&A.fase==='antes');
+  h+='<div class="md-hd" style="margin-top:2px"><div><h2 style="font-size:17px">🏆 Reto Body Art 3</h2><p>Ranking general (todos contra todos, sin rivales) · 50 composición + 30 visual + 20 constancia · solo tú ves el ranking completo</p></div><button type="button" class="md-reload" onclick="rtcCargar()">↻</button></div>';
+  if(antes){
+    h+='<div class="md-box md-empty rtc-vacio"><b>El reto arranca el lunes 11 de enero de 2027.</b><br>Aquí vas a ver el ranking completo después de cada chequeo (23 ene, 6 feb, 20 feb y 6 mar), la sugerencia de Claude (puntos + dictamen + comparación de fotos) y los botones para fijar el orden final del Top 10 y validar a los ganadores.'+(C&&C.inscritos?'<br><br>Inscritos hoy: <b>'+_rtcE(C.inscritos)+'</b>.':'')+(_rtc.err?'<br><br>No se pudo leer <b>fittrack_medallero_reto</b> (revisa la conexión).':'')+'</div>';
+    return h;
+  }
+  if(!C){ return h+'<div class="md-box md-empty">Todavía no hay cálculo del reto. El motor lo publica después de cada revisión.</div>'; }
+  var n=_rtcN0();
+  h+='<div class="md-pills"><span class="md-pill">'+_rtcE(RTC_FASE[C.fase]||C.fase)+(n?' '+(C.fase==='chequeo'?n:''):'')+'</span>'+(A&&A.publicado?'<span class="md-pill md-gr">Participantes ven: '+(A.final?'Top 5 final':'chequeo '+_rtcE(A.chequeo))+' · '+_rtcE(_mdcFH(A.publicado))+'</span>':'')+(n&&!C.listo?'<span class="md-pill md-am">Chequeo '+n+' aún sin calificar completo</span>':'')+(_rtc.gv?'<span class="md-pill md-gr">Ganadores validados</span>':'')+'</div>';
+  var hu=_rtcArr(C.huecos); if(hu.length) h+='<div class="md-box md-pad"><div class="md-ct">Pendientes del cálculo · '+hu.length+'</div><ul class="rtc-hu">'+hu.slice(0,12).map(function(x){ return '<li>'+_rtcE(x)+'</li>'; }).join('')+'</ul></div>';
+  h+=_rtcRanking(C);
+  h+=_rtcFotos(C);
+  if(C.fase==='final'||C.fase==='ganadores'||n>=_rtcArr(C.chequeos).length&&n) h+=_rtcGanadores(C); else h+=_rtcOrden(C);
+  return h;
+}
+function _rtcRanking(C){
+  var R=_rtcRank(), h='<div class="md-box"><div class="md-pad" style="padding-bottom:6px"><div class="md-ct">Ranking completo · chequeo '+_rtcE(C.chequeo)+' · '+R.length+' con punto de partida</div></div><div class="rtc-tbl" role="table">';
+  h+='<div class="rtc-tr rtc-th" role="row"><span>#</span><span>Participante</span><span>Comp.</span><span>Const.</span><span>Vis.</span><span>Total</span></div>';
+  h+=R.map(function(x){ var tr=x.transformacion||{}; var meds=Object.keys(tr).sort().map(function(k){ return mdcMedal(tr[k],'ganada',18); }).join('');
+    return '<div class="rtc-tr" role="row"><span class="rtc-l">'+(x.lugar!=null?_rtcE(x.lugar):'—')+'</span><span class="rtc-nm"><b>'+_rtcE(x.nombre)+'</b><small>'+_rtcE(RTC_GR[x.grupo]||x.grupo||'')+(x.delta?' · '+_mdcDelta(x.delta):'')+(x.finalOk===false?' · <span class="md-tag t-risk">final tarde</span>':'')+'</small><span class="rtc-meds">'+meds+'</span></span><span>'+_rtcN(x.composicion)+'</span><span>'+_rtcN(x.constancia)+'</span><span>'+_rtcN(x.visual)+'</span><span><b>'+_rtcN(x.total)+'</b></span></div>'; }).join('');
+  h+='</div>';
+  var sr=_rtcArr(C.sinRanking); if(sr.length) h+='<div class="md-pad md-note" style="border-top:1px solid var(--border2)">Fuera del ranking: '+sr.map(function(z){ return _rtcE(z.nombre)+' ('+_rtcE(z.motivo)+')'; }).join(' · ')+'</div>';
+  return h+'</div>';
+}
+function _rtcFotos(C){   // R7: sugerencia de Claude por fotos (solo coach)
+  var S=C.sugerencia||{}, P=_rtcArr(S.propuestaFotos), h='<div class="md-box md-pad"><div class="md-ct">Sugerencia de Claude · cambio físico en fotos (antes/después)</div>';
+  if(S.cambioMasNotorio) h+='<div class="rtc-dest">📸 Cambio más notorio: <b>'+_rtcE(S.cambioMasNotorio.nombre)+'</b> ('+_rtcN(S.cambioMasNotorio.puntaje)+'/100)'+(S.cambioMasNotorio.nota?' · '+_rtcE(S.cambioMasNotorio.nota):'')+'</div>';
+  if(!P.length) return h+'<div class="md-note">Aún no hay propuesta.</div></div>';
+  h+='<ol class="rtc-sug">'+P.map(function(z){ var f=z.fotos||{};
+    return '<li><span class="rtc-l">'+_rtcE(z.lugarSugerido)+'</span><span class="rtc-nm"><b>'+_rtcE(z.nombre)+'</b><small>por puntos: '+_rtcE(z.lugarPuntos)+'.º ('+_rtcN(z.pts)+' pts) · fotos: '+(f.puntaje!=null?'<b>'+_rtcN(f.puntaje)+'/100</b>':'<span class="md-tag t-conf">'+(f.estado==='sin_fotos'?'sin fotos comparables':'pendiente')+'</span>')+'</small>'+(f.nota&&f.puntaje!=null?'<small class="rtc-nota">'+_rtcE(f.nota)+'</small>':'')+'</span></li>'; }).join('')+'</ol>';
+  return h+'<div class="md-note">Propuesta para ti: no cambia los puntos (50/30/20) y no la ven los participantes. Tú decides el orden final.</div></div>';
+}
+function _rtcOrdenBase(C){
+  var n=_rtcN0(), F=(_rtc.fin||{})['c'+n], ids=[];
+  if(F&&F.orden) ids=_rtcArr(F.orden);
+  if(!ids.length) ids=_rtcRank().filter(function(x){ return x.lugar!=null; }).slice(0,10).map(function(x){ return x.id; });
+  return ids.filter(function(i){ return _rtcPor(i); }).slice(0,10);
+}
+function _rtcOrden(C){
+  var n=_rtcN0(); if(!n) return '<div class="md-box md-pad"><div class="md-ct">Orden final del Top 10</div><div class="md-note">Se habilita después del chequeo 1 (23 ene).</div></div>';
+  if(!_rtc.orden) _rtc.orden=_rtcOrdenBase(C);
+  var F=(_rtc.fin||{})['c'+n], h='<div class="md-box md-pad"><div class="md-ct">Orden final del Top 10 · chequeo '+n+'</div>';
+  h+='<div class="md-note" style="margin-bottom:8px">'+(F?'Guardado por ti '+_rtcE(_mdcFH(F.en))+'. ':'Por ahora es el orden por puntos. ')+'Mueve con ▲▼ y guarda: el motor lo publica a los participantes en la siguiente revisión.</div>';
+  h+='<ol class="rtc-ord">'+_rtc.orden.map(function(id,i){ var x=_rtcPor(id)||{};
+    return '<li><span class="rtc-l">'+(i+1)+'</span><span class="rtc-nm"><b>'+_rtcE(x.nombre)+'</b><small>'+_rtcN(x.total)+' pts · '+_rtcE(x.lugar)+'.º por puntos</small></span><button type="button" aria-label="Subir" onclick="rtcMover('+i+',-1)"'+(i?'':' disabled')+'>▲</button><button type="button" aria-label="Bajar" onclick="rtcMover('+i+',1)"'+(i<_rtc.orden.length-1?'':' disabled')+'>▼</button></li>'; }).join('')+'</ol>';
+  h+='<div class="rtc-btns"><button type="button" class="md-btn md-warn" onclick="rtcUsarFotos()">Usar sugerencia de Claude</button><button type="button" class="md-btn md-warn" onclick="rtcPuntos()">Orden por puntos</button><button type="button" class="md-btn" id="rtc-guardar-orden" onclick="rtcGuardarOrden()"'+(_rtc.guardando?' disabled':'')+'>Guardar orden final</button></div></div>';
+  return h;
+}
+function rtcMover(i,d){ var o=_rtc.orden, j=i+d; if(!o||j<0||j>=o.length) return; var t=o[i]; o[i]=o[j]; o[j]=t; mdcRender(); }
+function rtcUsarFotos(){ var P=_rtcArr(((_rtc.coach||{}).sugerencia||{}).propuestaFotos); if(!P.length) return; _rtc.orden=P.map(function(z){ return z.id; }).filter(function(i){ return _rtcPor(i); }).slice(0,10); mdcRender(); }
+function rtcPuntos(){ _rtc.orden=_rtcRank().filter(function(x){ return x.lugar!=null; }).slice(0,10).map(function(x){ return x.id; }); mdcRender(); }
+function rtcGuardarOrden(){
+  var n=_rtcN0(); if(_rtc.guardando||!n||!_rtc.orden||!_rtc.orden.length) return;
+  if(!window.confirm('¿Fijar este orden final del Top 10 del chequeo '+n+'?\n\n'+_rtc.orden.map(function(id,i){ return (i+1)+'. '+((_rtcPor(id)||{}).nombre||id); }).join('\n')+'\n\nLos participantes lo verán en la siguiente publicación.')) return;
+  var v={orden:_rtc.orden.slice(), por:'Noé', en:new Date().toISOString(), chequeo:n};
+  _rtc.guardando=true; mdcRender();
+  db.ref('fittrack_medallero_reto/final/c'+n).set(v).then(function(){ _rtc.guardando=false; _rtc.fin=_rtc.fin||{}; _rtc.fin['c'+n]=v; mdcRender(); try{ showToast('✓ Orden final guardado'); }catch(e){} })
+    .catch(function(){ _rtc.guardando=false; mdcRender(); try{ showToast('No se pudo guardar. Revisa la conexión.'); }catch(e){} });
+}
+function _rtcGanadores(C){
+  var S=C.sugerencia||{}, T5=_rtcArr(S.top5), G=_rtc.gv, h='<div class="md-box md-pad"><div class="md-ct">Sugerencia de ganadores (puntos + dictamen + fotos)</div>';
+  if(!T5.length) return h+'<div class="md-note">Aún no hay Top 5 calificado.</div></div>';
+  h+='<div class="md-note" style="margin-bottom:8px">'+_rtcE(S.criterio||'')+'</div><ol class="rtc-sug">'+T5.map(function(z){ var f=z.fotos||{};
+    return '<li><span class="rtc-l">'+_rtcE(z.lugarPorPuntos)+'</span><span class="rtc-nm"><b>'+_rtcE(z.nombre)+'</b><small>'+_rtcN(z.total)+' pts · comp. '+_rtcN(z.composicion)+' · const. '+_rtcN(z.constancia)+' · visual '+_rtcN(z.visual)+(z.puntoFuerte?' · fuerte en '+_rtcE(z.puntoFuerte):'')+'</small><small>Fotos: '+(f.puntaje!=null?_rtcN(f.puntaje)+'/100 · '+_rtcE(f.nota||''):(f.estado==='sin_fotos'?'sin fotos comparables':'pendiente'))+'</small></span></li>'; }).join('')+'</ol>';
+  _rtcArr(S.notas).forEach(function(x){ h+='<div class="rtc-dest">💡 '+_rtcE(x)+'</div>'; });
+  if(G){
+    h+='<div class="rtc-ok"><b>✓ Ganadores validados</b> '+_rtcE(_mdcFH(G.en))+'<ol>'+_rtcArr(G.lugares).map(function(g){ return '<li>'+_rtcE(g.lugar)+'.º '+_rtcE(g.nombre)+'</li>'; }).join('')+'</ol><div class="md-note">Se publican a los participantes el domingo 7 de marzo (en la revisión siguiente a la validación).</div></div>';
+    return h+'</div>';
+  }
+  if(!_rtc.gan){ var p=_rtcArr(S.propuesta); _rtc.gan=p.map(function(z){ return z.id; }); }
+  var opts=T5.map(function(z){ return z.id; });
+  h+='<div class="rtc-val">'+[1,2,3,4,5].map(function(l,i){
+    return '<label><span>'+l+'.º '+(l<=3?['🥇','🥈','🥉'][i]:'')+'</span><select id="rtc-g'+l+'" onchange="rtcGan('+i+',this.value)">'+opts.map(function(id){ var z=_rtcPor(id)||{}; return '<option value="'+_rtcE(id)+'"'+(_rtc.gan[i]===id?' selected':'')+'>'+_rtcE(z.nombre)+'</option>'; }).join('')+'</select></label>'; }).join('')+'</div>';
+  var dup=_rtc.gan.some(function(x,i){ return _rtc.gan.indexOf(x)!==i; });
+  h+=(dup?'<div class="rtc-dest" style="color:#A52219">Hay un nombre repetido: cada lugar debe ser una persona distinta.</div>':'')+'<button type="button" class="md-btn md-ok" id="rtc-validar" onclick="rtcValidar()"'+(dup||_rtc.guardando?' disabled':'')+'>Validar ganadores</button>';
+  return h+'<div class="md-note" style="margin-top:6px">Sin tu validación no se publica ningún ganador. El Top 5 ya se publicó sin posiciones.</div></div>';
+}
+function rtcGan(i,v){ _rtc.gan[i]=v; mdcRender(); }
+function rtcValidar(){
+  if(_rtc.guardando||!_rtc.gan) return;
+  var L=_rtc.gan.map(function(id,i){ return {lugar:i+1, id:id, nombre:(_rtcPor(id)||{}).nombre||''}; });
+  if(L.some(function(x,i){ return _rtc.gan.indexOf(x.id)!==i; })) return;
+  if(!window.confirm('¿Validar a los ganadores del Reto Body Art 3?\n\n'+L.map(function(x){ return x.lugar+'.º '+x.nombre; }).join('\n')+'\n\nSe anuncian a los participantes el domingo 7 de marzo. Esta decisión es definitiva.')) return;
+  var v={lugares:L, por:'Noé', en:new Date().toISOString(), chequeo:_rtcN0()};
+  _rtc.guardando=true; mdcRender();
+  db.ref('fittrack_medallero_reto/ganadoresValidados').set(v).then(function(){ _rtc.guardando=false; _rtc.gv=v; mdcRender(); try{ showToast('✓ Ganadores validados'); }catch(e){} })
+    .catch(function(){ _rtc.guardando=false; mdcRender(); try{ showToast('No se pudo guardar. Revisa la conexión.'); }catch(e){} });
+}
+(function(){
+  var _old=mdcRender;
+  mdcRender=function(){
+    var r=_old.apply(this,arguments);
+    try{
+      var el=document.getElementById('md-coach'); if(!el) return r;
+      var seg=el.querySelector('.md-seg'); if(!seg) return r;
+      if(!seg.querySelector('[data-rtc]')){ var b=document.createElement('button'); b.type='button'; b.setAttribute('role','tab'); b.setAttribute('data-rtc','1'); b.textContent='🏆 Reto'; b.onclick=function(){ mdcIr('reto'); }; seg.appendChild(b); }
+      var on=_mdc.tab==='reto';
+      seg.querySelectorAll('button').forEach(function(x){ var me=!!x.getAttribute('data-rtc'); if(on){ x.classList.toggle('on',me); x.setAttribute('aria-selected',String(me)); } else if(me){ x.classList.remove('on'); x.setAttribute('aria-selected','false'); } });
+      if(on){
+        while(seg.nextSibling) el.removeChild(seg.nextSibling);
+        var d=document.createElement('div'); d.className='rtc'; d.innerHTML=_rtcHtml(); el.appendChild(d);
+        if(!_rtc.listo&&!_rtc.cargando) rtcCargar();
+      }
+    }catch(e){ console.error(e); }
+    return r;
+  };
+})();
+// ── fin MEDALLERO DEL RETO (coach) ──
 </script>
 </body>
 </html>
