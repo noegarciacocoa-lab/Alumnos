@@ -939,6 +939,46 @@ html:not([lang^="es"]) .sug-gd,html:not([lang^="es"]) .cal-h b{text-transform:no
 .md-conf span{position:absolute;top:0;border-radius:2px;animation:mdFall 3.4s linear infinite}
 .md-flame{display:inline-block;animation:mdFlame 1.4s ease-in-out infinite}
 @media (prefers-reduced-motion: reduce){.md-med .md-disc::after,.md-en_riesgo .md-disc,.md-conf span,.md-av-ic,.md-av-cel .md-med,.md-flame{animation:none}}
+/* MEDALLERO DEL RETO (Noé 8 nov 2026) */
+#rt-view{display:none;flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:var(--bg)}
+.device.modo-rt .content,.device.modo-rt .bottom-nav,.device.modo-rt #sync-banner{display:none!important}
+.device.modo-rt #rt-view{display:block}
+.device.modo-rt .app-header{background:linear-gradient(135deg,#0A2126 0%,#0F3A42 50%,#B9861A 100%)}
+.modo-sw button.rt.on{background:#FFE3A3;color:#5A3A00}
+.rt-empty h3{margin:10px 0 6px}
+.rt-hero .rt-oculto{display:flex;flex-direction:column;gap:4px;padding:10px 0 4px;position:relative;z-index:1}
+.rt-hero .rt-oculto b{font-size:20px}
+.rt-hero .rt-oculto span{opacity:.9;font-size:13.5px}
+.rt-tr{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;text-align:center}
+.rt-tr-i{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.rt-tr-i b{font-size:12.5px}
+.rt-tr-i small{font-size:11px;color:var(--text2);line-height:1.2}
+.rt-tr-i.rt-pend .md-med{opacity:.45;filter:grayscale(1)}
+.rt-det{margin:10px 0 0;font-size:12.5px}
+.rt-areas{display:grid;grid-template-columns:1fr;gap:8px}
+@media(min-width:420px){.rt-areas{grid-template-columns:1fr 1fr}}
+.rt-area{display:flex;gap:10px;align-items:center;padding:8px;border:1px solid var(--border,#e3e7ea);border-radius:12px;min-width:0}
+.rt-area span{display:flex;flex-direction:column;min-width:0}
+.rt-area b{font-size:13.5px}
+.rt-area small{font-size:12px;color:var(--text2)}
+.rt-area .rt-sig{color:var(--teal-dark,#065666)}
+.rt-hist{margin-top:12px;border-top:1px solid var(--border,#e3e7ea);padding-top:8px;display:flex;flex-direction:column;gap:6px}
+.rt-hrow{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:var(--text2)}
+.rt-hmeds{display:flex;gap:3px;flex-shrink:0}
+.rt-q .md-pos{background:#FFF1B0;color:#6E4600}
+.rt-anuncio{margin-top:12px;text-align:center;font-weight:700}
+.rt-podio{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:6px;align-items:end;text-align:center;margin-top:6px}
+.rt-p{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.rt-pn{font-size:13px;line-height:1.2;word-break:break-word}
+.rt-p small{font-size:11.5px;color:var(--text2)}
+.rt-p .rt-prem{color:var(--teal-dark,#065666);font-weight:600}
+.rt-base{width:100%;border-radius:10px 10px 4px 4px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:22px}
+.rt-p1 .rt-base{height:74px;background:linear-gradient(180deg,#E9C25A,#B8861A)}
+.rt-p2 .rt-base{height:54px;background:linear-gradient(180deg,#C9D1D8,#8E989F)}
+.rt-p3 .rt-base{height:40px;background:linear-gradient(180deg,#D89A63,#9E5A2A)}
+.rt-p.md-me .rt-pn{color:var(--teal-dark,#065666)}
+.rt-como{margin:0;padding-left:18px;font-size:13.5px;line-height:1.5;display:flex;flex-direction:column;gap:6px}
+.rt-av{font-size:13px}
 </style>
 </head>
 <body>
@@ -975,13 +1015,14 @@ html:not([lang^="es"]) .sug-gd,html:not([lang^="es"]) .cal-h b{text-transform:no
         <button class="lang-btn" onclick="openLangModal()"><span id="lang-btn-label-main">🌐</span></button>
       <button class="logout-btn" id="btn-salir" onclick="doLogout()" data-i18n="btn_salir">Salir</button>
       </div>
-      <div class="modo-sw" id="modo-sw"><button id="sw-ent" class="on" onclick="ftModo('ent')"><span class="ic">🏋️</span><span data-i18n="sw_ent">Entreno</span><span class="dot" id="sw-ent-dot"></span></button><button id="sw-chq" class="chq" onclick="ftModo('chq')"><span class="ic">📋</span><span data-i18n="sw_chq">Mis chequeos</span><span class="dot" id="sw-chq-dot"></span></button><button id="sw-nut" class="nut" onclick="ftModo('nut')"><span class="ic">🥗</span><span data-i18n="sw_nut">Nutrición</span><span class="dot" id="sw-nut-dot"></span></button><button id="sw-md" class="md" style="display:none" onclick="ftModo('md')"><span class="ic">🏅</span><span data-i18n="sw_md">Medallero</span><span class="dot" id="sw-md-dot"></span></button><button id="sw-farma" class="farma" style="display:none" onclick="ftModo('farma')"><span class="ic">💊</span><span data-i18n="sw_farma">Farmaco</span><span class="dot" id="sw-dot"></span></button></div>
+      <div class="modo-sw" id="modo-sw"><button id="sw-ent" class="on" onclick="ftModo('ent')"><span class="ic">🏋️</span><span data-i18n="sw_ent">Entreno</span><span class="dot" id="sw-ent-dot"></span></button><button id="sw-chq" class="chq" onclick="ftModo('chq')"><span class="ic">📋</span><span data-i18n="sw_chq">Mis chequeos</span><span class="dot" id="sw-chq-dot"></span></button><button id="sw-nut" class="nut" onclick="ftModo('nut')"><span class="ic">🥗</span><span data-i18n="sw_nut">Nutrición</span><span class="dot" id="sw-nut-dot"></span></button><button id="sw-md" class="md" style="display:none" onclick="ftModo('md')"><span class="ic">🏅</span><span data-i18n="sw_md">Medallero</span><span class="dot" id="sw-md-dot"></span></button><button id="sw-rt" class="rt" style="display:none" onclick="ftModo('rt')"><span class="ic">🏆</span><span data-i18n="sw_rt">Reto</span><span class="dot" id="sw-rt-dot"></span></button><button id="sw-farma" class="farma" style="display:none" onclick="ftModo('farma')"><span class="ic">💊</span><span data-i18n="sw_farma">Farmaco</span><span class="dot" id="sw-dot"></span></button></div>
     </div>
     <button type="button" class="r278-bar" id="r278-bar" onclick="r278Canales()"><span class="r278-i" aria-hidden="true">💬</span><span class="r278-t"><b data-i18n="can_bar_t">¿Por dónde me comunico con mi coach?</b><span data-i18n="can_bar_s">WhatsApp · Bitácora de Harbiz · FitTrack · Grupo del Team</span></span><span class="r278-g" aria-hidden="true">›</span></button>
     <div id="farma-view"><iframe id="farma-frame" title="Farmacología" data-i18n-attr="title:h_farma_title"></iframe></div>
     <div id="nut-view"><div style="padding:16px 16px 28px"><div class="section-title" style="margin:4px 0 2px" data-i18n="sw_nut">Nutrición</div><p style="font-size:13px;color:var(--text3);margin-bottom:14px" data-i18n="nut_sub">Tus herramientas de alimentación. Toca cada una para ver para qué sirve.</p><div id="nut-body"></div></div></div>
     <div id="chq-view"><div style="padding:16px 16px 28px"><div class="section-title" style="margin:4px 0 2px" data-i18n="sw_chq">Mis chequeos</div><p style="font-size:13px;color:var(--text3);margin-bottom:14px" data-i18n="chq_view_sub">Tus resultados, tu evolución y los mensajes de tu coach.</p><div id="chq-body"></div></div></div>
     <div id="md-view"><div id="md-body"></div></div>
+    <div id="rt-view"><div id="rt-body"></div></div>
 
     <div id="sync-banner" style="background:linear-gradient(90deg,var(--teal),var(--teal-2));color:#fff;font-size:12px;font-weight:600;text-align:center;padding:8px 16px;opacity:0;transform:translateY(-20px);transition:all .4s;position:relative;z-index:10" data-i18n="sync_update">
       🔄 Tu coach actualizó tu información
@@ -4713,7 +4754,7 @@ function r278CanalesAuto(nip){
     var dev=document.querySelector('.device'); if(!dev) return;
     var f=document.createElement('button'); f.id='r327-flecha'; f.type='button'; f.setAttribute('aria-label','scroll'); f.textContent='⌄'; dev.appendChild(f);
     function visible(el){ return el && el.offsetParent!==null && el.clientHeight>0; }
-    function scroller(){ var c=['chq-view','nut-view','md-view'].map(function(i){return document.getElementById(i);}).filter(visible);
+    function scroller(){ var c=['chq-view','nut-view','md-view','rt-view'].map(function(i){return document.getElementById(i);}).filter(visible);
       if(c.length) return c[0]; var x=document.querySelector('.device .content'); return visible(x)?x:null; }
     var _t=0;
     function check(){ var s=scroller(); var nav=document.querySelector('.bottom-nav');
@@ -5903,6 +5944,174 @@ bvInit=function(nip){
 var _mdOldApply=applyLang;
 applyLang=function(){ var r=_mdOldApply.apply(this,arguments); try{ if(_modo==='md') mdRender(); }catch(e){} return r; };
 // ── fin MEDALLERO ──────────────────────────────────────────────────────────
+</script>
+<script>
+// Medallero del reto (8 nov 2026): textos es/en (los demás idiomas caen a inglés)
+(function(K){ Object.keys(K).forEach(function(l){ if(LANGS[l]) Object.keys(K[l]).forEach(function(k){ LANGS[l][k]=K[l][k]; }); }); })({"es": {"sw_rt": "Reto", "rt_puntos": "Puntos del reto (de 100)", "rt_sube": "Subiste {n} lugares", "rt_sube1": "Subiste 1 lugar", "rt_baja": "Bajaste {n} lugares", "rt_baja1": "Bajaste 1 lugar", "rt_igual": "Mismo lugar que en el chequeo anterior", "rt_titulo": "Reto Body Art 3", "rt_semana": "Semana del {a} al {b}", "rt_tab_mi": "Mi reto", "rt_tab_top": "Top 10", "rt_tab_top5": "Top 5", "rt_tab_gan": "Ganadores", "rt_tab_como": "Cómo se gana", "rt_sub_antes": "Arranca el {f}", "rt_sub_curso": "El reto ya arrancó · el primer Top 10 sale después del chequeo 1", "rt_sub_chq": "Resultados del chequeo {n} · {f}", "rt_sub_final": "Chequeo final · {f}", "rt_sub_gan": "¡Ya están los ganadores!", "rt_antes_t": "Tu medallero del reto está listo", "rt_antes_p": "El reto arranca el {f}. Aquí verás tu lugar, tus puntos, tus medallas y el Top 10 después de cada chequeo.", "rt_curso_t": "¡Ya estás en el reto!", "rt_curso_p": "Tu primer lugar y el Top 10 salen después del chequeo 1 ({f}). Mientras tanto, gana tus medallas de constancia cada semana.", "rt_sin_mio": "Todavía no hay resultados tuyos. Aparecen después de tu siguiente chequeo.", "rt_sin_partida": "Tu punto de partida está incompleto: habla con tu coach.", "rt_tras_chq": "Después del chequeo {n}", "rt_chq_final": "Chequeo final", "rt_en_top5": "¡Estás en el Top 5!", "rt_gracias": "¡Gracias por llegar hasta el final!", "rt_anuncio_7": "Los ganadores se anuncian el domingo 7 de marzo", "rt_sin_lugar": "Tu lugar aparece cuando tu chequeo esté calificado.", "rt_top10_si": "en el Top 10", "rt_ver_top10": "Ver Top 10", "rt_ver_top5": "Ver Top 5", "rt_ver_gan": "Ver ganadores", "rt_transf_t": "Medallas de transformación", "rt_final_corto": "Final", "rt_chq_n": "Chequeo {n}", "rt_sin_med": "Sin medalla", "rt_transf_reglas": "🥉 chequeo completo a tiempo (antes de las 10:00 a.m.) · 🥈 además 2 o más medidas a favor de tu objetivo · 🥇 además un cambio global visible en tus fotos.", "rt_const_t": "Constancia de la semana", "rt_const_vacio": "Tus medallas de constancia aparecen cada lunes, al cerrar la semana.", "rt_top_vacio": "El Top 10 se publica después de cada chequeo.", "rt_top10_t": "Top 10 · chequeo {n}", "rt_tu_lugar": "Tu lugar en el reto", "rt_priv": "Solo se publica el Top 10. Tu lugar exacto solo lo ves tú.", "rt_top5_t": "Top 5 del Reto Body Art 3", "rt_top5_sin": "En orden alfabético: las posiciones son sorpresa.", "rt_gan_t": "Ganadores del Reto Body Art 3", "rt_lugar_n": "{n}.º lugar", "rt_prem1": "Los Cabos + $5,000 MXN", "rt_prem2": "$2,000 MXN en suplementos", "rt_prem3": "$1,500 MXN en suplementos", "rt_gracias_todos": "¡Felicidades! Gracias a todos por su constancia.", "rt_como_t": "Cómo se gana el reto", "rt_como1": "Cada quien compite contra su propio punto de partida, todos contra todos.", "rt_como2": "50 pts composición corporal (según tu objetivo: bajar grasa, ganar músculo o recomposición), 30 pts evaluación visual de tu coach y 20 pts constancia y compromiso.", "rt_como3": "Constancia: registra todas tus tareas en Harbiz, usa FitTrack y entrega tus chequeos el sábado antes de las 10:00 a.m.", "rt_como4": "Después de los chequeos 1, 2 y 3 se publica el Top 10. En el chequeo final se publica el Top 5 sin posiciones.", "rt_como5": "Los ganadores se anuncian el domingo 7 de marzo."}, "en": {"sw_rt": "Challenge", "rt_puntos": "Challenge points (out of 100)", "rt_sube": "Up {n} places", "rt_sube1": "Up 1 place", "rt_baja": "Down {n} places", "rt_baja1": "Down 1 place", "rt_igual": "Same place as last check-in", "rt_titulo": "Body Art 3 Challenge", "rt_semana": "Week of {a} to {b}", "rt_tab_mi": "My challenge", "rt_tab_top": "Top 10", "rt_tab_top5": "Top 5", "rt_tab_gan": "Winners", "rt_tab_como": "How to win", "rt_sub_antes": "Starts {f}", "rt_sub_curso": "The challenge has started · the first Top 10 comes after check-in 1", "rt_sub_chq": "Check-in {n} results · {f}", "rt_sub_final": "Final check-in · {f}", "rt_sub_gan": "The winners are here!", "rt_antes_t": "Your challenge medal board is ready", "rt_antes_p": "The challenge starts {f}. Here you will see your place, your points, your medals and the Top 10 after each check-in.", "rt_curso_t": "You are in the challenge!", "rt_curso_p": "Your first place and the Top 10 come after check-in 1 ({f}). Meanwhile, earn your weekly consistency medals.", "rt_sin_mio": "No results for you yet. They appear after your next check-in.", "rt_sin_partida": "Your starting point is incomplete: talk to your coach.", "rt_tras_chq": "After check-in {n}", "rt_chq_final": "Final check-in", "rt_en_top5": "You are in the Top 5!", "rt_gracias": "Thank you for making it to the end!", "rt_anuncio_7": "Winners will be announced on Sunday, March 7", "rt_sin_lugar": "Your place appears once your check-in is graded.", "rt_top10_si": "in the Top 10", "rt_ver_top10": "See Top 10", "rt_ver_top5": "See Top 5", "rt_ver_gan": "See winners", "rt_transf_t": "Transformation medals", "rt_final_corto": "Final", "rt_chq_n": "Check-in {n}", "rt_sin_med": "No medal", "rt_transf_reglas": "🥉 complete check-in on time (before 10:00 a.m.) · 🥈 plus 2 or more measurements moving toward your goal · 🥇 plus a visible overall change in your photos.", "rt_const_t": "Consistency this week", "rt_const_vacio": "Your consistency medals appear every Monday, when the week closes.", "rt_top_vacio": "The Top 10 is published after each check-in.", "rt_top10_t": "Top 10 · check-in {n}", "rt_tu_lugar": "Your place in the challenge", "rt_priv": "Only the Top 10 is published. Only you can see your exact place.", "rt_top5_t": "Body Art 3 Challenge Top 5", "rt_top5_sin": "In alphabetical order: the positions are a surprise.", "rt_gan_t": "Body Art 3 Challenge winners", "rt_lugar_n": "Place {n}", "rt_prem1": "Los Cabos + $5,000 MXN", "rt_prem2": "$2,000 MXN in supplements", "rt_prem3": "$1,500 MXN in supplements", "rt_gracias_todos": "Congratulations! Thank you all for your consistency.", "rt_como_t": "How to win the challenge", "rt_como1": "Everyone competes against their own starting point, all against all.", "rt_como2": "50 pts body composition (by your goal: lose fat, gain muscle or recomposition), 30 pts your coach's visual evaluation and 20 pts consistency and commitment.", "rt_como3": "Consistency: log all your tasks in Harbiz, use FitTrack and send your check-ins on Saturday before 10:00 a.m.", "rt_como4": "After check-ins 1, 2 and 3 the Top 10 is published. At the final check-in the Top 5 is published without positions.", "rt_como5": "Winners are announced on Sunday, March 7."}});
+// ── MEDALLERO DEL RETO Body Art 3 · pestaña «🏆 Reto» (Noé 8 nov 2026 18:04, R1–R7) ─────────────────────────
+// Solo inscritos del reto (misma detección que la app: _reto() — fittrack_ingreso/<nip>.reto —, Team o no Team).
+// Lee SOLO (nunca escribe): fittrack_medallero_reto/actual  y  fittrack_medallero_reto/participante/<su nip>.
+//   actual: {fase:'antes'|'en_curso'|'chequeo'|'final'|'ganadores', chequeo, fecha, top10:[{lugar,nombre,pts,delta}],
+//            top5:[{nombre}] + sinPosiciones (chequeo final), ganadores:[{lugar,nombre,pts}] (solo validados por Noé)}
+//   participante: {lugar, pts, delta, oculto, enTop5, transformacion:{c1..c4}, constancia:[{semana, areas}], avisos}
+// Sin ranking completo (R1), nombre completo (R2), Top 5 sin posiciones (R3). Estado vacío amable sin datos.
+var _rt={nip:null, act:null, mio:null, listo:false, tab:'mi'};
+var RT_AREAS=['pesas','nutricion','cardio','actividad','registro'];
+var RT_ICON={pesas:'🏋️',nutricion:'🥗',cardio:'❤️',actividad:'👟',registro:'📝'};
+function _rtE(s){ return _esc(s==null?'':String(s)); }
+function _rtArr(v){ return (typeof _mdArr==='function')?_mdArr(v):(Array.isArray(v)?v:[]); }
+function _rtN(n){ var x=Number(n); return (n==null||isNaN(x))?'—':fmtN(Math.round(x*10)/10); }
+function _rtF(iso){ try{ return _retoF(String(iso).slice(0,10)); }catch(e){ return String(iso||''); } }
+function _rtSem(l){ try{ var a=_fechaLocal(l), b=new Date(a.getTime()+6*864e5); return t('rt_semana',{a:fDate(a,{day:'numeric',month:'short'}),b:fDate(b,{day:'numeric',month:'short'})}); }catch(e){ return l; } }
+function _rtMed(m,px,cinta,label){ return mdMedal(m||null, m?'ganada':'ganada', px, {cinta:!!cinta, label:label||null}); }
+function _rtDelta(d){ if(d==null||d==='') return ''; d=+d; if(isNaN(d)) return ''; return d>0?'<span class="md-up">▲ '+d+'</span>':d<0?'<span class="md-dn">▼ '+(-d)+'</span>':'<span class="md-eq">=</span>'; }
+function _rtApto(){ try{ return !!(currentAlumno&&typeof _reto==='function'&&_reto()); }catch(e){ return false; } }
+
+function rtInit(nip){
+  var b=document.getElementById('sw-rt');
+  if(!_rtApto()){ if(b) b.style.display='none'; return; }
+  if(b) b.style.display='';
+  _rt.nip=nip;
+  function lee(p){ return db.ref(p).once('value').then(function(s){ return s&&s.val(); }).catch(function(){ return null; }); }
+  Promise.all([lee('fittrack_medallero_reto/actual'), lee('fittrack_medallero_reto/participante/'+nip)]).then(function(r){
+    if(currentAlumno!==nip) return;
+    _rt.act=(r[0]&&typeof r[0]==='object')?r[0]:null;
+    _rt.mio=(r[1]&&typeof r[1]==='object')?r[1]:null;
+    _rt.listo=true;
+    var d=document.getElementById('sw-rt-dot'); if(d) d.style.display=(_rtArr(_rt.mio&&_rt.mio.avisos).length&&_rtFase()!=='antes')?'block':'none';
+    if(_modo==='rt') rtRender();
+  });
+}
+function _rtFase(){ var A=_rt.act||{}; var f=A.fase; if(f) return f;
+  try{ var hoy=_retoDia(_retoHoy()); var I=_retoInfo||_RETO_DEF; return hoy<I.inicio?'antes':'en_curso'; }catch(e){ return 'antes'; } }
+function rtIr(tab){ _rt.tab=tab||'mi'; rtRender(); var v=document.getElementById('rt-view'); if(v) v.scrollTop=0; }
+function rtRender(){
+  var el=document.getElementById('rt-body'); if(!el) return;
+  if(!_rt.listo){ el.innerHTML='<div class="md-wrap"><div class="md-card md-empty"><p>'+t('md_cargando')+'</p></div></div>'; return; }
+  var f=_rtFase(), A=_rt.act||{}, h='';
+  h+='<div><div class="md-h1">🏆 '+t('rt_titulo')+'</div><div class="md-sub">'+_rtE(_rtSubt(f,A))+'</div></div>';
+  if(f==='antes'||f==='en_curso'){ h+=_rtAntes(f); el.innerHTML='<div class="md-wrap rt-wrap">'+h+'</div>'; return; }
+  h+='<div class="md-tabs" role="tablist">'+[['mi','rt_tab_mi'],['top','rt_tab_top'],['como','rt_tab_como']].map(function(x){
+    return '<button type="button" role="tab" aria-selected="'+(_rt.tab===x[0])+'" class="'+(_rt.tab===x[0]?'on':'')+'" onclick="rtIr(\''+x[0]+'\')">'+t(x[1]=='rt_tab_top'?(f==='chequeo'?'rt_tab_top':(f==='final'?'rt_tab_top5':'rt_tab_gan')):x[1])+'</button>'; }).join('')+'</div>';
+  h+= _rt.tab==='top'?_rtTop(f):_rt.tab==='como'?_rtComo():_rtMi(f);
+  el.innerHTML='<div class="md-wrap rt-wrap">'+h+'</div>';
+}
+function _rtSubt(f,A){
+  if(f==='antes') return t('rt_sub_antes',{f:_rtF((A.inicio)||'2027-01-11')});
+  if(f==='en_curso') return t('rt_sub_curso');
+  if(f==='chequeo') return t('rt_sub_chq',{n:A.chequeo,f:_rtF(A.fecha)});
+  if(f==='final') return t('rt_sub_final',{f:_rtF(A.fecha)});
+  return t('rt_sub_gan');
+}
+function _rtAntes(f){
+  var M=_rt.mio||{}, h='';
+  h+='<div class="md-card md-empty rt-empty">'+_rtMed('oro',72,true)+'<h3>'+(f==='antes'?t('rt_antes_t'):t('rt_curso_t'))+'</h3><p>'+(f==='antes'?t('rt_antes_p',{f:_rtF((_rt.act&&_rt.act.inicio)||'2027-01-11')}):t('rt_curso_p',{f:_rtF(((_rt.act&&_rt.act.chequeos)||['2027-01-23'])[0])}))+'</p></div>';
+  if(f==='en_curso') h+=_rtMedallas();
+  h+=_rtComo();
+  return h;
+}
+function _rtMi(f){
+  var M=_rt.mio, A=_rt.act||{}, h='';
+  // avisos del motor (texto informativo, sin ventanas)
+  _rtArr(M&&M.avisos).slice(0,3).forEach(function(a){ h+='<div class="md-alert'+(a.tipo==='bajaste'?' md-c':'')+' rt-av"><b>'+_rtE(a.titulo)+'</b>'+(a.texto?'<br>'+_rtE(a.texto):'')+'</div>'; });
+  if(!M){ h+='<div class="md-card md-empty"><p>'+t('rt_sin_mio')+'</p></div>'; return h; }
+  if(M.estado==='sin_partida') h+='<div class="md-alert md-c">'+_rtE(M.nota||t('rt_sin_partida'))+'</div>';
+  // Hero: lugar, puntos y flecha (R1). En el final: oculto hasta el domingo (R3)
+  h+='<div class="md-hero rt-hero"><div class="md-hero-top"><span>'+(f==='chequeo'?t('rt_tras_chq',{n:_rtE(A.chequeo)}):t('rt_chq_final'))+'</span></div>';
+  if(M.oculto){
+    h+='<div class="rt-oculto">'+(M.enTop5?'<b>'+t('rt_en_top5')+'</b>':'<b>'+t('rt_gracias')+'</b>')+'<span>'+t('rt_anuncio_7')+'</span></div>';
+  } else if(M.lugar!=null){
+    h+='<div class="md-hero-row"><div class="md-hero-pts"><span>'+t('rt_puntos')+'</span><b>'+_rtN(M.pts)+'</b><span>'+(M.delta>0?'▲ '+t(M.delta===1?'rt_sube1':'rt_sube',{n:M.delta}):M.delta<0?'▼ '+t(M.delta===-1?'rt_baja1':'rt_baja',{n:-M.delta}):(M.delta===0?'= '+t('rt_igual'):''))+'</span></div>';
+    h+='<div class="md-hero-lug"><small>'+t('md_lugar')+'</small><b>'+_rtE(M.lugar)+'</b>'+(M.enTop10?'<span>'+t('rt_top10_si')+'</span>':'')+'</div></div>';
+  } else {
+    h+='<div class="rt-oculto"><span>'+t('rt_sin_lugar')+'</span></div>';
+  }
+  h+='<div class="md-hero-btns"><button type="button" class="md-solid" onclick="rtIr(\'top\')">'+t(f==='chequeo'?'rt_ver_top10':f==='final'?'rt_ver_top5':'rt_ver_gan')+'</button></div></div>';
+  h+=_rtMedallas();
+  return h;
+}
+function _rtMedallas(){
+  var M=_rt.mio||{}, A=_rt.act||{}, h='', ch=A.chequeos||['2027-01-23','2027-02-06','2027-02-20','2027-03-06'];
+  var T=M.transformacion||{};
+  // Transformación por chequeo (R6)
+  h+='<div class="md-card"><div class="md-ct">'+t('rt_transf_t')+'</div><div class="rt-tr">'+ch.map(function(fc,i){ var k='c'+(i+1), x=T[k]; var fin=i===ch.length-1;
+    var nom=fin?t('rt_final_corto'):t('rt_chq_n',{n:i+1});
+    return '<div class="rt-tr-i'+(x?'':' rt-pend')+'">'+_rtMed(x&&x.medalla,52,true,nom+': '+_mdNivel(x&&x.medalla))+'<b>'+_rtE(nom)+'</b><small>'+(x?_rtE(x.medalla?_mdNivel(x.medalla):t('rt_sin_med')):_rtE(_rtF(fc)))+'</small></div>'; }).join('')+'</div>';
+  var ult=null; Object.keys(T).sort().forEach(function(k){ ult=T[k]; });
+  if(ult) h+='<p class="md-muted rt-det">'+_rtE(ult.detalle||'')+(ult.siguiente?' · '+_rtE(ult.siguiente):'')+'</p>';
+  h+='<p class="md-muted rt-det">'+t('rt_transf_reglas')+'</p></div>';
+  // Constancia semanal por área (mismas metas que el coaching; solo áreas asignadas)
+  var S=_rtArr(M.constancia);
+  h+='<div class="md-card"><div class="md-ct">'+t('rt_const_t')+'</div>';
+  if(!S.length){ h+='<p class="md-muted" style="margin:0">'+t('rt_const_vacio')+'</p></div>'; return h; }
+  var u=S[S.length-1], ar=u.areas||{};
+  h+='<div class="md-muted" style="margin:-4px 0 8px">'+_rtE(_rtSem(u.semana))+'</div><div class="rt-areas">'+RT_AREAS.filter(function(k){ return ar[k]&&ar[k].estado!=='sin_asignar'; }).map(function(k){ var a=ar[k];
+    return '<div class="rt-area">'+mdMedal(a.medalla,a.estado,44,{cinta:true,label:t('md_a_'+k)+': '+_mdNivel(a.medalla)})+'<span><b>'+t('md_a_'+k)+'</b><small>'+_rtE(a.medalla?_mdNivel(a.medalla):(a.estado==='por_confirmar'?t('md_e_por_confirmar'):t('rt_sin_med')))+(a.valor?' · '+_rtE(a.valor):'')+'</small>'+(a.siguiente?'<small class="rt-sig">'+_rtE(a.siguiente)+'</small>':'')+'</span></div>'; }).join('')+'</div>';
+  if(S.length>1){
+    h+='<div class="rt-hist">'+S.slice(-8).map(function(s){ var a=s.areas||{}; return '<div class="rt-hrow"><span>'+_rtE(_rtSem(s.semana))+'</span><span class="rt-hmeds">'+RT_AREAS.filter(function(k){ return a[k]&&a[k].estado!=='sin_asignar'; }).map(function(k){ return mdMedal(a[k].medalla,a[k].estado,22,{label:t('md_a_'+k)}); }).join('')+'</span></div>'; }).join('')+'</div>';
+  }
+  return h+'</div>';
+}
+function _rtYo(nombre){ var M=_rt.mio||{}; return M.nombre&&String(nombre||'').toLowerCase()===String(M.nombre).toLowerCase(); }
+function _rtTop(f){
+  var A=_rt.act||{}, h='';
+  if(f==='chequeo'){
+    var T=_rtArr(A.top10);
+    if(!T.length) return '<div class="md-card md-empty"><p>'+t('rt_top_vacio')+'</p></div>';
+    h+='<div class="md-card"><div class="md-ct">'+t('rt_top10_t',{n:_rtE(A.chequeo)})+'</div><div class="md-rows">'+T.map(function(x){ var me=_rtYo(x.nombre);
+      return '<div class="md-row'+(me?' md-me':'')+'"><span class="md-pos">'+_rtE(x.lugar)+'</span><span class="md-nm">'+_rtE(x.nombre)+(me?' <span class="md-tu">'+t('md_tu')+'</span>':'')+'</span><span class="md-pt">'+_rtN(x.pts)+'<small>'+t('md_pts')+'</small></span><span class="md-dl">'+_rtDelta(x.delta)+'</span></div>'; }).join('')+'</div></div>';
+    var M=_rt.mio; if(M&&M.lugar!=null&&!M.enTop10) h+='<div class="md-mine"><div class="md-mine-r"><b>'+_rtE(M.lugar)+'</b><div style="flex:1;min-width:0"><div style="font-weight:700">'+t('rt_tu_lugar')+'</div><div class="md-muted">'+_rtN(M.pts)+' '+t('md_pts')+'</div></div>'+_rtDelta(M.delta)+'</div></div>';
+    h+='<p class="md-muted" style="margin:0;text-align:center">'+t('rt_priv')+'</p>';
+    return h;
+  }
+  if(f==='final'){
+    var T5=_rtArr(A.top5);
+    h+='<div class="md-card rt-top5"><div class="md-ct">'+t('rt_top5_t')+'</div><p class="md-muted" style="margin:0 0 10px">'+t('rt_top5_sin')+'</p><div class="md-rows">'+T5.map(function(x){ var me=_rtYo(x.nombre);
+      return '<div class="md-row rt-q'+(me?' md-me':'')+'"><span class="md-pos" aria-hidden="true">?</span><span class="md-nm">'+_rtE(x.nombre)+(me?' <span class="md-tu">'+t('md_tu')+'</span>':'')+'</span></div>'; }).join('')+'</div>';
+    h+='<div class="md-alert md-p rt-anuncio">🗓️ '+_rtE(A.texto||t('rt_anuncio_7'))+'</div></div>';
+    return h;
+  }
+  // ganadores (solo si Noé los validó)
+  var G=_rtArr(A.ganadores).slice().sort(function(a,b){ return a.lugar-b.lugar; });
+  if(!G.length) return '<div class="md-card md-empty"><p>'+t('rt_anuncio_7')+'</p></div>';
+  var by={}; G.forEach(function(g){ by[g.lugar]=g; });
+  var med={1:'oro',2:'plata',3:'bronce'}, prem={1:t('rt_prem1'),2:t('rt_prem2'),3:t('rt_prem3')};
+  h+='<div class="md-card rt-gan"><div class="md-ct">'+t('rt_gan_t')+'</div><div class="rt-podio">'+[2,1,3].map(function(l){ var g=by[l]; if(!g) return '<div></div>'; var me=_rtYo(g.nombre);
+    return '<div class="rt-p rt-p'+l+(me?' md-me':'')+'">'+_rtMed(med[l],l===1?78:60,true,t('rt_lugar_n',{n:l}))+'<b class="rt-pn">'+_rtE(g.nombre)+(me?' <span class="md-tu">'+t('md_tu')+'</span>':'')+'</b><small>'+_rtN(g.pts)+' '+t('md_pts')+'</small><div class="rt-base"><span>'+l+'</span></div><small class="rt-prem">'+_rtE(prem[l])+'</small></div>'; }).join('')+'</div>';
+  h+='<div class="md-rows" style="margin-top:12px">'+[4,5].map(function(l){ var g=by[l]; if(!g) return ''; var me=_rtYo(g.nombre);
+    return '<div class="md-row'+(me?' md-me':'')+'"><span class="md-pos">'+l+'.º</span><span class="md-nm">'+_rtE(g.nombre)+(me?' <span class="md-tu">'+t('md_tu')+'</span>':'')+'</span><span class="md-pt">'+_rtN(g.pts)+'<small>'+t('md_pts')+'</small></span></div>'; }).join('')+'</div></div>';
+  h+='<p class="md-muted" style="margin:0;text-align:center">'+t('rt_gracias_todos')+'</p>';
+  return h;
+}
+function _rtComo(){
+  return '<div class="md-card"><div class="md-ct">'+t('rt_como_t')+'</div><ul class="rt-como"><li>'+t('rt_como1')+'</li><li>'+t('rt_como2')+'</li><li>'+t('rt_como3')+'</li><li>'+t('rt_como4')+'</li><li>'+t('rt_como5')+'</li></ul></div>';
+}
+// ── Enganches (aditivos) ──
+var _rtOldModo=ftModo;
+ftModo=function(m){
+  var d=_device();
+  if(m==='rt'&&!_rtApto()) m='ent';
+  var r=_rtOldModo(m==='rt'?'ent':m);
+  if(m==='rt'){ _modo='rt'; var se=document.getElementById('sw-ent'); if(se) se.classList.remove('on'); }
+  if(d) d.classList.toggle('modo-rt',m==='rt');
+  var b=document.getElementById('sw-rt'); if(b) b.classList.toggle('on',m==='rt');
+  if(m==='rt'){ rtRender(); var v=document.getElementById('rt-view'); if(v) v.scrollTop=0; var dt=document.getElementById('sw-rt-dot'); if(dt) dt.style.display='none'; }
+  return r;
+};
+var _rtOldReset=ftReset;
+ftReset=function(){
+  _rt={nip:null, act:null, mio:null, listo:false, tab:'mi'};
+  var b=document.getElementById('sw-rt'); if(b) b.style.display='none';
+  var dt=document.getElementById('sw-rt-dot'); if(dt) dt.style.display='none';
+  var rb=document.getElementById('rt-body'); if(rb) rb.innerHTML='';
+  var d=_device(); if(d) d.classList.remove('modo-rt');
+  return _rtOldReset.apply(this,arguments);
+};
+var _rtOldRetoInit=retoInit;
+retoInit=function(nip){ var r; try{ r=_rtOldRetoInit.apply(this,arguments); }finally{ try{ rtInit(nip); }catch(e){} } return r; };
+var _rtOldApply=applyLang;
+applyLang=function(){ var r=_rtOldApply.apply(this,arguments); try{ if(_modo==='rt') rtRender(); }catch(e){} return r; };
+// ── fin MEDALLERO DEL RETO ──
 </script>
 </body>
 </html>
