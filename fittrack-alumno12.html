@@ -892,6 +892,16 @@ html:not([lang^="es"]) .sug-gd,html:not([lang^="es"]) .cal-h b{text-transform:no
 .md-rv-plata .md-tit-tag,.md-tit-tag.md-p{color:#2F363C;background:linear-gradient(135deg,#F1F4F6,#C9D1D8)}
 .md-rv-bronce .md-tit-tag{color:#4E270C;background:linear-gradient(135deg,#F5C59A,#C9814A)}
 .md-hero-tit{position:relative;z-index:1;display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.16);border-radius:12px;padding:8px 10px;font-size:13px}
+/* titcat (Noé 9 nov 10:06): categoría del alumno en grande */
+.md-catb{position:relative;z-index:1;display:flex;flex-direction:column;gap:3px;min-width:0}
+.md-catb-n{font-family:'Space Grotesk',sans-serif;font-size:25px;font-weight:700;line-height:1.15;overflow-wrap:anywhere}
+.md-catb-s{font-size:13px;font-weight:600;line-height:1.35;opacity:.92}
+.md-catb-k{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text2)}
+.md-catb.md-catb-l{background:var(--surface);border:1.5px solid rgba(10,143,168,.35);border-radius:14px;padding:12px 14px}
+.md-catb.md-catb-l .md-catb-n{color:var(--text)}
+.md-catb.md-catb-l .md-catb-s{color:var(--text2);opacity:1}
+.md-catb.md-catb-h{padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.22)}
+.md-hero-lug span.md-lugcat{display:block;max-width:132px;margin:0 auto;font-size:11.5px;line-height:1.25;overflow-wrap:anywhere}
 .md-hero-tit b{font-family:'Space Grotesk',sans-serif;font-size:16px}
 .md-hero-tit small{opacity:.9}
 .md-hero-tit .md-med{--s:40px}
@@ -5639,6 +5649,11 @@ function _mdCat(){
   return {cat:null, top10:_mdArr(A.top10), ranking:_mdArr(A.ranking), mayorAvance:A.mayorAvance||null, meta:A};
 }
 function _mdCatNom(k){ return k?t('md_cat_'+k):''; }
+// titcat (Noé 9 nov 10:06): categoría en grande en «Mis logros» (11 idiomas; el medallero no tiene versión «usted», va en tú como el resto)
+(function(K){ Object.keys(K).forEach(function(l){ if(LANGS[l]) Object.keys(K[l]).forEach(function(k){ LANGS[l][k]=K[l][k]; }); }); })({"es": {"md_catb_sub": "Compites solo con las personas de tu objetivo", "md_de_cat": "de {n} en {c}", "md_tu_lugar_de_cat": "Tu lugar de {n} en {c}"}, "en": {"md_catb_sub": "You only compete with people who share your goal", "md_de_cat": "of {n} in {c}", "md_tu_lugar_de_cat": "Your place out of {n} in {c}"}, "pt": {"md_catb_sub": "Você compete só com as pessoas do seu objetivo", "md_de_cat": "de {n} em {c}", "md_tu_lugar_de_cat": "Sua posição de {n} em {c}"}, "it": {"md_catb_sub": "Competi solo con le persone del tuo obiettivo", "md_de_cat": "su {n} in {c}", "md_tu_lugar_de_cat": "La tua posizione su {n} in {c}"}, "fr": {"md_catb_sub": "Tu es en compétition uniquement avec les personnes de ton objectif", "md_de_cat": "sur {n} en {c}", "md_tu_lugar_de_cat": "Ta place sur {n} en {c}"}, "de": {"md_catb_sub": "Du trittst nur gegen Personen mit deinem Ziel an", "md_de_cat": "von {n} in {c}", "md_tu_lugar_de_cat": "Dein Platz von {n} in {c}"}, "ru": {"md_catb_sub": "Ты соревнуешься только с людьми с твоей целью", "md_de_cat": "из {n} в категории «{c}»", "md_tu_lugar_de_cat": "Твоё место из {n} в категории «{c}»"}, "pl": {"md_catb_sub": "Rywalizujesz tylko z osobami o twoim celu", "md_de_cat": "z {n} w kategorii {c}", "md_tu_lugar_de_cat": "Twoje miejsce z {n} w kategorii {c}"}, "ar": {"md_catb_sub": "تتنافس فقط مع الأشخاص الذين لديهم هدفك نفسه", "md_de_cat": "من {n} في {c}", "md_tu_lugar_de_cat": "ترتيبك من {n} في {c}"}, "zh_tw": {"md_catb_sub": "你只和與你目標相同的人競爭", "md_de_cat": "{c} 共 {n} 人", "md_tu_lugar_de_cat": "你在{c} {n} 人中的名次"}, "zh_cn": {"md_catb_sub": "你只和与你目标相同的人竞争", "md_de_cat": "{c} 共 {n} 人", "md_tu_lugar_de_cat": "你在{c} {n} 人中的名次"}});
+var MD_CAT_IC={bienestar:'🌿',fitness:'💪',atletas:'🏋️'};
+function _mdCatBanner(modo,kick){ var c=_mdCat().cat; if(!c) return ''; return '<div class="md-catb md-catb-'+modo+'">'+(kick?'<span class="md-catb-k">'+kick+'</span>':'')+'<span class="md-catb-n"><span aria-hidden="true">'+(MD_CAT_IC[c]||'')+'</span> '+_mdE(_mdCatNom(c))+'</span><span class="md-catb-s">'+t('md_catb_sub')+'</span></div>'; }
+function _mdTuLugarDe(){ var c=_mdCat().cat, n=_mdE(_mdTotal()||'—'); return c?t('md_tu_lugar_de_cat',{n:n,c:_mdE(_mdCatNom(c))}):t('md_tu_lugar_de',{n:n}); }
 var MD_TIT=['oro','plata','bronce'];
 // Medalla de un lugar de rival: fila.medalla / fila.titulo / por lugar (1 oro, 2 plata, 3 bronce) / por nombre
 function _mdRvMed(x){ if(!x) return 'oro'; if(MD_LV[x.medalla]) return x.medalla; if(MD_LV[x.titulo]) return x.titulo; var n=String(x.nombre||'');
@@ -5736,10 +5751,11 @@ function _mdMi(){
   var h='', tot=_mdTotal(), prov=(A&&A.provisional&&(!M.semana||A.semana===M.semana));
   // Puntos y lugar
   h+='<div class="md-hero"><div class="md-hero-top"><span>'+_mdE(_mdSemana(M.semana))+'</span>'+(prov?'<span class="md-chip md-c-prov">'+t('md_prov',{f:_mdE(_mdFH(_mdCierre()))})+'</span>':'')+'</div>';
+  h+=_mdCatBanner('h');   // titcat
   var _myT=null; _mdCat().ranking.forEach(function(x){ if(x&&!x.rival&&String(x.nip)===String(_md.nip)&&MD_LV[x.titulo]) _myT=x.titulo; }); if(!_myT&&MD_LV[M.titulo]) _myT=M.titulo;
   if(_myT) h+='<div class="md-hero-tit">'+mdMedal(_myT,'ganada',40,{cinta:true})+'<span><b>'+_mdE(_mdTitNom(_myT))+'</b>'+(_mdCat().cat?' · '+_mdE(_mdCatNom(_mdCat().cat)):'')+'<br><small>'+t('md_titulo_hero')+'</small></span></div>';
   h+='<div class="md-hero-row"><div class="md-hero-pts"><span>'+t('md_puntos')+'</span><b>'+_mdNum(M.pts)+'</b><span>'+_mdDeltaHero(M.delta)+'</span></div>';
-  h+='<div class="md-hero-lug"><small>'+t('md_lugar')+'</small><b>'+(M.lugar!=null?_mdE(M.lugar):'—')+'</b>'+(tot?'<span>'+t('md_de',{n:_mdE(tot)})+'</span>':'')+'</div></div>';
+  h+='<div class="md-hero-lug"><small>'+t('md_lugar')+'</small><b>'+(M.lugar!=null?_mdE(M.lugar):'—')+'</b>'+(tot?(_mdCat().cat?'<span class="md-lugcat">'+t('md_de_cat',{n:_mdE(tot),c:_mdE(_mdCatNom(_mdCat().cat))})+'</span>':'<span>'+t('md_de',{n:_mdE(tot)})+'</span>'):'')+'</div></div>';
   h+=_mdFaltaHtml(M,true);
   h+='<div class="md-hero-btns"><button type="button" class="md-solid" onclick="mdIr(\'rank\')">'+t('md_ver_top10')+'</button><button type="button" onclick="mdIr(\'rank\',\'full\')">'+t('md_ver_rank')+'</button></div></div>';
   // Conteo
@@ -5840,7 +5856,7 @@ function _mdRanking(){
   if(!top.length&&!rk.length) return _mdVacio(t('md_rank_vacio_t'),t('md_rank_vacio'));
   if(!top.length) top=rk.slice(0,10);
   var me=String(_md.nip);
-  h+='<div><div class="md-h1">'+_mdRankTit('md_rank_t')+'</div><div class="md-sub">'+_mdE(_mdSemana(A.semana))+(A.publicado?' · '+t('md_publicado',{f:_mdE(_mdFH(A.publicado))}):'')+(A.provisional?' · '+t('md_provisional'):'')+'</div></div>';
+  h+=(R.cat?_mdCatBanner('l',t('md_rank_t')):'')+'<div>'+(R.cat?'':'<div class="md-h1">'+_mdRankTit('md_rank_t')+'</div>')+'<div class="md-sub">'+_mdE(_mdSemana(A.semana))+(A.publicado?' · '+t('md_publicado',{f:_mdE(_mdFH(A.publicado))}):'')+(A.provisional?' · '+t('md_provisional'):'')+'</div></div>';
   if(R.cat) h+=_mdDinBloque(false);
   h+='<div class="md-card"><div class="md-ct">'+_mdRankTit('md_top10')+'</div><div class="md-rows">'+top.map(_mdRow).join('')+'</div></div>';
   var may=R.mayorAvance;
@@ -5848,7 +5864,7 @@ function _mdRanking(){
   var mine=null; rk.forEach(function(x){ if(x&&!x.rival&&String(x.nip)===me) mine=x; });
   var lug=(M&&M.lugar!=null)?M.lugar:(mine&&mine.lugar), pts=(M&&M.pts!=null)?M.pts:(mine&&mine.pts), dl=(M&&M.delta!=null)?M.delta:(mine&&mine.delta);
   if(lug!=null){
-    h+='<div class="md-mine"><div class="md-mine-r"><b>'+_mdE(lug)+'</b><div style="flex:1;min-width:0"><div style="font-weight:700">'+t('md_tu_lugar_de',{n:_mdE(_mdTotal()||'—')})+'</div><div class="md-muted">'+_mdNum(pts)+' '+t('md_pts')+'</div></div>'+(_mdDelta(dl,true)?'<span class="md-chip md-c-ok" style="background:var(--surface)">'+_mdDelta(dl,true)+'</span>':'')+'</div>'+(M?_mdFaltaHtml(M,false):'')+'</div>';
+    h+='<div class="md-mine"><div class="md-mine-r"><b>'+_mdE(lug)+'</b><div style="flex:1;min-width:0"><div style="font-weight:700">'+_mdTuLugarDe()+'</div><div class="md-muted">'+_mdNum(pts)+' '+t('md_pts')+'</div></div>'+(_mdDelta(dl,true)?'<span class="md-chip md-c-ok" style="background:var(--surface)">'+_mdDelta(dl,true)+'</span>':'')+'</div>'+(M?_mdFaltaHtml(M,false):'')+'</div>';
   }
   var na=_mdAlumnos(rk).length;
   h+='<button type="button" class="md-btn" onclick="mdIr(\'rank\',\'full\')">☰ '+t('md_ver_rank')+(na?' · '+tn('md_alumnos',na):'')+'</button>';
@@ -5871,11 +5887,11 @@ function _mdRow(x){
 function _mdFull(){
   var M=_md.mio, R=_mdCat(), A=R.meta||_md.act, rk=R.ranking, h='';
   h+='<button type="button" class="md-back" onclick="mdIr(\'rank\')">'+t('md_volver')+'</button>';
-  h+='<div><div class="md-h1">'+_mdRankTit('md_full_t')+'</div><div class="md-sub">'+(A?_mdE(_mdSemana(A.semana))+' · ':'')+(R.cat?t('md_full_sub_cat',{c:_mdE(_mdCatNom(R.cat))}):t('md_full_sub'))+'</div></div>';
+  h+=(R.cat?_mdCatBanner('l',t('md_full_t')):'')+'<div>'+(R.cat?'':'<div class="md-h1">'+_mdRankTit('md_full_t')+'</div>')+'<div class="md-sub">'+(A?_mdE(_mdSemana(A.semana))+' · ':'')+(R.cat?t('md_full_sub_cat',{c:_mdE(_mdCatNom(R.cat))}):t('md_full_sub'))+'</div></div>';
   if(!rk.length) return h+_mdVacio(t('md_rank_vacio_t'),t('md_rank_vacio'));
   var mine=null; rk.forEach(function(x){ if(x&&!x.rival&&String(x.nip)===String(_md.nip)) mine=x; });
   if(mine||(M&&M.lugar!=null)){ var lug=M&&M.lugar!=null?M.lugar:mine.lugar;
-    h+='<div class="md-mine"><div class="md-mine-r"><b>'+_mdE(lug)+'</b><div style="flex:1;min-width:0"><div style="font-weight:700">'+t('md_tu_lugar_de',{n:_mdE(_mdTotal()||'—')})+' · '+_mdNum(M&&M.pts!=null?M.pts:mine&&mine.pts)+' '+t('md_pts')+'</div><div style="font-size:12.5px;font-weight:700">'+_mdDelta(M&&M.delta!=null?M.delta:mine&&mine.delta,true)+'</div></div></div>'+(M?_mdFaltaHtml(M,false):'')+(mine?'<button type="button" class="md-btn md-out" onclick="mdYo()">'+t('md_ir_lugar')+'</button>':'')+'</div>';
+    h+='<div class="md-mine"><div class="md-mine-r"><b>'+_mdE(lug)+'</b><div style="flex:1;min-width:0"><div style="font-weight:700">'+_mdTuLugarDe()+' · '+_mdNum(M&&M.pts!=null?M.pts:mine&&mine.pts)+' '+t('md_pts')+'</div><div style="font-size:12.5px;font-weight:700">'+_mdDelta(M&&M.delta!=null?M.delta:mine&&mine.delta,true)+'</div></div></div>'+(M?_mdFaltaHtml(M,false):'')+(mine?'<button type="button" class="md-btn md-out" onclick="mdYo()">'+t('md_ir_lugar')+'</button>':'')+'</div>';
   }
   h+='<div class="md-muted">'+t('md_leyenda')+'</div>';
   var rows='', cut=-1; rk.forEach(function(x,i){ if(x&&+x.lugar<=10) cut=i; });
@@ -5937,7 +5953,7 @@ function mdAvisoMostrar(a){
     h='<div class="md-av-hd md-r"><span class="md-av-ic" aria-hidden="true">⚠️</span><div><div class="md-av-t" id="md-av-tt">'+tit+'</div><div class="md-av-s">'+t('md_av_hasta',{f:_mdE(_mdFH(_mdCierre()))})+'</div></div><button type="button" class="md-av-x" aria-label="'+t('md_cerrar')+'" onclick="mdAvisoCerrar()">✕</button></div>';
     h+='<div class="md-av-b">'+(ar?'<div style="display:flex;gap:14px;align-items:center">'+mdStars(ar.a.medalla,'en_riesgo',64)+'<div style="min-width:0"><div style="font-weight:700;color:var(--text2);font-size:13px">'+t('md_a_'+ar.k)+'</div>'+(ar.a.siguiente?'<div style="font-family:\'Space Grotesk\',sans-serif;font-weight:700;font-size:20px;color:#A52219;line-height:1.15">'+_mdE(ar.a.siguiente)+'</div>':'')+'</div></div>':'')+(tx?'<p class="md-muted" style="margin:0;font-size:14px">'+tx+'</p>':'')+bIr+'</div>';
   } else if(tipo==='top10'){
-    h=_mdConf()+'<button type="button" class="md-av-x md-dk" aria-label="'+t('md_cerrar')+'" onclick="mdAvisoCerrar()">✕</button><div class="md-av-cel">'+mdMedal('oro','ganada',96,{txt:M.lugar!=null?M.lugar:'10'})+'<h2 id="md-av-tt">'+tit+'</h2>'+(tx?'<p>'+tx+'</p>':'')+(M.pts!=null?'<div style="background:var(--teal-xlight);border:1.5px solid var(--teal-light);border-radius:14px;padding:10px 18px"><b style="font-family:\'Space Grotesk\',sans-serif;font-size:26px;color:var(--teal-dark)">'+_mdNum(M.pts)+' '+t('md_pts')+'</b>'+(M.lugar!=null?'<div class="md-muted">'+t('md_tu_lugar_de',{n:_mdE(_mdTotal()||'—')})+': '+_mdE(M.lugar)+'</div>':'')+'</div>':'')+'</div><div class="md-av-b">'+bTop+bFull+bMi+'</div>';
+    h=_mdConf()+'<button type="button" class="md-av-x md-dk" aria-label="'+t('md_cerrar')+'" onclick="mdAvisoCerrar()">✕</button><div class="md-av-cel">'+mdMedal('oro','ganada',96,{txt:M.lugar!=null?M.lugar:'10'})+'<h2 id="md-av-tt">'+tit+'</h2>'+(tx?'<p>'+tx+'</p>':'')+(M.pts!=null?'<div style="background:var(--teal-xlight);border:1.5px solid var(--teal-light);border-radius:14px;padding:10px 18px"><b style="font-family:\'Space Grotesk\',sans-serif;font-size:26px;color:var(--teal-dark)">'+_mdNum(M.pts)+' '+t('md_pts')+'</b>'+(M.lugar!=null?'<div class="md-muted">'+_mdTuLugarDe()+': '+_mdE(M.lugar)+'</div>':'')+'</div>':'')+'</div><div class="md-av-b">'+bTop+bFull+bMi+'</div>';
   } else if(tipo==='subiste'||tipo==='racha'){
     var best=null; MD_AREAS.forEach(function(k){ var x=M.areas&&M.areas[k]; if(!x||!x.medalla) return; var sc=(MD_LV[x.medalla]||0)*100+(+x.racha||0); if(!best||sc>best.sc) best={k:k,a:x,sc:sc}; });
     var ic=tipo==='racha'?'<div style="font-size:64px;line-height:1" class="md-flame" aria-hidden="true">🔥</div>':mdStars(best?best.a.medalla:'oro','ganada',96);
@@ -5948,14 +5964,14 @@ function mdAvisoMostrar(a){
     var me2=null; _mdCat().ranking.forEach(function(x){ if(x&&!x.rival&&String(x.nip)===String(_md.nip)) me2=x; });
     var rm=MD_LV[a.medalla]?a.medalla:MD_LV[a.titulo_medalla]?a.titulo_medalla:(me2&&MD_LV[me2.titulo])?me2.titulo:MD_LV[M.titulo]?M.titulo:(/oro/i.test(a.titulo||''))?'oro':(/plata/i.test(a.titulo||''))?'plata':(/bronce/i.test(a.titulo||''))?'bronce':'oro';
     if(!a.titulo) tit=_mdE(t('md_av_t_titulo',{r:_mdTitNom(rm)}));
-    h=_mdConf()+'<button type="button" class="md-av-x md-dk" aria-label="'+t('md_cerrar')+'" onclick="mdAvisoCerrar()">✕</button><div class="md-av-cel">'+mdMedal(rm,'ganada',96,{cinta:true})+'<span class="md-tit-tag" style="font-size:13px">'+_mdE(_mdTitNom(rm))+(_mdCat().cat?' · '+_mdE(_mdCatNom(_mdCat().cat)):'')+'</span><h2 id="md-av-tt">'+tit+'</h2>'+(tx?'<p>'+tx+'</p>':'<p>'+t('md_av_titulo_p',{n:_mdNum(_mdVaras()[rm])})+'</p>')+(M.pts!=null?'<div style="background:var(--teal-xlight);border:1.5px solid var(--teal-light);border-radius:14px;padding:10px 18px"><b style="font-family:\'Space Grotesk\',sans-serif;font-size:26px;color:var(--teal-dark)">'+_mdNum(M.pts)+' '+t('md_pts')+'</b>'+(M.lugar!=null?'<div class="md-muted">'+t('md_tu_lugar_de',{n:_mdE(_mdTotal()||'—')})+': '+_mdE(M.lugar)+'</div>':'')+'</div>':'')+'</div><div class="md-av-b">'+bTop+bFull+bMi+'</div>';
+    h=_mdConf()+'<button type="button" class="md-av-x md-dk" aria-label="'+t('md_cerrar')+'" onclick="mdAvisoCerrar()">✕</button><div class="md-av-cel">'+mdMedal(rm,'ganada',96,{cinta:true})+'<span class="md-tit-tag" style="font-size:13px">'+_mdE(_mdTitNom(rm))+(_mdCat().cat?' · '+_mdE(_mdCatNom(_mdCat().cat)):'')+'</span><h2 id="md-av-tt">'+tit+'</h2>'+(tx?'<p>'+tx+'</p>':'<p>'+t('md_av_titulo_p',{n:_mdNum(_mdVaras()[rm])})+'</p>')+(M.pts!=null?'<div style="background:var(--teal-xlight);border:1.5px solid var(--teal-light);border-radius:14px;padding:10px 18px"><b style="font-family:\'Space Grotesk\',sans-serif;font-size:26px;color:var(--teal-dark)">'+_mdNum(M.pts)+' '+t('md_pts')+'</b>'+(M.lugar!=null?'<div class="md-muted">'+_mdTuLugarDe()+': '+_mdE(M.lugar)+'</div>':'')+'</div>':'')+'</div><div class="md-av-b">'+bTop+bFull+bMi+'</div>';
   } else { // resultados
     var RC=_mdCat(), top=_mdAlumnos(RC.top10.length?RC.top10:RC.ranking.slice(0,10));
     var p=[top[1],top[0],top[2]], sz=[40,50,36], mm=['plata','oro','bronce'];
     h='<div class="md-av-hd"><span class="md-av-ic" aria-hidden="true">🏆</span><div><div class="md-av-t" id="md-av-tt">'+tit+'</div><div class="md-av-s">'+_mdE(_mdSemana((_mdCat().meta||A).semana||A.semana||M.semana))+'</div></div><button type="button" class="md-av-x" aria-label="'+t('md_cerrar')+'" onclick="mdAvisoCerrar()">✕</button></div><div class="md-av-b">';
     if(tx) h+='<p class="md-muted" style="margin:0;font-size:14px">'+tx+'</p>';
     var t5=(RC.top10.length?RC.top10:RC.ranking).slice(0,5); if(t5.length) h+='<div><div class="md-ct" style="margin-bottom:4px">'+_mdRankTit('md_top10')+'</div><div class="md-rows">'+t5.map(_mdRow).join('')+'</div></div>';
-    if(M.lugar!=null) h+='<div class="md-mine"><div class="md-mine-r"><b>'+_mdE(M.lugar)+'</b><div style="flex:1;min-width:0"><div style="font-weight:700">'+t('md_tu_lugar_de',{n:_mdE(_mdTotal()||'—')})+'</div><div class="md-muted">'+_mdNum(M.pts)+' '+t('md_pts')+'</div></div><span style="font-size:12px;font-weight:700">'+_mdDelta(M.delta,true)+'</span></div>'+_mdFaltaHtml(M,false)+'</div>';
+    if(M.lugar!=null) h+='<div class="md-mine"><div class="md-mine-r"><b>'+_mdE(M.lugar)+'</b><div style="flex:1;min-width:0"><div style="font-weight:700">'+_mdTuLugarDe()+'</div><div class="md-muted">'+_mdNum(M.pts)+' '+t('md_pts')+'</div></div><span style="font-size:12px;font-weight:700">'+_mdDelta(M.delta,true)+'</span></div>'+_mdFaltaHtml(M,false)+'</div>';
     var MAY=RC.mayorAvance; if(MAY&&MAY.nombre) h+='<div class="md-muted" style="font-size:13.5px">📈 '+t('md_mayor')+': <b style="color:var(--text)">'+_mdE(MAY.nombre)+'</b>'+(MAY.detalle?' · '+_mdE(MAY.detalle):'')+'</div>';
     h+=bTop+bFull+bMi+'</div>';
   }
@@ -6240,6 +6256,552 @@ var _rtOldNav=navTo; navTo=function(){ var r=_rtOldNav.apply(this,arguments); tr
 var _rtOldApply2=applyLang; applyLang=function(){ var r=_rtOldApply2.apply(this,arguments); try{ rtSoloPintar(); }catch(e){} return r; };
 var _rtOldRetoInit2=retoInit; retoInit=function(nip){ var r=_rtOldRetoInit2.apply(this,arguments); try{ rtSoloPintar(); setTimeout(rtSoloPintar,600); }catch(e){} return r; };
 var _rtOldReset2=ftReset; ftReset=function(){ var d=_device(); if(d) d.classList.remove('rtm-solo'); return _rtOldReset2.apply(this,arguments); };
+// ── rgr · regla 405 (Noé 9 nov 9:03 MX, maqueta aprobada): «📲 Cómo registrar tu dieta en Harbiz».
+//    Lee (solo lectura): fittrack_nutricion/<nip>/reglasRegistro =
+//      { comidaLibre:{ tipo:'finde'|'descanso'|'semanal'|null, comida:'cena', n:1 }, pre:true, intra:bool, postDescanso:'snack'|'omitir', actualizado }
+//    Lo arma tools/reglas_registro.py (sync/reglas_registro.json). Sin nodo → FitTrack se ve igual que antes.
+//    Un campo en null (o ausente) → esa parte NO se muestra. El intra solo se menciona si su dieta lo trae (intra:true).
+//    postDescanso: 'snack' = el post pasa a (segundo) snack y SÍ se marca; 'omitir' = indicación vieja «omite el pre y post» (se deja sin marcar).
+//    En Nutrición: UNA nota fija (sin cambios por día). Mis logros / Mis chequeos / Inicio: una línea informativa.
+//    «No cuenta en tu cumplimiento» solo se dice de lo que el cálculo realmente no cuenta: pre y post entreno (prepost.py) y la comida libre.
+(function(K){ Object.keys(K).forEach(function(l){ if(LANGS[l]) Object.keys(K[l]).forEach(function(k){ LANGS[l][k]=K[l][k]; }); }); })({
+"es":{
+  "rgr_t_u":"📲 Cómo registrar su dieta en Harbiz",
+  "rgr_d_u":"<b>🌴 En sus días de descanso:</b> omita {om}.",
+  "rgr_d_sn_u":"<b>🌴 En sus días de descanso:</b> omita {om}; el post entreno cómalo como snack y sí márquelo.",
+  "rgr_d_sn2_u":"<b>🌴 En sus días de descanso:</b> omita {om}; el post entreno cómalo como segundo snack y sí márquelo.",
+  "rgr_cl_u":"<b>🍕 Su comida libre:</b> {libre}.",
+  "rgr_pie_ambos_u":"En Harbiz puede dejar sin marcar {om} de esos días y su comida libre: no cuentan en su cumplimiento.",
+  "rgr_pie_pp1_u":"En Harbiz puede dejar sin marcar {om} de esos días: no cuenta en su cumplimiento.",
+  "rgr_pie_pp_u":"En Harbiz puede dejar sin marcar {om} de esos días: no cuentan en su cumplimiento.",
+  "rgr_pie_cl_u":"En Harbiz puede dejar sin marcar su comida libre: no cuenta en su cumplimiento.",
+  "rgr_c_cena_u":"su cena","rgr_c_comida_u":"su comida","rgr_c_desayuno_u":"su desayuno",
+  "rgr_cl_descanso_u":"{c} en sus días de descanso",
+  "rgr_cl_sem_one_u":"1 comida libre a la semana, el día que usted elija","rgr_cl_sem_other_u":"{n} comidas libres a la semana, los días que usted elija",
+  "rgr_md_ambos_u":"💡 Aquí no cuentan {om} de sus días de descanso ni su comida libre ({libre}). Si quedan sin marcar en Harbiz, no le afectan.",
+  "rgr_md_pp1_u":"💡 Aquí no cuenta {om} de sus días de descanso. Si queda sin marcar en Harbiz, no le afecta.",
+  "rgr_md_pp_u":"💡 Aquí no cuentan {om} de sus días de descanso. Si quedan sin marcar en Harbiz, no le afectan.",
+  "rgr_md_cl_u":"💡 Aquí no cuenta su comida libre ({libre}). Si queda sin marcar en Harbiz, no le afecta.",
+  "rgr_chq_ambos_u":"💡 Su % de dieta no cuenta {om} de sus días de descanso ni su comida libre ({libre}): si quedan sin marcar en Harbiz, no le afectan.",
+  "rgr_chq_pp1_u":"💡 Su % de dieta no cuenta {om} de sus días de descanso: si queda sin marcar en Harbiz, no le afecta.",
+  "rgr_chq_pp_u":"💡 Su % de dieta no cuenta {om} de sus días de descanso: si quedan sin marcar en Harbiz, no le afectan.",
+  "rgr_chq_cl_u":"💡 Su % de dieta no cuenta su comida libre ({libre}): si queda sin marcar en Harbiz, no le afecta.",
+  "rgr_ini_ambos_u":"💡 {omc} en descanso y su comida libre puede dejarlos sin marcar en Harbiz: no cuentan.",
+  "rgr_ini_pp1_u":"💡 {omc} en sus días de descanso puede dejarlo sin marcar en Harbiz: no cuenta.",
+  "rgr_ini_pp_u":"💡 {omc} en sus días de descanso puede dejarlos sin marcar en Harbiz: no cuentan.",
+  "rgr_ini_cl_u":"💡 Su comida libre puede dejarla sin marcar en Harbiz: no cuenta.",
+  "rgr_t":"📲 Cómo registrar tu dieta en Harbiz",
+  "rgr_d":"<b>🌴 En tus días de descanso:</b> omite {om}.",
+  "rgr_d_sn":"<b>🌴 En tus días de descanso:</b> omite {om}; el post entreno cómelo como snack y sí márcalo.",
+  "rgr_d_sn2":"<b>🌴 En tus días de descanso:</b> omite {om}; el post entreno cómelo como segundo snack y sí márcalo.",
+  "rgr_om_p":"el pre entreno","rgr_om_pi":"el pre y el intra entreno","rgr_om_pp":"el pre y el post entreno","rgr_om_pip":"el pre, el intra y el post entreno",
+  "rgr_omc_p":"El pre entreno","rgr_omc_pp":"El pre y el post entreno",
+  "rgr_cl":"<b>🍕 Tu comida libre:</b> {libre}.",
+  "rgr_pie_ambos":"En Harbiz puedes dejar sin marcar {om} de esos días y tu comida libre: no cuentan en tu cumplimiento.",
+  "rgr_pie_pp1":"En Harbiz puedes dejar sin marcar {om} de esos días: no cuenta en tu cumplimiento.",
+  "rgr_pie_pp":"En Harbiz puedes dejar sin marcar {om} de esos días: no cuentan en tu cumplimiento.",
+  "rgr_pie_cl":"En Harbiz puedes dejar sin marcar tu comida libre: no cuenta en tu cumplimiento.",
+  "rgr_c_cena":"tu cena","rgr_c_comida":"tu comida","rgr_c_desayuno":"tu desayuno",
+  "rgr_cl_finde":"{c} de sábado y domingo","rgr_cl_descanso":"{c} en tus días de descanso",
+  "rgr_cl_sem_one":"1 comida libre a la semana, el día que tú elijas","rgr_cl_sem_other":"{n} comidas libres a la semana, los días que tú elijas",
+  "rgr_md_ambos":"💡 Aquí no cuentan {om} de tus días de descanso ni tu comida libre ({libre}). Si quedan sin marcar en Harbiz, no te afectan.",
+  "rgr_md_pp1":"💡 Aquí no cuenta {om} de tus días de descanso. Si queda sin marcar en Harbiz, no te afecta.",
+  "rgr_md_pp":"💡 Aquí no cuentan {om} de tus días de descanso. Si quedan sin marcar en Harbiz, no te afectan.",
+  "rgr_md_cl":"💡 Aquí no cuenta tu comida libre ({libre}). Si queda sin marcar en Harbiz, no te afecta.",
+  "rgr_chq_ambos":"💡 Tu % de dieta no cuenta {om} de tus días de descanso ni tu comida libre ({libre}): si quedan sin marcar en Harbiz, no te afectan.",
+  "rgr_chq_pp1":"💡 Tu % de dieta no cuenta {om} de tus días de descanso: si queda sin marcar en Harbiz, no te afecta.",
+  "rgr_chq_pp":"💡 Tu % de dieta no cuenta {om} de tus días de descanso: si quedan sin marcar en Harbiz, no te afectan.",
+  "rgr_chq_cl":"💡 Tu % de dieta no cuenta tu comida libre ({libre}): si queda sin marcar en Harbiz, no te afecta.",
+  "rgr_ini_ambos":"💡 {omc} en descanso y tu comida libre puedes dejarlos sin marcar en Harbiz: no cuentan.",
+  "rgr_ini_pp1":"💡 {omc} en tus días de descanso puedes dejarlo sin marcar en Harbiz: no cuenta.",
+  "rgr_ini_pp":"💡 {omc} en tus días de descanso puedes dejarlos sin marcar en Harbiz: no cuentan.",
+  "rgr_ini_cl":"💡 Tu comida libre puedes dejarla sin marcar en Harbiz: no cuenta."
+},
+"en":{
+  "rgr_t":"📲 How to log your diet in Harbiz",
+  "rgr_d":"<b>🌴 On your rest days:</b> skip {om}.",
+  "rgr_d_sn":"<b>🌴 On your rest days:</b> skip {om}; eat your post-workout as a snack and do check it off.",
+  "rgr_d_sn2":"<b>🌴 On your rest days:</b> skip {om}; eat your post-workout as your second snack and do check it off.",
+  "rgr_om_p":"your pre-workout","rgr_om_pi":"your pre- and intra-workout","rgr_om_pp":"your pre- and post-workout","rgr_om_pip":"your pre-, intra- and post-workout",
+  "rgr_omc_p":"Your pre-workout","rgr_omc_pp":"Your pre- and post-workout",
+  "rgr_cl":"<b>🍕 Your free meal:</b> {libre}.",
+  "rgr_pie_ambos":"In Harbiz you can leave {om} on those days and your free meal unchecked: they don't count toward your compliance.",
+  "rgr_pie_pp1":"In Harbiz you can leave {om} on those days unchecked: it doesn't count toward your compliance.",
+  "rgr_pie_pp":"In Harbiz you can leave {om} on those days unchecked: they don't count toward your compliance.",
+  "rgr_pie_cl":"In Harbiz you can leave your free meal unchecked: it doesn't count toward your compliance.",
+  "rgr_c_cena":"your dinner","rgr_c_comida":"your lunch","rgr_c_desayuno":"your breakfast",
+  "rgr_cl_finde":"{c} on Saturday and Sunday","rgr_cl_descanso":"{c} on your rest days",
+  "rgr_cl_sem_one":"1 free meal a week, on the day you choose","rgr_cl_sem_other":"{n} free meals a week, on the days you choose",
+  "rgr_md_ambos":"💡 Not counted here: {om} on your rest days and your free meal ({libre}). If they're left unchecked in Harbiz, they don't affect you.",
+  "rgr_md_pp1":"💡 Not counted here: {om} on your rest days. If it's left unchecked in Harbiz, it doesn't affect you.",
+  "rgr_md_pp":"💡 Not counted here: {om} on your rest days. If they're left unchecked in Harbiz, they don't affect you.",
+  "rgr_md_cl":"💡 Not counted here: your free meal ({libre}). If it's left unchecked in Harbiz, it doesn't affect you.",
+  "rgr_chq_ambos":"💡 Your diet % doesn't count {om} on your rest days or your free meal ({libre}): if they're left unchecked in Harbiz, they don't affect you.",
+  "rgr_chq_pp1":"💡 Your diet % doesn't count {om} on your rest days: if it's left unchecked in Harbiz, it doesn't affect you.",
+  "rgr_chq_pp":"💡 Your diet % doesn't count {om} on your rest days: if they're left unchecked in Harbiz, they don't affect you.",
+  "rgr_chq_cl":"💡 Your diet % doesn't count your free meal ({libre}): if it's left unchecked in Harbiz, it doesn't affect you.",
+  "rgr_ini_ambos":"💡 {omc} on rest days and your free meal can be left unchecked in Harbiz: they don't count.",
+  "rgr_ini_pp1":"💡 {omc} on your rest days can be left unchecked in Harbiz: it doesn't count.",
+  "rgr_ini_pp":"💡 {omc} on your rest days can be left unchecked in Harbiz: they don't count.",
+  "rgr_ini_cl":"💡 Your free meal can be left unchecked in Harbiz: it doesn't count."
+},
+"pt":{
+  "rgr_t":"📲 Como registrar sua dieta no Harbiz",
+  "rgr_d":"<b>🌴 Nos seus dias de descanso:</b> omita {om}.",
+  "rgr_d_sn":"<b>🌴 Nos seus dias de descanso:</b> omita {om}; coma o pós-treino como lanche e marque-o, sim.",
+  "rgr_d_sn2":"<b>🌴 Nos seus dias de descanso:</b> omita {om}; coma o pós-treino como segundo lanche e marque-o, sim.",
+  "rgr_om_p":"o pré-treino","rgr_om_pi":"o pré e o intratreino","rgr_om_pp":"o pré e o pós-treino","rgr_om_pip":"o pré, o intra e o pós-treino",
+  "rgr_omc_p":"O pré-treino","rgr_omc_pp":"O pré e o pós-treino",
+  "rgr_cl":"<b>🍕 Sua refeição livre:</b> {libre}.",
+  "rgr_pie_ambos":"No Harbiz você pode deixar sem marcar {om} desses dias e sua refeição livre: não contam no seu cumprimento.",
+  "rgr_pie_pp1":"No Harbiz você pode deixar sem marcar {om} desses dias: não conta no seu cumprimento.",
+  "rgr_pie_pp":"No Harbiz você pode deixar sem marcar {om} desses dias: não contam no seu cumprimento.",
+  "rgr_pie_cl":"No Harbiz você pode deixar sua refeição livre sem marcar: não conta no seu cumprimento.",
+  "rgr_c_cena":"seu jantar","rgr_c_comida":"seu almoço","rgr_c_desayuno":"seu café da manhã",
+  "rgr_cl_finde":"{c} de sábado e domingo","rgr_cl_descanso":"{c} nos seus dias de descanso",
+  "rgr_cl_sem_one":"1 refeição livre por semana, no dia que você escolher","rgr_cl_sem_other":"{n} refeições livres por semana, nos dias que você escolher",
+  "rgr_md_ambos":"💡 Aqui não contam {om} dos seus dias de descanso nem sua refeição livre ({libre}). Se ficarem sem marcar no Harbiz, não afetam você.",
+  "rgr_md_pp1":"💡 Aqui não conta {om} dos seus dias de descanso. Se ficar sem marcar no Harbiz, não afeta você.",
+  "rgr_md_pp":"💡 Aqui não contam {om} dos seus dias de descanso. Se ficarem sem marcar no Harbiz, não afetam você.",
+  "rgr_md_cl":"💡 Aqui não conta sua refeição livre ({libre}). Se ficar sem marcar no Harbiz, não afeta você.",
+  "rgr_chq_ambos":"💡 Seu % de dieta não conta {om} dos seus dias de descanso nem sua refeição livre ({libre}): se ficarem sem marcar no Harbiz, não afetam você.",
+  "rgr_chq_pp1":"💡 Seu % de dieta não conta {om} dos seus dias de descanso: se ficar sem marcar no Harbiz, não afeta você.",
+  "rgr_chq_pp":"💡 Seu % de dieta não conta {om} dos seus dias de descanso: se ficarem sem marcar no Harbiz, não afetam você.",
+  "rgr_chq_cl":"💡 Seu % de dieta não conta sua refeição livre ({libre}): se ficar sem marcar no Harbiz, não afeta você.",
+  "rgr_ini_ambos":"💡 {omc} no descanso e sua refeição livre podem ficar sem marcar no Harbiz: não contam.",
+  "rgr_ini_pp1":"💡 {omc} nos seus dias de descanso pode ficar sem marcar no Harbiz: não conta.",
+  "rgr_ini_pp":"💡 {omc} nos seus dias de descanso podem ficar sem marcar no Harbiz: não contam.",
+  "rgr_ini_cl":"💡 Sua refeição livre pode ficar sem marcar no Harbiz: não conta."
+},
+"it":{
+  "rgr_t":"📲 Come registrare la tua dieta su Harbiz",
+  "rgr_d":"<b>🌴 Nei tuoi giorni di riposo:</b> salta {om}.",
+  "rgr_d_sn":"<b>🌴 Nei tuoi giorni di riposo:</b> salta {om}; mangia il post-allenamento come spuntino e segnalo.",
+  "rgr_d_sn2":"<b>🌴 Nei tuoi giorni di riposo:</b> salta {om}; mangia il post-allenamento come secondo spuntino e segnalo.",
+  "rgr_om_p":"il pre-allenamento","rgr_om_pi":"il pre e l'intra-allenamento","rgr_om_pp":"il pre e il post-allenamento","rgr_om_pip":"il pre, l'intra e il post-allenamento",
+  "rgr_omc_p":"Il pre-allenamento","rgr_omc_pp":"Il pre e il post-allenamento",
+  "rgr_cl":"<b>🍕 Il tuo pasto libero:</b> {libre}.",
+  "rgr_pie_ambos":"Su Harbiz puoi lasciare senza spunta {om} di quei giorni e il tuo pasto libero: non contano nella tua aderenza.",
+  "rgr_pie_pp1":"Su Harbiz puoi lasciare senza spunta {om} di quei giorni: non conta nella tua aderenza.",
+  "rgr_pie_pp":"Su Harbiz puoi lasciare senza spunta {om} di quei giorni: non contano nella tua aderenza.",
+  "rgr_pie_cl":"Su Harbiz puoi lasciare senza spunta il tuo pasto libero: non conta nella tua aderenza.",
+  "rgr_c_cena":"la tua cena","rgr_c_comida":"il tuo pranzo","rgr_c_desayuno":"la tua colazione",
+  "rgr_cl_finde":"{c} di sabato e domenica","rgr_cl_descanso":"{c} nei tuoi giorni di riposo",
+  "rgr_cl_sem_one":"1 pasto libero a settimana, nel giorno che scegli tu","rgr_cl_sem_other":"{n} pasti liberi a settimana, nei giorni che scegli tu",
+  "rgr_md_ambos":"💡 Qui non contano {om} dei tuoi giorni di riposo né il tuo pasto libero ({libre}). Se restano senza spunta su Harbiz, non ti penalizzano.",
+  "rgr_md_pp1":"💡 Qui non conta {om} dei tuoi giorni di riposo. Se resta senza spunta su Harbiz, non ti penalizza.",
+  "rgr_md_pp":"💡 Qui non contano {om} dei tuoi giorni di riposo. Se restano senza spunta su Harbiz, non ti penalizzano.",
+  "rgr_md_cl":"💡 Qui non conta il tuo pasto libero ({libre}). Se resta senza spunta su Harbiz, non ti penalizza.",
+  "rgr_chq_ambos":"💡 La tua % di dieta non conta {om} dei tuoi giorni di riposo né il tuo pasto libero ({libre}): se restano senza spunta su Harbiz, non ti penalizzano.",
+  "rgr_chq_pp1":"💡 La tua % di dieta non conta {om} dei tuoi giorni di riposo: se resta senza spunta su Harbiz, non ti penalizza.",
+  "rgr_chq_pp":"💡 La tua % di dieta non conta {om} dei tuoi giorni di riposo: se restano senza spunta su Harbiz, non ti penalizzano.",
+  "rgr_chq_cl":"💡 La tua % di dieta non conta il tuo pasto libero ({libre}): se resta senza spunta su Harbiz, non ti penalizza.",
+  "rgr_ini_ambos":"💡 {omc} nei giorni di riposo e il tuo pasto libero puoi lasciarli senza spunta su Harbiz: non contano.",
+  "rgr_ini_pp1":"💡 {omc} nei tuoi giorni di riposo puoi lasciarlo senza spunta su Harbiz: non conta.",
+  "rgr_ini_pp":"💡 {omc} nei tuoi giorni di riposo puoi lasciarli senza spunta su Harbiz: non contano.",
+  "rgr_ini_cl":"💡 Il tuo pasto libero puoi lasciarlo senza spunta su Harbiz: non conta."
+},
+"fr":{
+  "rgr_t":"📲 Comment enregistrer ton plan alimentaire dans Harbiz",
+  "rgr_d":"<b>🌴 Tes jours de repos :</b> saute {om}.",
+  "rgr_d_sn":"<b>🌴 Tes jours de repos :</b> saute {om} ; mange ton post-entraînement comme collation et coche-le.",
+  "rgr_d_sn2":"<b>🌴 Tes jours de repos :</b> saute {om} ; mange ton post-entraînement comme deuxième collation et coche-le.",
+  "rgr_om_p":"le pré-entraînement","rgr_om_pi":"le pré et l'intra-entraînement","rgr_om_pp":"le pré et le post-entraînement","rgr_om_pip":"le pré, l'intra et le post-entraînement",
+  "rgr_omc_p":"Le pré-entraînement","rgr_omc_pp":"Le pré et le post-entraînement",
+  "rgr_cl":"<b>🍕 Ton repas libre :</b> {libre}.",
+  "rgr_pie_ambos":"Dans Harbiz, tu peux ne pas cocher {om} de ces jours-là ni ton repas libre : ils ne comptent pas dans ton respect du plan.",
+  "rgr_pie_pp1":"Dans Harbiz, tu peux ne pas cocher {om} de ces jours-là : il ne compte pas dans ton respect du plan.",
+  "rgr_pie_pp":"Dans Harbiz, tu peux ne pas cocher {om} de ces jours-là : ils ne comptent pas dans ton respect du plan.",
+  "rgr_pie_cl":"Dans Harbiz, tu peux ne pas cocher ton repas libre : il ne compte pas dans ton respect du plan.",
+  "rgr_c_cena":"ton dîner","rgr_c_comida":"ton déjeuner","rgr_c_desayuno":"ton petit-déjeuner",
+  "rgr_cl_finde":"{c} du samedi et du dimanche","rgr_cl_descanso":"{c} de tes jours de repos",
+  "rgr_cl_sem_one":"1 repas libre par semaine, le jour de ton choix","rgr_cl_sem_other":"{n} repas libres par semaine, les jours de ton choix",
+  "rgr_md_ambos":"💡 Ici, {om} de tes jours de repos et ton repas libre ({libre}) ne comptent pas. S'ils restent non cochés dans Harbiz, ça ne te pénalise pas.",
+  "rgr_md_pp1":"💡 Ici, {om} de tes jours de repos ne compte pas. S'il reste non coché dans Harbiz, ça ne te pénalise pas.",
+  "rgr_md_pp":"💡 Ici, {om} de tes jours de repos ne comptent pas. S'ils restent non cochés dans Harbiz, ça ne te pénalise pas.",
+  "rgr_md_cl":"💡 Ici, ton repas libre ({libre}) ne compte pas. S'il reste non coché dans Harbiz, ça ne te pénalise pas.",
+  "rgr_chq_ambos":"💡 Ton % d'alimentation ne compte pas {om} de tes jours de repos ni ton repas libre ({libre}) : s'ils restent non cochés dans Harbiz, ça ne te pénalise pas.",
+  "rgr_chq_pp1":"💡 Ton % d'alimentation ne compte pas {om} de tes jours de repos : s'il reste non coché dans Harbiz, ça ne te pénalise pas.",
+  "rgr_chq_pp":"💡 Ton % d'alimentation ne compte pas {om} de tes jours de repos : s'ils restent non cochés dans Harbiz, ça ne te pénalise pas.",
+  "rgr_chq_cl":"💡 Ton % d'alimentation ne compte pas ton repas libre ({libre}) : s'il reste non coché dans Harbiz, ça ne te pénalise pas.",
+  "rgr_ini_ambos":"💡 {omc} les jours de repos et ton repas libre peuvent rester non cochés dans Harbiz : ils ne comptent pas.",
+  "rgr_ini_pp1":"💡 {omc} de tes jours de repos peut rester non coché dans Harbiz : il ne compte pas.",
+  "rgr_ini_pp":"💡 {omc} de tes jours de repos peuvent rester non cochés dans Harbiz : ils ne comptent pas.",
+  "rgr_ini_cl":"💡 Ton repas libre peut rester non coché dans Harbiz : il ne compte pas."
+},
+"de":{
+  "rgr_t":"📲 So trägst du deine Ernährung in Harbiz ein",
+  "rgr_d":"<b>🌴 An deinen Ruhetagen:</b> lass {om} weg.",
+  "rgr_d_sn":"<b>🌴 An deinen Ruhetagen:</b> lass {om} weg; iss dein Post-Workout als Snack und hak es ab.",
+  "rgr_d_sn2":"<b>🌴 An deinen Ruhetagen:</b> lass {om} weg; iss dein Post-Workout als zweiten Snack und hak es ab.",
+  "rgr_om_p":"das Pre-Workout","rgr_om_pi":"das Pre- und das Intra-Workout","rgr_om_pp":"das Pre- und das Post-Workout","rgr_om_pip":"das Pre-, Intra- und Post-Workout",
+  "rgr_omc_p":"Das Pre-Workout","rgr_omc_pp":"Das Pre- und das Post-Workout",
+  "rgr_cl":"<b>🍕 Deine freie Mahlzeit:</b> {libre}.",
+  "rgr_pie_ambos":"In Harbiz kannst du {om} an diesen Tagen und deine freie Mahlzeit unabgehakt lassen: Sie zählen nicht zu deiner Erfüllung.",
+  "rgr_pie_pp1":"In Harbiz kannst du {om} an diesen Tagen unabgehakt lassen: Es zählt nicht zu deiner Erfüllung.",
+  "rgr_pie_pp":"In Harbiz kannst du {om} an diesen Tagen unabgehakt lassen: Sie zählen nicht zu deiner Erfüllung.",
+  "rgr_pie_cl":"In Harbiz kannst du deine freie Mahlzeit unabgehakt lassen: Sie zählt nicht zu deiner Erfüllung.",
+  "rgr_c_cena":"dein Abendessen","rgr_c_comida":"dein Mittagessen","rgr_c_desayuno":"dein Frühstück",
+  "rgr_cl_finde":"{c} am Samstag und Sonntag","rgr_cl_descanso":"{c} an deinen Ruhetagen",
+  "rgr_cl_sem_one":"1 freie Mahlzeit pro Woche, an einem Tag deiner Wahl","rgr_cl_sem_other":"{n} freie Mahlzeiten pro Woche, an Tagen deiner Wahl",
+  "rgr_md_ambos":"💡 Hier zählen {om} an deinen Ruhetagen und deine freie Mahlzeit ({libre}) nicht. Wenn sie in Harbiz nicht abgehakt sind, schadet dir das nicht.",
+  "rgr_md_pp1":"💡 Hier zählt {om} an deinen Ruhetagen nicht. Wenn es in Harbiz nicht abgehakt ist, schadet dir das nicht.",
+  "rgr_md_pp":"💡 Hier zählen {om} an deinen Ruhetagen nicht. Wenn sie in Harbiz nicht abgehakt sind, schadet dir das nicht.",
+  "rgr_md_cl":"💡 Hier zählt deine freie Mahlzeit ({libre}) nicht. Wenn sie in Harbiz nicht abgehakt ist, schadet dir das nicht.",
+  "rgr_chq_ambos":"💡 Dein Ernährungs-% zählt {om} an deinen Ruhetagen und deine freie Mahlzeit ({libre}) nicht: Wenn sie in Harbiz nicht abgehakt sind, schadet dir das nicht.",
+  "rgr_chq_pp1":"💡 Dein Ernährungs-% zählt {om} an deinen Ruhetagen nicht: Wenn es in Harbiz nicht abgehakt ist, schadet dir das nicht.",
+  "rgr_chq_pp":"💡 Dein Ernährungs-% zählt {om} an deinen Ruhetagen nicht: Wenn sie in Harbiz nicht abgehakt sind, schadet dir das nicht.",
+  "rgr_chq_cl":"💡 Dein Ernährungs-% zählt deine freie Mahlzeit ({libre}) nicht: Wenn sie in Harbiz nicht abgehakt ist, schadet dir das nicht.",
+  "rgr_ini_ambos":"💡 {omc} an Ruhetagen und deine freie Mahlzeit kannst du in Harbiz unabgehakt lassen: Sie zählen nicht.",
+  "rgr_ini_pp1":"💡 {omc} an deinen Ruhetagen kannst du in Harbiz unabgehakt lassen: Es zählt nicht.",
+  "rgr_ini_pp":"💡 {omc} an deinen Ruhetagen kannst du in Harbiz unabgehakt lassen: Sie zählen nicht.",
+  "rgr_ini_cl":"💡 Deine freie Mahlzeit kannst du in Harbiz unabgehakt lassen: Sie zählt nicht."
+},
+"ru":{
+  "rgr_t":"📲 Как отмечать питание в Harbiz",
+  "rgr_d":"<b>🌴 В дни отдыха:</b> пропускай {om}.",
+  "rgr_d_sn":"<b>🌴 В дни отдыха:</b> пропускай {om}; приём пищи после тренировки ешь как перекус и обязательно отмечай его.",
+  "rgr_d_sn2":"<b>🌴 В дни отдыха:</b> пропускай {om}; приём пищи после тренировки ешь как второй перекус и обязательно отмечай его.",
+  "rgr_om_p":"приём пищи перед тренировкой","rgr_om_pi":"приёмы пищи перед тренировкой и во время неё","rgr_om_pp":"приёмы пищи до и после тренировки","rgr_om_pip":"приёмы пищи до, во время и после тренировки",
+  "rgr_omc_p":"Приём пищи перед тренировкой","rgr_omc_pp":"Приёмы пищи до и после тренировки",
+  "rgr_cl":"<b>🍕 Твой свободный приём пищи:</b> {libre}.",
+  "rgr_pie_ambos":"В Harbiz можно не отмечать {om} в эти дни и свободный приём пищи: они не влияют на выполнение плана.",
+  "rgr_pie_pp1":"В Harbiz можно не отмечать {om} в эти дни: он не влияет на выполнение плана.",
+  "rgr_pie_pp":"В Harbiz можно не отмечать {om} в эти дни: они не влияют на выполнение плана.",
+  "rgr_pie_cl":"В Harbiz можно не отмечать свободный приём пищи: он не влияет на выполнение плана.",
+  "rgr_c_cena":"твой ужин","rgr_c_comida":"твой обед","rgr_c_desayuno":"твой завтрак",
+  "rgr_cl_finde":"{c} в субботу и воскресенье","rgr_cl_descanso":"{c} в дни отдыха",
+  "rgr_cl_sem_one":"1 свободный приём пищи в неделю, в день на твой выбор","rgr_cl_sem_other":"{n} свободных приёма пищи в неделю, в дни на твой выбор",
+  "rgr_md_ambos":"💡 Здесь не учитываются {om} в дни отдыха и свободный приём пищи ({libre}). Если они не отмечены в Harbiz, это на тебя не влияет.",
+  "rgr_md_pp1":"💡 Здесь не учитывается {om} в дни отдыха. Если он не отмечен в Harbiz, это на тебя не влияет.",
+  "rgr_md_pp":"💡 Здесь не учитываются {om} в дни отдыха. Если они не отмечены в Harbiz, это на тебя не влияет.",
+  "rgr_md_cl":"💡 Здесь не учитывается свободный приём пищи ({libre}). Если он не отмечен в Harbiz, это на тебя не влияет.",
+  "rgr_chq_ambos":"💡 Твой % по питанию не учитывает {om} в дни отдыха и свободный приём пищи ({libre}): если они не отмечены в Harbiz, это на тебя не влияет.",
+  "rgr_chq_pp1":"💡 Твой % по питанию не учитывает {om} в дни отдыха: если он не отмечен в Harbiz, это на тебя не влияет.",
+  "rgr_chq_pp":"💡 Твой % по питанию не учитывает {om} в дни отдыха: если они не отмечены в Harbiz, это на тебя не влияет.",
+  "rgr_chq_cl":"💡 Твой % по питанию не учитывает свободный приём пищи ({libre}): если он не отмечен в Harbiz, это на тебя не влияет.",
+  "rgr_ini_ambos":"💡 {omc} в дни отдыха и свободный приём пищи можно не отмечать в Harbiz: они не учитываются.",
+  "rgr_ini_pp1":"💡 {omc} в дни отдыха можно не отмечать в Harbiz: он не учитывается.",
+  "rgr_ini_pp":"💡 {omc} в дни отдыха можно не отмечать в Harbiz: они не учитываются.",
+  "rgr_ini_cl":"💡 Свободный приём пищи можно не отмечать в Harbiz: он не учитывается."
+},
+"pl":{
+  "rgr_t":"📲 Jak odhaczać dietę w Harbiz",
+  "rgr_d":"<b>🌴 W dni odpoczynku:</b> pomiń {om}.",
+  "rgr_d_sn":"<b>🌴 W dni odpoczynku:</b> pomiń {om}; posiłek po treningu zjedz jako przekąskę i koniecznie go odhacz.",
+  "rgr_d_sn2":"<b>🌴 W dni odpoczynku:</b> pomiń {om}; posiłek po treningu zjedz jako drugą przekąskę i koniecznie go odhacz.",
+  "rgr_om_p":"posiłek przed treningiem","rgr_om_pi":"posiłki przed treningiem i w trakcie","rgr_om_pp":"posiłki przed treningiem i po nim","rgr_om_pip":"posiłki przed treningiem, w trakcie i po nim",
+  "rgr_omc_p":"Posiłek przed treningiem","rgr_omc_pp":"Posiłki przed treningiem i po nim",
+  "rgr_cl":"<b>🍕 Twój wolny posiłek:</b> {libre}.",
+  "rgr_pie_ambos":"W Harbiz {om} w te dni i wolny posiłek mogą zostać nieodhaczone: nie liczą się do realizacji planu.",
+  "rgr_pie_pp1":"W Harbiz {om} w te dni może zostać nieodhaczony: nie liczy się do realizacji planu.",
+  "rgr_pie_pp":"W Harbiz {om} w te dni mogą zostać nieodhaczone: nie liczą się do realizacji planu.",
+  "rgr_pie_cl":"W Harbiz wolny posiłek może zostać nieodhaczony: nie liczy się do realizacji planu.",
+  "rgr_c_cena":"twoja kolacja","rgr_c_comida":"twój obiad","rgr_c_desayuno":"twoje śniadanie",
+  "rgr_cl_finde":"{c} w sobotę i niedzielę","rgr_cl_descanso":"{c} w dni odpoczynku",
+  "rgr_cl_sem_one":"1 wolny posiłek w tygodniu, w wybrany przez ciebie dzień","rgr_cl_sem_other":"{n} wolne posiłki w tygodniu, w wybrane przez ciebie dni",
+  "rgr_md_ambos":"💡 Tutaj nie liczą się {om} z dni odpoczynku ani wolny posiłek ({libre}). Jeśli zostaną nieodhaczone w Harbiz, nie wpływa to na ciebie.",
+  "rgr_md_pp1":"💡 Tutaj nie liczy się {om} z dni odpoczynku. Jeśli zostanie nieodhaczony w Harbiz, nie wpływa to na ciebie.",
+  "rgr_md_pp":"💡 Tutaj nie liczą się {om} z dni odpoczynku. Jeśli zostaną nieodhaczone w Harbiz, nie wpływa to na ciebie.",
+  "rgr_md_cl":"💡 Tutaj nie liczy się wolny posiłek ({libre}). Jeśli zostanie nieodhaczony w Harbiz, nie wpływa to na ciebie.",
+  "rgr_chq_ambos":"💡 Do twojego % diety nie liczą się {om} z dni odpoczynku ani wolny posiłek ({libre}): jeśli zostaną nieodhaczone w Harbiz, nie wpływa to na ciebie.",
+  "rgr_chq_pp1":"💡 Do twojego % diety nie liczy się {om} z dni odpoczynku: jeśli zostanie nieodhaczony w Harbiz, nie wpływa to na ciebie.",
+  "rgr_chq_pp":"💡 Do twojego % diety nie liczą się {om} z dni odpoczynku: jeśli zostaną nieodhaczone w Harbiz, nie wpływa to na ciebie.",
+  "rgr_chq_cl":"💡 Do twojego % diety nie liczy się wolny posiłek ({libre}): jeśli zostanie nieodhaczony w Harbiz, nie wpływa to na ciebie.",
+  "rgr_ini_ambos":"💡 {omc} w dni odpoczynku i wolny posiłek mogą zostać nieodhaczone w Harbiz: nie liczą się.",
+  "rgr_ini_pp1":"💡 {omc} w dni odpoczynku może zostać nieodhaczony w Harbiz: nie liczy się.",
+  "rgr_ini_pp":"💡 {omc} w dni odpoczynku mogą zostać nieodhaczone w Harbiz: nie liczą się.",
+  "rgr_ini_cl":"💡 Wolny posiłek może zostać nieodhaczony w Harbiz: nie liczy się."
+},
+"ar":{
+  "rgr_t":"📲 كيف تسجّل نظامك الغذائي في Harbiz",
+  "rgr_d":"<b>🌴 في أيام راحتك:</b> تخطَّ {om}.",
+  "rgr_d_sn":"<b>🌴 في أيام راحتك:</b> تخطَّ {om}، وتناول وجبة ما بعد التمرين كوجبة خفيفة وسجّلها.",
+  "rgr_d_sn2":"<b>🌴 في أيام راحتك:</b> تخطَّ {om}، وتناول وجبة ما بعد التمرين كوجبة خفيفة ثانية وسجّلها.",
+  "rgr_om_p":"وجبة ما قبل التمرين","rgr_om_pi":"وجبتي ما قبل التمرين وأثناءه","rgr_om_pp":"وجبتي ما قبل التمرين وما بعده","rgr_om_pip":"وجبات ما قبل التمرين وأثناءه وما بعده",
+  "rgr_omc_p":"وجبة ما قبل التمرين","rgr_omc_pp":"وجبتي ما قبل التمرين وما بعده",
+  "rgr_cl":"<b>🍕 وجبتك الحرّة:</b> {libre}.",
+  "rgr_pie_ambos":"في Harbiz يمكنك ترك {om} في تلك الأيام ووجبتك الحرّة دون تسجيل: لا تُحتسب في التزامك.",
+  "rgr_pie_pp1":"في Harbiz يمكنك ترك {om} في تلك الأيام دون تسجيل: لا تُحتسب في التزامك.",
+  "rgr_pie_pp":"في Harbiz يمكنك ترك {om} في تلك الأيام دون تسجيل: لا تُحتسب في التزامك.",
+  "rgr_pie_cl":"في Harbiz يمكنك ترك وجبتك الحرّة دون تسجيل: لا تُحتسب في التزامك.",
+  "rgr_c_cena":"عشاؤك","rgr_c_comida":"غداؤك","rgr_c_desayuno":"فطورك",
+  "rgr_cl_finde":"{c} يومي السبت والأحد","rgr_cl_descanso":"{c} في أيام راحتك",
+  "rgr_cl_sem_one":"وجبة حرّة واحدة في الأسبوع، في اليوم الذي تختاره","rgr_cl_sem_other":"{n} وجبات حرّة في الأسبوع، في الأيام التي تختارها",
+  "rgr_md_ambos":"💡 لا تُحتسب هنا {om} في أيام راحتك ولا وجبتك الحرّة ({libre}). إذا بقيت دون تسجيل في Harbiz فلن تؤثر عليك.",
+  "rgr_md_pp1":"💡 لا تُحتسب هنا {om} في أيام راحتك. إذا بقيت دون تسجيل في Harbiz فلن تؤثر عليك.",
+  "rgr_md_pp":"💡 لا تُحتسب هنا {om} في أيام راحتك. إذا بقيت دون تسجيل في Harbiz فلن تؤثر عليك.",
+  "rgr_md_cl":"💡 لا تُحتسب هنا وجبتك الحرّة ({libre}). إذا بقيت دون تسجيل في Harbiz فلن تؤثر عليك.",
+  "rgr_chq_ambos":"💡 نسبة نظامك الغذائي لا تحتسب {om} في أيام راحتك ولا وجبتك الحرّة ({libre}): إذا بقيت دون تسجيل في Harbiz فلن تؤثر عليك.",
+  "rgr_chq_pp1":"💡 نسبة نظامك الغذائي لا تحتسب {om} في أيام راحتك: إذا بقيت دون تسجيل في Harbiz فلن تؤثر عليك.",
+  "rgr_chq_pp":"💡 نسبة نظامك الغذائي لا تحتسب {om} في أيام راحتك: إذا بقيت دون تسجيل في Harbiz فلن تؤثر عليك.",
+  "rgr_chq_cl":"💡 نسبة نظامك الغذائي لا تحتسب وجبتك الحرّة ({libre}): إذا بقيت دون تسجيل في Harbiz فلن تؤثر عليك.",
+  "rgr_ini_ambos":"💡 يمكنك ترك {omc} في أيام الراحة ووجبتك الحرّة دون تسجيل في Harbiz: لا تُحتسب.",
+  "rgr_ini_pp1":"💡 يمكنك ترك {omc} في أيام راحتك دون تسجيل في Harbiz: لا تُحتسب.",
+  "rgr_ini_pp":"💡 يمكنك ترك {omc} في أيام راحتك دون تسجيل في Harbiz: لا تُحتسب.",
+  "rgr_ini_cl":"💡 يمكنك ترك وجبتك الحرّة دون تسجيل في Harbiz: لا تُحتسب."
+},
+"zh_tw":{
+  "rgr_t":"📲 如何在 Harbiz 記錄你的飲食",
+  "rgr_d":"<b>🌴 休息日：</b>省略{om}。",
+  "rgr_d_sn":"<b>🌴 休息日：</b>省略{om}；訓練後餐當作點心吃，而且要打勾。",
+  "rgr_d_sn2":"<b>🌴 休息日：</b>省略{om}；訓練後餐當作第二份點心吃，而且要打勾。",
+  "rgr_om_p":"訓練前餐","rgr_om_pi":"訓練前餐及訓練中補給","rgr_om_pp":"訓練前餐及訓練後餐","rgr_om_pip":"訓練前餐、訓練中補給及訓練後餐",
+  "rgr_omc_p":"訓練前餐","rgr_omc_pp":"訓練前餐及訓練後餐",
+  "rgr_cl":"<b>🍕 你的放縱餐：</b>{libre}。",
+  "rgr_pie_ambos":"在 Harbiz，那幾天的{om}和你的放縱餐可以不打勾：不會計入你的達成率。",
+  "rgr_pie_pp1":"在 Harbiz，那幾天的{om}可以不打勾：不會計入你的達成率。",
+  "rgr_pie_pp":"在 Harbiz，那幾天的{om}可以不打勾：不會計入你的達成率。",
+  "rgr_pie_cl":"在 Harbiz，你的放縱餐可以不打勾：不會計入你的達成率。",
+  "rgr_c_cena":"晚餐","rgr_c_comida":"午餐","rgr_c_desayuno":"早餐",
+  "rgr_cl_finde":"週六和週日的{c}","rgr_cl_descanso":"休息日的{c}",
+  "rgr_cl_sem_one":"每週 1 次放縱餐，由你選擇哪一天","rgr_cl_sem_other":"每週 {n} 次放縱餐，由你選擇哪幾天",
+  "rgr_md_ambos":"💡 這裡不計算休息日的{om}和你的放縱餐（{libre}）。在 Harbiz 沒打勾也不會影響你。",
+  "rgr_md_pp1":"💡 這裡不計算休息日的{om}。在 Harbiz 沒打勾也不會影響你。",
+  "rgr_md_pp":"💡 這裡不計算休息日的{om}。在 Harbiz 沒打勾也不會影響你。",
+  "rgr_md_cl":"💡 這裡不計算你的放縱餐（{libre}）。在 Harbiz 沒打勾也不會影響你。",
+  "rgr_chq_ambos":"💡 你的飲食 % 不計算休息日的{om}和你的放縱餐（{libre}）：在 Harbiz 沒打勾也不會影響你。",
+  "rgr_chq_pp1":"💡 你的飲食 % 不計算休息日的{om}：在 Harbiz 沒打勾也不會影響你。",
+  "rgr_chq_pp":"💡 你的飲食 % 不計算休息日的{om}：在 Harbiz 沒打勾也不會影響你。",
+  "rgr_chq_cl":"💡 你的飲食 % 不計算你的放縱餐（{libre}）：在 Harbiz 沒打勾也不會影響你。",
+  "rgr_ini_ambos":"💡 休息日的{omc}和你的放縱餐在 Harbiz 可以不打勾：不會計入。",
+  "rgr_ini_pp1":"💡 休息日的{omc}在 Harbiz 可以不打勾：不會計入。",
+  "rgr_ini_pp":"💡 休息日的{omc}在 Harbiz 可以不打勾：不會計入。",
+  "rgr_ini_cl":"💡 你的放縱餐在 Harbiz 可以不打勾：不會計入。"
+},
+"zh_cn":{
+  "rgr_t":"📲 如何在 Harbiz 记录你的饮食",
+  "rgr_d":"<b>🌴 休息日：</b>省略{om}。",
+  "rgr_d_sn":"<b>🌴 休息日：</b>省略{om}；训练后餐当作加餐吃，而且要打勾。",
+  "rgr_d_sn2":"<b>🌴 休息日：</b>省略{om}；训练后餐当作第二份加餐吃，而且要打勾。",
+  "rgr_om_p":"训练前餐","rgr_om_pi":"训练前餐及训练中补给","rgr_om_pp":"训练前餐及训练后餐","rgr_om_pip":"训练前餐、训练中补给及训练后餐",
+  "rgr_omc_p":"训练前餐","rgr_omc_pp":"训练前餐及训练后餐",
+  "rgr_cl":"<b>🍕 你的放纵餐：</b>{libre}。",
+  "rgr_pie_ambos":"在 Harbiz，那几天的{om}和你的放纵餐可以不打勾：不会计入你的达成率。",
+  "rgr_pie_pp1":"在 Harbiz，那几天的{om}可以不打勾：不会计入你的达成率。",
+  "rgr_pie_pp":"在 Harbiz，那几天的{om}可以不打勾：不会计入你的达成率。",
+  "rgr_pie_cl":"在 Harbiz，你的放纵餐可以不打勾：不会计入你的达成率。",
+  "rgr_c_cena":"晚餐","rgr_c_comida":"午餐","rgr_c_desayuno":"早餐",
+  "rgr_cl_finde":"周六和周日的{c}","rgr_cl_descanso":"休息日的{c}",
+  "rgr_cl_sem_one":"每周 1 次放纵餐，由你选择哪一天","rgr_cl_sem_other":"每周 {n} 次放纵餐，由你选择哪几天",
+  "rgr_md_ambos":"💡 这里不计算休息日的{om}和你的放纵餐（{libre}）。在 Harbiz 没打勾也不会影响你。",
+  "rgr_md_pp1":"💡 这里不计算休息日的{om}。在 Harbiz 没打勾也不会影响你。",
+  "rgr_md_pp":"💡 这里不计算休息日的{om}。在 Harbiz 没打勾也不会影响你。",
+  "rgr_md_cl":"💡 这里不计算你的放纵餐（{libre}）。在 Harbiz 没打勾也不会影响你。",
+  "rgr_chq_ambos":"💡 你的饮食 % 不计算休息日的{om}和你的放纵餐（{libre}）：在 Harbiz 没打勾也不会影响你。",
+  "rgr_chq_pp1":"💡 你的饮食 % 不计算休息日的{om}：在 Harbiz 没打勾也不会影响你。",
+  "rgr_chq_pp":"💡 你的饮食 % 不计算休息日的{om}：在 Harbiz 没打勾也不会影响你。",
+  "rgr_chq_cl":"💡 你的饮食 % 不计算你的放纵餐（{libre}）：在 Harbiz 没打勾也不会影响你。",
+  "rgr_ini_ambos":"💡 休息日的{omc}和你的放纵餐在 Harbiz 可以不打勾：不会计入。",
+  "rgr_ini_pp1":"💡 休息日的{omc}在 Harbiz 可以不打勾：不会计入。",
+  "rgr_ini_pp":"💡 休息日的{omc}在 Harbiz 可以不打勾：不会计入。",
+  "rgr_ini_cl":"💡 你的放纵餐在 Harbiz 可以不打勾：不会计入。"
+}});
+var _rgr=null;
+function _rgrT(k,v){ try{ if(typeof r321cT==='function') return r321cT(k,v); }catch(e){} return t(k,v); }
+(function(){
+  var css=''
+  +'.rgr-nota{background:linear-gradient(135deg,#EEF8FA,#F7FCFD);border:1.5px solid var(--teal-light,#cdeef2);border-radius:14px;padding:10px 12px;margin:8px 0 10px;font-size:12.5px;line-height:1.45;color:var(--text2,#4b5563)}'
+  +'.rgr-nota h5{margin:0 0 6px;font-size:13.5px;color:var(--teal-dark,#065666)}.rgr-nota ul{margin:0;padding-inline-start:16px}.rgr-nota li{margin:2px 0}'
+  +'.rgr-nota .rgr-pie{margin-top:7px;padding-top:7px;border-top:1px dashed #cfe3e7;font-weight:700;color:var(--teal-dark,#065666)}'
+  +'.rgr-linea{margin-top:8px;padding:8px 10px;border-radius:10px;background:var(--teal-xlight,#EEF8FA);font-size:12px;line-height:1.45;color:var(--text2,#4b5563)}'
+  +'.r374-av .rgr-linea{background:rgba(255,255,255,.7);color:#6b4a00}';
+  var st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+})();
+var RGR_PP=/(?:^|[\s(\-_\/])(pre|intra|post)[\s\-_]*(?:entreno|entrenamiento|entrenam|entrene|workout|training|train)s?\b/;
+function _rgrN(s){ try{ return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim(); }catch(e){ return String(s||'').toLowerCase().trim(); } }
+function _rgrTipo(nombre){ var n=_rgrN(String(nombre||'').split(':')[0]); if(!n||n.indexOf('protocolo')===0) return null; var m=RGR_PP.exec(n); return m?m[1]:null; }
+function _rgrCL(){ var c=_rgr&&_rgr.comidaLibre; return (c&&typeof c==='object'&&/^(finde|descanso|semanal)$/.test(c.tipo))?c:null; }
+// pre: regla general (nodo nuevo pre:true; compatible con la maqueta prepost:true)
+function _rgrPre(){ return !!(_rgr&&(_rgr.pre===true||(_rgr.pre==null&&_rgr.prepost===true))); }
+function _rgrIntra(){ return !!(_rgr&&_rgr.intra===true); }
+function _rgrPost(){ var p=_rgr&&_rgr.postDescanso; return (p==='snack'||p==='omitir')?p:null; }
+function _rgrLibreTxt(){
+  var c=_rgrCL(); if(!c) return '';
+  if(c.tipo==='semanal'){ var n=+c.n||1; return n===1?_rgrT('rgr_cl_sem_one'):_rgrT('rgr_cl_sem_other',{n:n}); }
+  var cm=_rgrN(c.comida||'cena'), k='rgr_c_'+cm, cv=_tRaw(k);
+  return _rgrT('rgr_cl_'+c.tipo,{c:cv!==undefined?_rgrT(k):_esc(cm)});
+}
+function _rgrComidas(){ var D=(typeof _nPlan!=='undefined'&&_nPlan&&_nPlan.dieta)||{}; return _r374vals(D.comidas); }
+function _rgrInfo(){
+  var cs=_rgrComidas(), tipos=cs.map(function(c){ return _rgrTipo(c.nombre); });
+  var snack=cs.some(function(c,i){ return !tipos[i]&&/\b(snack|colacion|merienda)\b/.test(_rgrN(c.nombre)); });
+  return {hay:cs.length>0, pre:tipos.indexOf('pre')>=0, post:tipos.indexOf('post')>=0, snack:snack};
+}
+// Qué se omite en descanso: para la instrucción (incluye el intra si su dieta lo trae) y para «no cuenta» (solo pre/post: lo que el cálculo no cuenta)
+function _rgrOm(conIntra){ var i=conIntra&&_rgrIntra(), p=_rgrPost()==='omitir'; return 'p'+(i?'i':'')+(p?'p':''); }
+function _rgrPP(){ if(!_rgrPre()) return false; var I=_rgrInfo(); return !I.hay||I.pre||I.post; }
+// Nota FIJA (Noé 8:48): la dieta se ve completa; nada cambia según el día.
+function _rgrNota(){
+  if(!_rgr) return '';
+  var pp=_rgrPP(), cl=_rgrCL(), L=[];
+  if(!pp&&!cl) return '';
+  if(pp){ var post=_rgrPost(), I=_rgrInfo(), om=_rgrT('rgr_om_'+_rgrOm(true));
+    L.push(_rgrT(post==='snack'?(I.snack?'rgr_d_sn2':'rgr_d_sn'):'rgr_d',{om:om})); }
+  if(cl) L.push(_rgrT('rgr_cl',{libre:_rgrLibreTxt()}));
+  var oc=_rgrOm(false), om2=_rgrT('rgr_om_'+oc);
+  var pie=pp&&cl?_rgrT('rgr_pie_ambos',{om:om2}):pp?_rgrT(oc==='p'?'rgr_pie_pp1':'rgr_pie_pp',{om:om2}):_rgrT('rgr_pie_cl');
+  return '<div class="rgr-nota"><h5>'+_rgrT('rgr_t')+'</h5><ul>'+L.map(function(x){ return '<li>'+x+'</li>'; }).join('')+'</ul><div class="rgr-pie">'+pie+'</div></div>';
+}
+function _rgrLinea(base){
+  if(!_rgr) return '';
+  var pp=_rgrPP(), cl=_rgrCL(), oc=_rgrOm(false), v={om:_rgrT('rgr_om_'+oc), omc:_rgrT('rgr_omc_'+oc), libre:_rgrLibreTxt()};
+  if(pp&&cl) return _rgrT(base+'_ambos',v);
+  if(pp) return _rgrT(base+(oc==='p'?'_pp1':'_pp'),v);
+  if(cl) return _rgrT(base+'_cl',v);
+  return '';
+}
+// a) Nutrición → dieta simplificada / detallada
+var _rgrOldAbrir=r374Abrir;
+r374Abrir=function(tab){
+  var r=_rgrOldAbrir.apply(this,arguments);
+  try{ if((tab==='simple'||tab==='det')&&_rgr){
+    var box=document.getElementById('r374-in'), mut=box&&box.querySelector('.r374-mut');
+    var n=_rgrNota(); if(n&&mut) mut.insertAdjacentHTML('afterend',n);
+  } }catch(e){}
+  return r;
+};
+// b) ⭐ Mis logros → detalle del área Nutrición
+var _rgrOldMdDet=_mdDetalle;
+_mdDetalle=function(k){
+  var h=_rgrOldMdDet.apply(this,arguments);
+  try{ if(k==='nutricion'){ var x=_rgrLinea('rgr_md'); if(x){ var m='<div class="md-card"><div class="md-ct">'+t('md_como_area'); var i=h.indexOf(m);
+    var c='<div class="md-card"><div class="rgr-linea" style="margin:0">'+x+'</div></div>'; h=i>=0?h.slice(0,i)+c+h.slice(i):h+c; } } }catch(e){}
+  return h;
+};
+// c) Mis chequeos → Cumplimiento (dieta)
+function _rgrChq(){
+  try{ var x=_rgrLinea('rgr_chq'); if(!x) return;
+    document.querySelectorAll('#chq-body .chq-fb .chq-tiles').forEach(function(tl){ if(tl.nextElementSibling&&tl.nextElementSibling.classList.contains('rgr-linea')) return; tl.insertAdjacentHTML('afterend','<div class="rgr-linea">'+x+'</div>'); });
+  }catch(e){}
+}
+var _rgrOldChq=renderChequeos;
+renderChequeos=function(){ var r=_rgrOldChq.apply(this,arguments); _rgrChq(); return r; };
+// d) Inicio: tarjeta «Revisa tu apartado de Nutrición» (solo existe mientras está pendiente)
+var _rgrOldPintar=r374Pintar;
+r374Pintar=function(){
+  var r=_rgrOldPintar.apply(this,arguments);
+  try{ var av=document.querySelector('#r374-box .r374-av'); if(av&&!av.querySelector('.rgr-linea')){ var x=_rgrLinea('rgr_ini'); if(x){ var p=av.querySelector('p'); (p||av.querySelector('h4')).insertAdjacentHTML('afterend','<div class="rgr-linea" style="margin:0 0 8px">'+x+'</div>'); } } }catch(e){}
+  return r;
+};
+// Carga: junto con el plan de nutrición
+var _rgrOldInit=nutricionInit;
+nutricionInit=function(nip){
+  _rgr=null;
+  var p=db.ref('fittrack_nutricion/'+nip+'/reglasRegistro').once('value').then(function(s){ if(currentAlumno===nip){ var v=s&&s.val(); _rgr=(v&&typeof v==='object')?v:null; } }).catch(function(){});
+  return Promise.all([_rgrOldInit.apply(this,arguments), p]).then(function(){ try{ if(currentAlumno===nip&&_rgr) r374Pintar(); }catch(e){} });
+};
+var _rgrOldReset=ftReset; ftReset=function(){ _rgr=null; return _rgrOldReset.apply(this,arguments); };
+// ── fin rgr · regla 405 ──
+// ── 407 (Noé 9 nov 9:19): plan de acción ENTREGADO TARDE ─────────────────────────────────────────────
+//    Tarde = enviado (día en hora de México) después de `hasta`, o fittrack_chequeos/planAccion/<nip> en estado
+//    'entregado_tarde' / tarde:true (lo escribe la revisión de 15 min, ACCESOS_EN_VIVO 6-bis b y 6 d).
+//    a) «📋 Tu plan de acción»: «✅ Recibido (entregado tarde), tu coach lo revisa» (mismo texto amable).
+//    b) Regla 235: la nota fija «no presentado» de ESE chequeo pasa a «Plan de acción entregado tarde (venció el …,
+//       lo enviaste el …)», en tono neutro (sin rojo); el registro en la lista de notas se conserva con ese texto.
+(function(K){ Object.keys(K).forEach(function(l){ if(LANGS[l]) Object.keys(K[l]).forEach(function(k){ LANGS[l][k]=K[l][k]; }); }); })({
+"es":{"pa390_ok_tarde":"✅ Recibido (entregado tarde), tu coach lo revisa","r235_tarde":"📋 <b>Plan de acción entregado tarde</b> (venció el {f}, lo enviaste el {e}).","r235_tarde_sin":"📋 <b>Plan de acción entregado tarde</b> (venció el {f}).",
+      "pa390_ok_tarde_u":"✅ Recibido (entregado tarde), su coach lo revisa","r235_tarde_u":"📋 <b>Plan de acción entregado tarde</b> (venció el {f}, lo envió el {e}).","r235_tarde_sin_u":"📋 <b>Plan de acción entregado tarde</b> (venció el {f})."},
+"en":{"pa390_ok_tarde":"✅ Received (submitted late), your coach will review it","r235_tarde":"📋 <b>Action plan submitted late</b> (it was due on {f}, you sent it on {e}).","r235_tarde_sin":"📋 <b>Action plan submitted late</b> (it was due on {f})."},
+"pt":{"pa390_ok_tarde":"✅ Recebido (entregue com atraso), seu coach vai revisar","r235_tarde":"📋 <b>Plano de ação entregue com atraso</b> (venceu em {f}, você enviou em {e}).","r235_tarde_sin":"📋 <b>Plano de ação entregue com atraso</b> (venceu em {f})."},
+"it":{"pa390_ok_tarde":"✅ Ricevuto (consegnato in ritardo), il tuo coach lo rivedrà","r235_tarde":"📋 <b>Piano d'azione consegnato in ritardo</b> (scadeva il {f}, l'hai inviato il {e}).","r235_tarde_sin":"📋 <b>Piano d'azione consegnato in ritardo</b> (scadeva il {f})."},
+"fr":{"pa390_ok_tarde":"✅ Reçu (remis en retard), ton coach va le revoir","r235_tarde":"📋 <b>Plan d'action remis en retard</b> (échéance le {f}, tu l'as envoyé le {e}).","r235_tarde_sin":"📋 <b>Plan d'action remis en retard</b> (échéance le {f})."},
+"de":{"pa390_ok_tarde":"✅ Erhalten (verspätet eingereicht), dein Coach sieht ihn sich an","r235_tarde":"📋 <b>Aktionsplan verspätet eingereicht</b> (fällig am {f}, du hast ihn am {e} gesendet).","r235_tarde_sin":"📋 <b>Aktionsplan verspätet eingereicht</b> (fällig am {f})."},
+"ru":{"pa390_ok_tarde":"✅ Получено (сдано с опозданием), тренер его проверит","r235_tarde":"📋 <b>План действий сдан с опозданием</b> (срок был {f}, ты отправил(а) его {e}).","r235_tarde_sin":"📋 <b>План действий сдан с опозданием</b> (срок был {f})."},
+"pl":{"pa390_ok_tarde":"✅ Otrzymano (oddany po terminie), twój coach go przejrzy","r235_tarde":"📋 <b>Plan działania oddany po terminie</b> (termin minął {f}, wysłałeś/aś go {e}).","r235_tarde_sin":"📋 <b>Plan działania oddany po terminie</b> (termin minął {f})."},
+"ar":{"pa390_ok_tarde":"✅ تم الاستلام (سُلّمت متأخرة)، سيراجعها مدربك","r235_tarde":"📋 <b>خطة العمل سُلّمت متأخرة</b> (انتهت المهلة في {f}، وأرسلتها في {e}).","r235_tarde_sin":"📋 <b>خطة العمل سُلّمت متأخرة</b> (انتهت المهلة في {f})."},
+"zh_tw":{"pa390_ok_tarde":"✅ 已收到（逾期提交），教練會審閱","r235_tarde":"📋 <b>行動計畫逾期提交</b>（期限為 {f}，你於 {e} 送出）。","r235_tarde_sin":"📋 <b>行動計畫逾期提交</b>（期限為 {f}）。"},
+"zh_cn":{"pa390_ok_tarde":"✅ 已收到（逾期提交），教练会审阅","r235_tarde":"📋 <b>行动计划逾期提交</b>（期限为 {f}，你于 {e} 提交）。","r235_tarde_sin":"📋 <b>行动计划逾期提交</b>（期限为 {f}）。"}
+});
+function _pa407Usted(){ try{ return !!(typeof r321cUsted==='function' && r321cUsted()); }catch(e){ return false; } }
+function _pa407T(k,v){ if(currentLang==='es' && _pa407Usted() && LANGS.es[k+'_u']!==undefined) return _tFmt(LANGS.es[k+'_u'],v); return t(k,v); }
+function _pa407DiaMx(iso){ try{ var d=new Date(iso); if(isNaN(d)) return ''; return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Mexico_City',year:'numeric',month:'2-digit',day:'2-digit'}).format(d); }catch(e){ return String(iso||'').slice(0,10); } }
+function _pa407Num(x){ var m=/\d+/.exec(String(x==null?'':x)); return m?+m[0]:null; }
+function _pa407EsTarde(p){ return !!(p&&(p.estado==='entregado_tarde'||p.tarde===true)); }
+// a) apartado «📋 Tu plan de acción»
+var _pa407OldHtml=_pa390Html;
+_pa390Html=function(it){
+  var h=_pa407OldHtml.apply(this,arguments);
+  try{
+    var id=_chqId(it), env=id&&_pa390[currentAlumno+'|'+id]; if(!env) return h;
+    var hasta=String((it.planAccion&&it.planAccion.hasta)||'').slice(0,10), pa=_r235&&_r235.nip===currentAlumno?_r235.pa:null;
+    var num=_pa407Num(it.num!=null?it.num:id);
+    var tarde=env.tarde===true || (/^\d{4}-\d{2}-\d{2}$/.test(hasta) && _pa407DiaMx(env.enviadoEn)>hasta)
+      || (_pa407EsTarde(pa) && (pa.chequeo==null || _pa407Num(pa.chequeo)===num));
+    if(tarde){ var a=_pa390T(it,'pa390_ok'), b=_pa407T('pa390_ok_tarde'); if(h.indexOf(a)>=0) h=h.replace(a,b); }
+    // ya enviado: quita «…pero todavía puedes enviarlo» (ya no aplica)
+    if(/^\d{4}-\d{2}-\d{2}$/.test(hasta) && _r174HoyMx()>hasta){ var v='⏰ '+_pa390T(it,'pa390_venc',{f:_fcorta(hasta)}); var k=h.indexOf(v); if(k>=0){ var d0=h.lastIndexOf('<div',k), d1=h.indexOf('</div>',k); if(d0>=0&&d1>k) h=h.slice(0,d0)+h.slice(d1+6); } }
+  }catch(e){}
+  return h;
+};
+// b) regla 235: no presentado → entregado tarde
+r235Cargar=function(nip){
+  _r235 = {nip:nip, lista:[], pa:null};
+  try{
+    Promise.all([db.ref('fittrack_chequeos/planAccion/'+nip).once('value'), db.ref('fittrack_planes/'+nip).once('value').catch(function(){ return null; })]).then(function(R){
+      var s=R[0], p=s&&s.val(); if(!p || currentAlumno!==nip) return;
+      _r235.pa=p;
+      // plan ya enviado desde FitTrack aunque la revisión todavía no cierre planAccion (solo lectura de fittrack_planes)
+      var pl=(R[1]&&R[1].val())||{}, envF=null;
+      Object.keys(pl).forEach(function(k){ var v=pl[k]; if(v&&v.enviadoEn&&p.chequeo!=null&&_pa407Num(v.num!=null?v.num:k)===_pa407Num(p.chequeo)) envF=v.enviadoEn; });
+      var hastaP=String(p.hasta||'').slice(0,10);
+      if(envF && !_pa407EsTarde(p) && p.estado!=='recibido'){
+        if(/^\d{4}-\d{2}-\d{2}$/.test(hastaP) && _pa407DiaMx(envF)>hastaP){ p=Object.assign({},p,{tarde:true}); p.recibidoEn=p.recibidoEn||envF; }
+        else if(p.estado!=='no_presentado'){ p=Object.assign({},p,{pendiente:false}); }   // llegó a tiempo: no es «no presentado»
+      }
+      var L=[], vistos={}, np=p.noPresentados||{}, tardeP=_pa407EsTarde(p), envP=p.recibidoEn||p.enviadoEn||envF||null;
+      Object.keys(np).forEach(function(k){ var x=np[k]||{}; vistos[k]=1;
+        var tk=_pa407EsTarde(x) || (tardeP && p.chequeo!=null && _pa407Num(k)===_pa407Num(p.chequeo));
+        L.push({chequeo:k, desde:x.desde, hasta:x.hasta, tarde:tk, env:tk?(x.recibidoEn||x.enviadoEn||(tardeP?envP:null)):null}); });
+      var hoy=_r174HoyMx(), hasta=String(p.hasta||'').slice(0,10);
+      var vencido = (p.estado==='no_presentado') || (p.pendiente===true && /^\d{4}-\d{2}-\d{2}$/.test(hasta) && hoy>hasta);
+      if((vencido||tardeP) && p.chequeo!=null && !vistos[p.chequeo]) L.push({chequeo:String(p.chequeo), desde:p.desde, hasta:p.hasta, tarde:tardeP, env:tardeP?envP:null});
+      L.sort(function(a,b){ return String(b.hasta||'').localeCompare(String(a.hasta||'')); });
+      _r235.lista=L; r235Pintar();
+      try{ if(tardeP && typeof _modo!=='undefined' && _modo==='chq' && typeof renderChequeos==='function' && document.getElementById('pa390') && !document.querySelector('#pa390 textarea') && Object.keys(_pa390).some(function(k){ return k.indexOf(nip+'|')===0; })) renderChequeos(); }catch(e){}   // solo si ya lo envió (no borra lo que esté escribiendo)
+    }).catch(function(){});
+  }catch(e){}
+};
+var _pa407OldTxt=_r235Txt;
+_r235Txt=function(x){
+  if(x&&x.tarde){ var f=_r235Fecha(x.hasta); return x.env?_pa407T('r235_tarde',{f:f,e:_r235Fecha(_pa407DiaMx(x.env))}):_pa407T('r235_tarde_sin',{f:f}); }
+  return _pa407OldTxt.apply(this,arguments);
+};
+var _pa407OldPintar=r235Pintar;
+r235Pintar=function(){
+  var r=_pa407OldPintar.apply(this,arguments);
+  try{ var x=_r235.lista&&_r235.lista[0], fija=document.getElementById('r235-fija');
+    if(x&&x.tarde&&fija&&fija.firstChild){ var it=fija.firstChild; it.classList.remove('new'); it.classList.add('seen','r407-tarde'); it.style.borderInlineStart='4px solid #94a3b8'; } }catch(e){}
+  return r;
+};
+// ── fin 407 ──
+// ── 408 (Noé 9 nov): «Cómo se ganan» → registro tardío o masivo (texto de motor/medallero/texto_408_como_se_gana.md).
+//    Solo texto: la regla la aplica el motor (el detalle/siguiente de cada área llega ya escrito en el JSON publicado).
+//    «Cómo se ganan» no tiene versión «usted» (todo el apartado va en tú), así que esta tarjeta tampoco.
+(function(K){ Object.keys(K).forEach(function(l){ if(LANGS[l]) Object.keys(K[l]).forEach(function(k){ LANGS[l][k]=K[l][k]; }); }); })({
+"es":{"md408_t":"📅 Registra el mismo día","md408":"Cada tarea y cada día de tu dieta cuentan a tiempo si los marcas el mismo día que los haces (hasta las 23:59 de tu hora local). Si en una semana marcas 3 o más fuera de tiempo en un área, o todo de golpe, esa área llega como máximo a {l1}; ⭐⭐ y ⭐⭐⭐ son para quien registra a tiempo. Lo que registra tu reloj vinculado no cuenta como fuera de tiempo."},
+"en":{"md408_t":"📅 Log it the same day","md408":"Each task and each day of your diet counts as on time if you check it off the same day you do it (until 11:59 p.m. your local time). If in one week you check off 3 or more late in an area, or everything at once, that area can reach {l1} at most; ⭐⭐ and ⭐⭐⭐ are for those who log on time. What your linked watch records does not count as late."},
+"pt":{"md408_t":"📅 Registre no mesmo dia","md408":"Cada tarefa e cada dia da sua dieta contam como no prazo se você marcar no mesmo dia em que faz (até as 23:59 do seu horário local). Se em uma semana você marcar 3 ou mais fora do prazo em uma área, ou tudo de uma vez, essa área chega no máximo a {l1}; ⭐⭐ e ⭐⭐⭐ são para quem registra no prazo. O que o seu relógio vinculado registra não conta como fora do prazo."},
+"it":{"md408_t":"📅 Registra lo stesso giorno","md408":"Ogni attività e ogni giorno della tua dieta contano in tempo se li segni lo stesso giorno in cui li fai (entro le 23:59 della tua ora locale). Se in una settimana ne segni 3 o più in ritardo in un'area, o tutto in una volta, quell'area arriva al massimo a {l1}; ⭐⭐ e ⭐⭐⭐ sono per chi registra in tempo. Quello che registra il tuo orologio collegato non conta come in ritardo."},
+"fr":{"md408_t":"📅 Enregistre le jour même","md408":"Chaque tâche et chaque jour de ta diète comptent comme à temps si tu les coches le jour même où tu les fais (jusqu'à 23 h 59, heure locale). Si dans une semaine tu en coches 3 ou plus en retard dans un domaine, ou tout d'un coup, ce domaine atteint au maximum {l1} ; ⭐⭐ et ⭐⭐⭐ sont pour ceux qui enregistrent à temps. Ce qu'enregistre ta montre connectée ne compte pas comme en retard."},
+"de":{"md408_t":"📅 Am selben Tag eintragen","md408":"Jede Aufgabe und jeder Tag deiner Ernährung zählen als rechtzeitig, wenn du sie am selben Tag abhakst, an dem du sie machst (bis 23:59 Uhr deiner Ortszeit). Wenn du in einer Woche in einem Bereich 3 oder mehr verspätet abhakst oder alles auf einmal, erreicht dieser Bereich höchstens {l1}; ⭐⭐ und ⭐⭐⭐ gibt es für alle, die rechtzeitig eintragen. Was deine verbundene Uhr aufzeichnet, zählt nicht als verspätet."},
+"ru":{"md408_t":"📅 Отмечай в тот же день","md408":"Каждая задача и каждый день твоего питания засчитываются вовремя, если ты отмечаешь их в тот же день, когда выполняешь (до 23:59 по местному времени). Если за неделю ты отметишь 3 или больше с опозданием в одной области или всё сразу, эта область получит максимум {l1}; ⭐⭐ и ⭐⭐⭐ — для тех, кто отмечает вовремя. То, что записывают твои подключённые часы, не считается опозданием."},
+"pl":{"md408_t":"📅 Zapisuj tego samego dnia","md408":"Każde zadanie i każdy dzień twojej diety liczą się jako na czas, jeśli odhaczysz je tego samego dnia, w którym je robisz (do 23:59 twojego czasu lokalnego). Jeśli w tygodniu odhaczysz w jednym obszarze 3 lub więcej po czasie albo wszystko naraz, ten obszar osiągnie najwyżej {l1}; ⭐⭐ i ⭐⭐⭐ są dla tych, którzy zapisują na czas. To, co zapisuje twój połączony zegarek, nie liczy się jako po czasie."},
+"ar":{"md408_t":"📅 سجّل في اليوم نفسه","md408":"تُحتسب كل مهمة وكل يوم من نظامك الغذائي في الوقت إذا علّمتها في اليوم نفسه الذي تقوم بها فيه (حتى 23:59 بتوقيتك المحلي). إذا علّمت في أسبوع واحد 3 أو أكثر متأخرة في مجال ما، أو كل شيء دفعة واحدة، فلن يتجاوز ذلك المجال {l1}؛ ⭐⭐ و⭐⭐⭐ لمن يسجّل في الوقت. ما تسجّله ساعتك المرتبطة لا يُحتسب متأخرًا."},
+"zh_tw":{"md408_t":"📅 當天記錄","md408":"每項任務和你飲食的每一天，只要在完成的當天勾選（當地時間 23:59 前），就算準時。如果一週內某個項目有 3 項以上逾時勾選，或一次全部補勾，該項目最多只能拿到 {l1}；⭐⭐ 和 ⭐⭐⭐ 是給準時記錄的人。你連結的手錶自動記錄的內容不算逾時。"},
+"zh_cn":{"md408_t":"📅 当天记录","md408":"每项任务和你饮食的每一天，只要在完成的当天勾选（当地时间 23:59 前），就算准时。如果一周内某个项目有 3 项以上逾时勾选，或一次全部补勾，该项目最多只能拿到 {l1}；⭐⭐ 和 ⭐⭐⭐ 是给准时记录的人。你连接的手表自动记录的内容不算逾时。"}
+});
+var _md408Old=_mdComo;
+_mdComo=function(){
+  var h=_md408Old.apply(this,arguments);
+  try{
+    var card='<div class="md-card md408"><div class="md-ct">'+t('md408_t')+'</div><p class="md-muted" style="margin:0;font-size:13.5px;color:var(--text);line-height:1.5">'+t('md408',{l1:t('md_lv_1')})+'</p></div>';
+    var mk='<div class="md-card"><div class="md-ct">'+t('md_como_estados'), k=h.indexOf(mk);
+    h = k>=0 ? h.slice(0,k)+card+h.slice(k) : h+card;   // justo después de «Cada área», antes de los estados
+  }catch(e){}
+  return h;
+};
+// ── fin 408 ──
 </script>
 </body>
 </html>
