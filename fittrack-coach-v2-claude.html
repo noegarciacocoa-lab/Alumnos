@@ -1017,6 +1017,13 @@ var DIAS_RUTINA = ['lunes','martes','miercoles','jueves','viernes','sabado','dom
 // Devuelve SIEMPRE una rutina con los 7 días definidos, cada uno como lista.
 // Firebase no guarda listas vacías, así que al leer de la nube los días sin
 // ejercicios llegan "sin definir" — aquí se rellenan explícitamente como [].
+// 411: al leer fittrack_data/rutinas se conserva el estado «sin rutina» (motivo y rutina previa).
+function _rutinaConEstado411(r){
+  if(!(r && r.sinRutina === true)) return normalizarRutina(r);
+  var o = {sinRutina:true, motivo:r.motivo || 'sin rutina asignada en Harbiz', semana:r.semana || null, desde:r.desde || null, origen:r.origen || 'harbiz'};
+  if(r.previa) o.previa = normalizarRutina(r.previa);
+  return o;
+}
 function normalizarRutina(r){
   var out = {};
   DIAS_RUTINA.forEach(function(d){
@@ -4460,7 +4467,7 @@ function applyRemoteData(data){
     if(data.rutinas){
       Object.keys(data.rutinas).forEach(function(nip){
         var found=Object.keys(ALUMNOS_DATA).find(function(n){return ALUMNOS_DATA[n].nip===nip;});
-        if(found && data.rutinas[nip]) RUTINAS_ALUMNO[found]=normalizarRutina(data.rutinas[nip]);
+        if(found && data.rutinas[nip]) RUTINAS_ALUMNO[found]=_rutinaConEstado411(data.rutinas[nip]);
       });
     }
     return true;
@@ -5056,9 +5063,35 @@ function aplicarRutinasHarbiz(){
     var a = ALUMNOS_DATA[nombre];
     if(a.rutinaHarbizHash === hash) return; // ya aplicada
     try{
+      // Regla 411 (Noé 9 nov): FitTrack enlazado con Harbiz. Si Harbiz no tiene rutina
+      // (descanso médico o sin rutina asignada), V6 manda {rutina:{}, sinRutina:true, motivo}:
+      // se VACÍA la rutina del alumno y se guarda el motivo en fittrack_data/rutinas/<nip>.
+      // Las aprobaciones/enRevision no se tocan y la rutina anterior queda en .previa, para
+      // reemparejarlas por nombre cuando Harbiz vuelva a tener rutina.
+      if(p.sinRutina === true){
+        var _act = RUTINAS_ALUMNO[nombre] || {}, _mot = String(p.motivo || 'sin rutina asignada en Harbiz');
+        var _prev = _act.sinRutina ? (_act.previa ? normalizarRutina(_act.previa) : null) : (_rutinaVacia(_act) ? null : normalizarRutina(_act));
+        var _yaIgual = !!(_act.sinRutina && _act.motivo === _mot && (_act.semana||null) === (p.semana||null));
+        var _quitados = 0;
+        if(!_act.sinRutina && _prev) DIAS_RUTINA.forEach(function(d){ _quitados += _prev[d].length; });
+        previo[nip] = {nombre:nombre, hash:a.rutinaHarbizHash, ts:a.rutinaHarbizTs};
+        if(!_yaIgual){
+          var _vac = {sinRutina:true, motivo:_mot, semana:p.semana||null, desde:p.ts||Date.now(), origen:'harbiz'};
+          if(_prev) _vac.previa = _prev;
+          RUTINAS_ALUMNO[nombre] = _vac;
+          nCambiados++;
+          console.log('[RUTINAS HARBIZ] '+nombre+' · sin rutina ('+_mot+'): rutina vaciada');
+        }
+        a.rutinaHarbizHash = hash;
+        a.rutinaHarbizTs = p.ts || Date.now();
+        aplicados.push(nombre);
+        acksOk[nip] = {hash:hash, ok:true, cambios:_quitados, sinRutina:true, motivo:_mot};
+        return;
+      }
       var nueva = normalizarRutina(p.rutina || {});
       if(_rutinaVacia(nueva)){ errUnaVez(nip, hash, 'rutina vacía'); return; }
-      var vieja = normalizarRutina(RUTINAS_ALUMNO[nombre] || {});
+      var _act411 = RUTINAS_ALUMNO[nombre] || {};   // 411: si venía de «sin rutina», se compara contra la anterior
+      var vieja = normalizarRutina(_act411.sinRutina ? (_act411.previa || {}) : _act411);
       var cambios = 0;
       previo[nip] = {nombre:nombre, hash:a.rutinaHarbizHash, ts:a.rutinaHarbizTs};
       if(JSON.stringify(vieja) !== JSON.stringify(nueva)){
@@ -5107,7 +5140,7 @@ function aplicarRutinasHarbiz(){
           hayHist = true;
         }
         nCambiados++;
-      }
+      } else if(_act411.sinRutina){ RUTINAS_ALUMNO[nombre] = nueva; nCambiados++; }   // 411: vuelve la misma rutina de antes
       a.rutinaHarbizHash = hash;
       a.rutinaHarbizTs = p.ts || Date.now();
       aplicados.push(nombre);
@@ -5128,6 +5161,7 @@ function aplicarRutinasHarbiz(){
     Object.keys(acksOk).forEach(function(nip){
       u[nip] = ok ? {hash:acksOk[nip].hash, ts:Date.now(), ok:true, cambios:acksOk[nip].cambios}
                   : {hash:acksOk[nip].hash, ts:Date.now(), ok:false, error:'sync: '+err};
+      if(ok && acksOk[nip].sinRutina){ u[nip].sinRutina = true; u[nip].motivo = acksOk[nip].motivo; }   // 411
     });
     try{ PROP_REF.child('harbiz/rutinas_ok').update(u); }catch(e){}
   }
@@ -5150,6 +5184,7 @@ function aplicarRutinasNuevos(){
     var d = dec['n_'+x.harbizId]; if(!d || !d.nip || (d.decision!=='agregado' && d.decision!=='vinculado')) return;
     var nombre = nombrePorNip(d.nip); if(!nombre) return;
     if(!_rutinaVacia(RUTINAS_ALUMNO[nombre])) return;
+    if(RUTINAS_ALUMNO[nombre] && RUTINAS_ALUMNO[nombre].sinRutina) return;   // 411: pausada desde Harbiz, no se rellena
     var a = ALUMNOS_DATA[nombre], rutina = normalizarRutina(x.rutina), fecha = a.fechaInicio || a.fechaGeneral || FECHAS_ALUMNO[nombre];
     RUTINAS_ALUMNO[nombre] = rutina;
     if(!a.harbizId) a.harbizId = x.harbizId;

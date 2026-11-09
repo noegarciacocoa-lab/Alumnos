@@ -1511,7 +1511,11 @@ function loadFromCoach(){
     // Merge rutinas
     if(data.rutinas){
       Object.keys(data.rutinas).forEach(function(nip){
-        if(data.rutinas[nip]) ALL_RUTINAS[nip]=data.rutinas[nip];
+        var _rn=data.rutinas[nip];
+        // Regla 411: también se reemplaza cuando llega VACÍA con sinRutina (Harbiz sin rutina);
+        // se guarda solo el estado y el motivo, nunca los ejercicios anteriores.
+        if(_rn && _rn.sinRutina===true) ALL_RUTINAS[nip]={sinRutina:true, motivo:_rn.motivo||'sin rutina asignada en Harbiz', semana:_rn.semana||null, desde:_rn.desde||null};
+        else if(_rn) ALL_RUTINAS[nip]=_rn;
       });
     }
     // Restore aprobaciones, fechaInicio, and aprobSemana per alumno
@@ -1745,6 +1749,7 @@ function updateEjerciciosStats(){
 }
 
 function getRutinaDia(day){
+  if(currentAlumno && ALL_RUTINAS[currentAlumno] && ALL_RUTINAS[currentAlumno].sinRutina===true) return []; // regla 411
   var aprobs = (currentAlumno && ALL_APROBACIONES[currentAlumno] && ALL_APROBACIONES[currentAlumno][day]) || {};
   if(currentAlumno && ALL_RUTINAS[currentAlumno] && ALL_RUTINAS[currentAlumno][day]){
     // Rutina personalizada: usar aprobaciones reales del alumno
@@ -6802,6 +6807,77 @@ _mdComo=function(){
   return h;
 };
 // ── fin 408 ──
+/* ══ REGLA 411 (Noé · 9 nov 2026) ══════════════════════════════════════════
+   FitTrack enlazado con Harbiz: si en Harbiz no hay rutina, el coach guarda en
+   fittrack_data/rutinas/<nip> = {sinRutina:true, motivo:'descanso médico'|'sin rutina asignada en Harbiz'}.
+   En Entreno se muestra una tarjeta clara (no «Día de descanso» cada día) y no se
+   muestran la aprobación por día, el volumen ni la fuerza de la rutina anterior;
+   las progresiones pendientes de esa rutina tampoco aparecen como vigentes. */
+(function(K){ Object.keys(K).forEach(function(l){ if(LANGS[l]) Object.keys(K[l]).forEach(function(k){ LANGS[l][k]=K[l][k]; }); }); })({
+ "es":{"r411_med_t":"🩺 Pausa médica","r411_med":"Tu coach pausó tu entrenamiento de pesas por indicación médica. Sigue las actividades de tu calendario en Harbiz.","r411_med_u":"Su coach pausó su entrenamiento de pesas por indicación médica. Siga las actividades de su calendario en Harbiz.","r411_sin_t":"📅 Semana sin pesas","r411_sin":"Sin rutina de pesas esta semana. Revisa tu calendario en Harbiz.","r411_sin_u":"Sin rutina de pesas esta semana. Revise su calendario en Harbiz."},
+ "en":{"r411_med_t":"🩺 Medical pause","r411_med":"Your coach paused your weight training on medical advice. Follow the activities in your Harbiz calendar.","r411_sin_t":"📅 No weights this week","r411_sin":"No weight-training routine this week. Check your calendar in Harbiz."},
+ "pt":{"r411_med_t":"🩺 Pausa médica","r411_med":"Seu coach pausou seu treino de musculação por indicação médica. Siga as atividades do seu calendário no Harbiz.","r411_sin_t":"📅 Semana sem musculação","r411_sin":"Sem rotina de musculação esta semana. Confira seu calendário no Harbiz."},
+ "it":{"r411_med_t":"🩺 Pausa medica","r411_med":"Il tuo coach ha sospeso il tuo allenamento con i pesi su indicazione medica. Segui le attività del tuo calendario su Harbiz.","r411_sin_t":"📅 Settimana senza pesi","r411_sin":"Nessuna scheda con i pesi questa settimana. Controlla il tuo calendario su Harbiz."},
+ "fr":{"r411_med_t":"🩺 Pause médicale","r411_med":"Ton coach a mis en pause ton entraînement de musculation sur avis médical. Suis les activités de ton calendrier dans Harbiz.","r411_sin_t":"📅 Semaine sans musculation","r411_sin":"Pas de programme de musculation cette semaine. Consulte ton calendrier dans Harbiz."},
+ "zh_tw":{"r411_med_t":"🩺 醫療暫停","r411_med":"教練依醫囑暫停了您的重量訓練。請依照 Harbiz 行事曆中的活動進行。","r411_sin_t":"📅 本週無重量訓練","r411_sin":"本週沒有重量訓練課表。請查看您在 Harbiz 的行事曆。"},
+ "zh_cn":{"r411_med_t":"🩺 医疗暂停","r411_med":"教练根据医嘱暂停了您的力量训练。请按照 Harbiz 日历中的活动进行。","r411_sin_t":"📅 本周无力量训练","r411_sin":"本周没有力量训练计划。请查看您在 Harbiz 的日历。"},
+ "de":{"r411_med_t":"🩺 Medizinische Pause","r411_med":"Dein Coach hat dein Krafttraining auf ärztliche Anweisung pausiert. Folge den Aktivitäten in deinem Harbiz-Kalender.","r411_sin_t":"📅 Diese Woche ohne Gewichte","r411_sin":"Diese Woche kein Krafttrainingsplan. Schau in deinen Kalender in Harbiz."},
+ "ru":{"r411_med_t":"🩺 Медицинская пауза","r411_med":"Тренер приостановил твои силовые тренировки по медицинским показаниям. Следуй занятиям из своего календаря в Harbiz.","r411_sin_t":"📅 Неделя без силовых","r411_sin":"На этой неделе нет программы силовых тренировок. Проверь свой календарь в Harbiz."},
+ "pl":{"r411_med_t":"🩺 Przerwa medyczna","r411_med":"Twój trener wstrzymał Twój trening siłowy ze wskazań lekarskich. Wykonuj aktywności ze swojego kalendarza w Harbiz.","r411_sin_t":"📅 Tydzień bez ciężarów","r411_sin":"W tym tygodniu nie masz planu treningu siłowego. Sprawdź swój kalendarz w Harbiz."},
+ "ar":{"r411_med_t":"🩺 توقف طبي","r411_med":"أوقف مدربك تمارين الأثقال مؤقتًا بناءً على توصية طبية. اتبع الأنشطة الموجودة في تقويمك على Harbiz.","r411_sin_t":"📅 أسبوع بدون أثقال","r411_sin":"لا يوجد برنامج أثقال هذا الأسبوع. راجع تقويمك على Harbiz."}
+});
+(function(){
+  try{
+    var st=document.createElement('style');
+    st.textContent='.r411-card{display:flex;gap:12px;align-items:flex-start;padding:16px;border-radius:var(--radius-sm,12px);background:var(--teal-xlight);border:1px solid var(--teal-light);color:var(--text)}'
+      +'.r411-card.med{background:var(--amber-light,#FEF3DC);border-color:var(--amber,#F2B84B)}'
+      +'.r411-card b{display:block;font-size:15px;margin-bottom:4px;color:var(--teal-dark)}.r411-card.med b{color:var(--amber-dark,#8a5a00)}'
+      +'.r411-card p{margin:0;font-size:13.5px;line-height:1.5;color:var(--text2)}.r411-ic{font-size:26px;line-height:1}'
+      +'#sc-rutina.r411-sin .day-tabs,#sc-rutina.r411-sin #rev-parcial-info,#sc-rutina.r411-sin #tipo-revision-banner,#sc-rutina.r411-sin #r321-inicio,#sc-rutina.r411-sin .r411-aprob{display:none!important}'
+      +'#sc-rutina.r411-sin #exercises-card{padding:0!important;background:none;border:0;box-shadow:none}';
+    document.head.appendChild(st);
+  }catch(e){}
+})();
+function r411Estado(nip){
+  var n=nip||currentAlumno, r=n&&ALL_RUTINAS[n];
+  return (r && r.sinRutina===true) ? r : null;
+}
+function r411T(k){ try{ if(typeof r321cT==='function') return r321cT(k); }catch(e){} return t(k); }
+function r411Html(r){
+  var med = String(r.motivo||'').toLowerCase().indexOf('médic')>=0 || String(r.motivo||'').toLowerCase().indexOf('medic')>=0;
+  var k = med ? 'r411_med' : 'r411_sin';
+  var tit = t(k+'_t'), ic = tit.split(' ')[0], txt = tit.slice(ic.length+1);
+  return '<div class="r411-card'+(med?' med':'')+'" id="r411-card" data-motivo="'+(med?'medico':'sin')+'"><span class="r411-ic">'+ic+'</span><div><b>'+txt+'</b><p>'+r411T(k)+'</p></div></div>';
+}
+(function(){
+  // Entreno: tarjeta en lugar de «Día de descanso 🌴» en cada día
+  try{ var _re=renderExercises; renderExercises=function(day){
+    var sc=document.getElementById('sc-rutina'), r=r411Estado();
+    try{ var ap=document.getElementById('aprob-por-dia'), c=ap&&ap.closest&&ap.closest('.card'); if(c) c.classList.add('r411-aprob'); }catch(e){}
+    if(sc) sc.classList.toggle('r411-sin', !!r);
+    if(r){ var el=document.getElementById('exercises-card'); if(el) el.innerHTML=r411Html(r); try{ r321cInicioPintar(); }catch(e){} return; }
+    return _re.apply(this, arguments);
+  }; }catch(e){}
+  // Rendimiento de la semana: sin la tarjeta de fuerza (pesas) de la rutina anterior
+  try{ var _rr=renderRendimiento; renderRendimiento=function(){
+    var r=r411Estado(); if(!r || !_rend || !_rend.fuerza) return _rr.apply(this, arguments);
+    var orig=_rend, cp={}; Object.keys(orig).forEach(function(k){ if(k!=='fuerza') cp[k]=orig[k]; });
+    _rend=cp; try{ return _rr.apply(this, arguments); } finally { _rend=orig; }
+  }; }catch(e){}
+  // Mapa de volumen: sin el volumen semanal de la rutina anterior (se deja la parte de cuerpo)
+  try{ var _rm=renderMapaVol; renderMapaVol=function(){
+    var r=r411Estado(); if(!r || !_mapa || !_mapa.semana) return _rm.apply(this, arguments);
+    var orig=_mapa, cp={}; Object.keys(orig).forEach(function(k){ if(k!=='semana') cp[k]=orig[k]; });
+    _mapa=cp; try{ return _rm.apply(this, arguments); } finally { _mapa=orig; }
+  }; }catch(e){}
+  // Progresiones: las pendientes de la rutina anterior no se muestran como vigentes (el historial sí)
+  try{ var _rs=renderSugerencias; renderSugerencias=function(){
+    var r=r411Estado(); if(!r || !_sug || !_sug.length) return _rs.apply(this, arguments);
+    var orig=_sug;
+    _sug=orig.filter(function(x){ var e=_sugEstado(x); return (x.tipo && x.tipo!=='progresion') || e==='vencida' || e==='atendida'; });
+    try{ return _rs.apply(this, arguments); } finally { _sug=orig; }
+  }; }catch(e){}
+})();
 </script>
 </body>
 </html>
