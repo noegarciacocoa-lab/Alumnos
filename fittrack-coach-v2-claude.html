@@ -6439,5 +6439,59 @@ function rtcValidar(){
 })();
 // ── fin MEDALLERO DEL RETO (coach) ──
 </script>
+<script>
+/* ── REGLA 415 (Noé 9 nov 13:21): etiqueta de embarazo en FitTrack Coach (lista de alumnos, perfil y Evaluar).
+   Lee (solo lectura) fittrack_chequeos/condiciones (lo publica tools/condiciones_publicar.py). Fecha de México (UTC-6).
+   Con fechaParto: 40 − ceil((FPP − hoy)/7) · solo semanasRef+fechaRef: semanasRef + floor((hoy − fechaRef)/7) → «(aprox.)»
+   · sin referencia: «🤰 Embarazo · falta su fecha probable de parto». */
+var EMB415={};
+function _embHoyMx(){ var d=new Date(Date.now()-6*3600000); return Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()); }
+function _embF(s){ var m=String(s||'').match(/^(\d{4})-(\d{2})-(\d{2})/); return m?Date.UTC(+m[1],+m[2]-1,+m[3]):null; }
+function embSemanas(c,hoy){
+  if(!c||String(c.estado||'').toLowerCase()!=='embarazo') return null;
+  hoy=(hoy==null)?_embHoyMx():hoy;
+  var fpp=_embF(c.fechaParto), fr=_embF(c.fechaRef), sr=(c.semanasRef===null||c.semanasRef===undefined||c.semanasRef==='')?null:+c.semanasRef;
+  if(fpp!=null) return {n:40-Math.ceil(Math.round((fpp-hoy)/864e5)/7),tipo:'exacto'};
+  if(sr!=null&&!isNaN(sr)&&fr!=null) return {n:sr+Math.floor(Math.round((hoy-fr)/864e5)/7),tipo:'aprox'};
+  return {n:null,tipo:'sin_dato'};
+}
+function embTexto(nip,corto){
+  var S=embSemanas(EMB415[String(nip||'')]); if(!S) return '';
+  if(S.n==null) return corto?'🤰 Embarazo · sin fecha de parto':'🤰 Embarazo · falta su fecha probable de parto';
+  if(S.n<1||S.n>42) return '🤰 Embarazo · revisar referencia (da semana '+S.n+')';
+  return (corto?'🤰 Sem. ':'🤰 Semana ')+S.n+' de embarazo'+(S.tipo==='aprox'?' (aprox.)':'');
+}
+function embChip(nip,extra,corto){ var x=embTexto(nip,corto); if(!x) return ''; var S=embSemanas(EMB415[String(nip)]);
+  return '<span class="emb-chip415'+(S&&S.tipo==='sin_dato'?' emb-sin':'')+'"'+(extra||'')+' title="'+(S&&S.tipo==='aprox'?'Conteo aproximado (semanas que dijo en una fecha). Con su fecha probable de parto el conteo es exacto.':S&&S.tipo==='exacto'?'Conteo exacto por su fecha probable de parto.':'Sin fecha de referencia: pídele su fecha probable de parto.')+'">'+String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</span>'; }
+function embPintarCoach(){
+  // lista de alumnos: debajo del NIP
+  document.querySelectorAll('#alumnos-list-card .alumno-item[data-nombre]').forEach(function(it){
+    var a=ALUMNOS_DATA[it.getAttribute('data-nombre')]; var inf=it.querySelector('.alumno-info'); if(!inf) return;
+    var v=inf.querySelector('.emb-w415'); if(v) v.remove();
+    var h=a?embChip(a.nip,'',true):''; if(h) inf.insertAdjacentHTML('beforeend','<div class="emb-w415" style="margin-top:3px">'+h+'</div>');
+  });
+  // perfil (modal) y Evaluar
+  [['modal-emb415','modal-status-badge',typeof currentModalAlumno!=='undefined'?currentModalAlumno:null],
+   ['eval-emb415','eval-nombre',typeof currentEvalAlumno!=='undefined'?currentEvalAlumno:null]].forEach(function(z){
+    var anc=document.getElementById(z[1]); if(!anc) return;
+    var el=document.getElementById(z[0]);
+    if(!el){ el=document.createElement('div'); el.id=z[0]; el.style.marginTop='4px'; anc.parentNode.insertBefore(el,anc.nextSibling); }
+    var a=z[2]&&ALUMNOS_DATA[z[2]]; el.innerHTML=a?embChip(a.nip):''; el.style.display=el.innerHTML?'':'none';
+  });
+}
+(function(){
+  var st=document.createElement('style'); st.textContent=
+   '.emb-chip415{display:inline-block;background:#FBEAF2;color:#9A2F64;border:1px solid #F3CFE0;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:700;line-height:1.5;max-width:100%;white-space:normal}'+
+   '.emb-w415 .emb-chip415{font-size:10.5px;padding:2px 8px;border-radius:9px;line-height:1.35}'+
+   '.emb-chip415.emb-sin{background:#FFF6E5;color:#8A5300;border-color:#F5DEB0}';
+  document.head.appendChild(st);
+  var _r=renderAlumnosList; renderAlumnosList=function(){ var x=_r.apply(this,arguments); try{ embPintarCoach(); }catch(e){} return x; };
+  var _p=openProfileModal; openProfileModal=function(){ var x=_p.apply(this,arguments); try{ embPintarCoach(); }catch(e){} return x; };
+  var _e=openEvaluar; openEvaluar=function(){ var x=_e.apply(this,arguments); try{ embPintarCoach(); }catch(e){} return x; };
+  try{ db.ref('fittrack_chequeos/condiciones').on('value',function(s){ EMB415=(s&&s.val())||{}; try{ embPintarCoach(); }catch(e){} }); }catch(e){}
+  setInterval(function(){ try{ embPintarCoach(); }catch(e){} },600000);   // cambia sola de semana
+})();
+// ── fin REGLA 415 (coach) ──
+</script>
 </body>
 </html>

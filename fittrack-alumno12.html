@@ -1055,7 +1055,7 @@ html:not([lang^="es"]) .sug-gd,html:not([lang^="es"]) .cal-h b{text-transform:no
       <div class="header-row">
         <div class="user-info">
           <div class="user-avatar" id="user-avatar">AB</div>
-          <div><div class="user-name" id="user-name">Alumno</div><div class="user-sub" id="user-status-sub" data-i18n="header_plan">Plan activo</div><button type="button" class="les-tag" id="les-tag" onclick="lesionAbrir()"></button></div>
+          <div><div class="user-name" id="user-name">Alumno</div><div class="user-sub" id="user-status-sub" data-i18n="header_plan">Plan activo</div><button type="button" class="les-tag" id="les-tag" onclick="lesionAbrir()"></button><div class="emb-hdr" id="emb-hdr" hidden></div></div>
         </div>
         <button class="lang-btn" onclick="openLangModal()"><span id="lang-btn-label-main">🌐</span></button>
       <button class="logout-btn" id="btn-salir" onclick="doLogout()" data-i18n="btn_salir">Salir</button>
@@ -1261,6 +1261,7 @@ html:not([lang^="es"]) .sug-gd,html:not([lang^="es"]) .cal-h b{text-transform:no
             <div style="font-size:13px;color:var(--text2);margin-top:4px" data-i18n="prof_plan">Plan de entrenamiento activo</div>
             <span class="nivel-badge" id="prof-nivel">Nivel Básico</span>
             <div id="prof-status-pill" style="margin-top:10px"></div>
+            <div class="emb-prof" id="emb-prof" hidden></div>
           </div>
           <div id="prof-status-card"></div>
           <div class="card" style="padding:14px 16px">
@@ -2328,6 +2329,7 @@ function doLogin(){
   try{ r235Cargar(nip); }catch(e){} // regla 235: plan de acción no presentado fijo en Notas
   try{ r236Cargar(nip); }catch(e){} // regla 236: seguimiento de la adaptación (2 semanas sin videos)
   try{ r240Cargar(nip); }catch(e){} // regla 240: cuenta regresiva del chequeo
+  try{ embCargar(nip); }catch(e){} // regla 415: semanas de embarazo (fittrack_chequeos/condiciones/<nip>)
   // Check for celebration after renders settle
   setTimeout(function(){ checkCelebrations(a, calcAprobGeneral()); }, 1000);
   // Show notification popup if there are new or positive notes
@@ -2347,6 +2349,7 @@ function doLogin(){
 }
 
 function doLogout(){
+  try{ embSalir(); }catch(e){} // regla 415
   try{ r278Salir(); }catch(e){} // regla 278: el idioma fijado por el coach no se queda para el siguiente alumno
   document.querySelectorAll('.nip-digit').forEach(function(d){d.value='';d.classList.remove('filled');});
   document.getElementById('login-error').style.display='none';
@@ -6878,6 +6881,73 @@ function r411Html(r){
     try{ return _rs.apply(this, arguments); } finally { _sug=orig; }
   }; }catch(e){}
 })();
+</script>
+<script>
+/* ── REGLA 415 (Noé 9 nov 13:21): etiqueta de embarazo «🤰 Semana N de embarazo», se actualiza sola.
+   Lee (solo lectura) fittrack_chequeos/condiciones/<nip> = {estado:'embarazo', semanasRef, fechaRef, fechaParto, actualizado}
+   (lo publica tools/condiciones_publicar.py desde sync/condiciones.json). Fecha de MÉXICO (UTC-6).
+   Con fechaParto (exacto): 40 − ceil((fechaParto − hoy)/7)  ≡ floor((280 − días para la FPP)/7).
+   Solo semanasRef + fechaRef (aprox.): semanasRef + floor((hoy − fechaRef)/7) + nota pequeña pidiendo la FPP.
+   Sin referencia: «🤰 Embarazo» + nota que pide la fecha probable de parto. Fuera de 1–42: no se muestran semanas.
+   Va en el encabezado (bajo el estatus) y en el perfil (bajo «En proceso de adaptación»). Sin indicaciones médicas. */
+(function(K){ Object.keys(K).forEach(function(l){ if(LANGS[l]) Object.keys(K[l]).forEach(function(k){ LANGS[l][k]=K[l][k]; }); }); })({
+ "es":{"emb_tag":"🤰 Semana {n} de embarazo","emb_sin":"🤰 Embarazo","emb_sin_nota":"Compárteme tu fecha probable de parto para llevar tu conteo de semanas.","emb_sin_nota_u":"Compártame su fecha probable de parto para llevar su conteo de semanas.","emb_aprox":"Si tienes tu fecha probable de parto, compártemela para que el conteo sea exacto.","emb_aprox_u":"Si tiene su fecha probable de parto, compártamela para que el conteo sea exacto."},
+ "en":{"emb_tag":"🤰 Week {n} of pregnancy","emb_sin":"🤰 Pregnancy","emb_sin_nota":"Share your due date with me so I can keep count of your weeks.","emb_aprox":"If you know your due date, share it with me so the count is exact."},
+ "pt":{"emb_tag":"🤰 Semana {n} de gravidez","emb_sin":"🤰 Gravidez","emb_sin_nota":"Compartilhe comigo sua data provável do parto para eu acompanhar suas semanas.","emb_aprox":"Se você souber sua data provável do parto, compartilhe comigo para que a contagem seja exata."},
+ "it":{"emb_tag":"🤰 Settimana {n} di gravidanza","emb_sin":"🤰 Gravidanza","emb_sin_nota":"Condividi con me la data presunta del parto per tenere il conto delle tue settimane.","emb_aprox":"Se conosci la data presunta del parto, condividila con me perché il conteggio sia esatto."},
+ "fr":{"emb_tag":"🤰 Semaine {n} de grossesse","emb_sin":"🤰 Grossesse","emb_sin_nota":"Partage-moi ta date prévue d'accouchement pour que je suive le compte de tes semaines.","emb_aprox":"Si tu connais ta date prévue d'accouchement, partage-la avec moi pour que le compte soit exact."},
+ "zh_tw":{"emb_tag":"🤰 懷孕第 {n} 週","emb_sin":"🤰 懷孕中","emb_sin_nota":"請告訴我你的預產期，以便記錄你的懷孕週數。","emb_aprox":"如果你知道預產期，請告訴我，讓週數更準確。"},
+ "zh_cn":{"emb_tag":"🤰 怀孕第 {n} 周","emb_sin":"🤰 怀孕中","emb_sin_nota":"请告诉我你的预产期，以便记录你的孕周。","emb_aprox":"如果你知道预产期，请告诉我，让孕周更准确。"},
+ "de":{"emb_tag":"🤰 Schwangerschaftswoche {n}","emb_sin":"🤰 Schwangerschaft","emb_sin_nota":"Teile mir deinen voraussichtlichen Geburtstermin mit, damit ich deine Wochen mitzählen kann.","emb_aprox":"Wenn du deinen voraussichtlichen Geburtstermin kennst, teile ihn mir mit, damit die Zählung genau ist."},
+ "ru":{"emb_tag":"🤰 {n}-я неделя беременности","emb_sin":"🤰 Беременность","emb_sin_nota":"Сообщите мне предполагаемую дату родов, чтобы я вёл счёт ваших недель.","emb_aprox":"Если вы знаете предполагаемую дату родов, сообщите её мне, чтобы счёт был точным."},
+ "pl":{"emb_tag":"🤰 {n}. tydzień ciąży","emb_sin":"🤰 Ciąża","emb_sin_nota":"Podaj mi przewidywaną datę porodu, abym mógł liczyć Twoje tygodnie.","emb_aprox":"Jeśli znasz przewidywaną datę porodu, przekaż ją mnie, aby liczenie było dokładne."},
+ "ar":{"emb_tag":"🤰 الأسبوع {n} من الحمل","emb_sin":"🤰 حمل","emb_sin_nota":"شاركيني موعد الولادة المتوقع لأتابع عدّ أسابيعك.","emb_aprox":"إذا كان لديكِ موعد الولادة المتوقع، شاركيه معي ليكون العدّ دقيقًا."}
+});
+var _emb={nip:null,c:null,ref:null,t:null};
+function _embHoyMx(){ var d=new Date(Date.now()-6*3600000); return Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()); }
+function _embF(s){ var m=String(s||'').match(/^(\d{4})-(\d{2})-(\d{2})/); return m?Date.UTC(+m[1],+m[2]-1,+m[3]):null; }
+// → {n, tipo:'exacto'|'aprox'|'sin_dato'} o null si no es embarazo. Misma fórmula que tools/condiciones_publicar.py
+function embSemanas(c,hoy){
+  if(!c||String(c.estado||'').toLowerCase()!=='embarazo') return null;
+  hoy=(hoy==null)?_embHoyMx():hoy;
+  var fpp=_embF(c.fechaParto), fr=_embF(c.fechaRef), sr=(c.semanasRef===null||c.semanasRef===undefined||c.semanasRef==='')?null:+c.semanasRef;
+  if(fpp!=null) return {n:40-Math.ceil(Math.round((fpp-hoy)/864e5)/7),tipo:'exacto'};
+  if(sr!=null&&!isNaN(sr)&&fr!=null) return {n:sr+Math.floor(Math.round((hoy-fr)/864e5)/7),tipo:'aprox'};
+  return {n:null,tipo:'sin_dato'};
+}
+function _embU(k){ try{ return r321cT(k); }catch(e){ return t(k); } }
+function embRender(){
+  var S=(_emb.nip===currentAlumno)?embSemanas(_emb.c):null;
+  ['emb-hdr','emb-prof'].forEach(function(id){
+    var el=document.getElementById(id); if(!el) return;
+    if(!S||(S.n!=null&&(S.n<1||S.n>42))){ el.hidden=true; el.innerHTML=''; return; }
+    var tag=S.n!=null?t('emb_tag',{n:S.n}):t('emb_sin');
+    var nota=S.tipo==='sin_dato'?_embU('emb_sin_nota'):S.tipo==='aprox'?_embU('emb_aprox'):'';
+    el.innerHTML='<span class="emb-chip">'+_esc(tag)+'</span>'+(nota?'<span class="emb-nota">'+_esc(nota)+'</span>':'');
+    el.setAttribute('data-tipo',S.tipo); el.hidden=false;
+  });
+}
+function embSalir(){ try{ if(_emb.ref) _emb.ref.off(); }catch(e){} if(_emb.t){ clearInterval(_emb.t); } _emb={nip:null,c:null,ref:null,t:null}; embRender(); }
+function embCargar(nip){
+  embSalir(); _emb.nip=nip;
+  try{
+    var ref=db.ref('fittrack_chequeos/condiciones/'+nip); _emb.ref=ref;
+    ref.on('value',function(s){ if(currentAlumno!==nip) return; _emb.c=(s&&s.val())||null; embRender(); });
+  }catch(e){}
+  _emb.t=setInterval(embRender,600000);   // cambia sola de semana (fecha de México)
+}
+(function(){
+  var st=document.createElement('style'); st.textContent=
+   '.emb-hdr{margin-top:4px;max-width:100%}.emb-hdr[hidden],.emb-prof[hidden]{display:none}'+
+   '.emb-hdr .emb-chip{display:inline-flex;align-items:center;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.6);color:#fff;border-radius:999px;padding:2px 9px;font-size:11px;font-weight:700;line-height:1.35;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
+   '.emb-hdr .emb-nota{display:block;font-size:10px;line-height:1.3;opacity:.85;margin-top:3px;max-width:230px}'+
+   '.emb-prof{margin-top:10px;display:flex;flex-direction:column;align-items:center;gap:5px}'+
+   '.emb-prof .emb-chip{display:inline-block;background:#FBEAF2;color:#9A2F64;border:1px solid #F3CFE0;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:700}'+
+   '.emb-prof .emb-nota{display:block;font-size:11px;line-height:1.4;color:var(--text3);max-width:290px}';
+  document.head.appendChild(st);
+  var _al=applyLang; applyLang=function(){ var r=_al.apply(this,arguments); try{ embRender(); }catch(e){} return r; };
+})();
+// ── fin REGLA 415 ──
 </script>
 </body>
 </html>
