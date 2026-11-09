@@ -5954,7 +5954,7 @@ applyLang=function(){ var r=_mdOldApply.apply(this,arguments); try{ if(_modo==='
 //   actual: {fase:'antes'|'en_curso'|'chequeo'|'final'|'ganadores', chequeo, fecha, top10:[{lugar,nombre,pts,delta}],
 //            top5:[{nombre}] + sinPosiciones (chequeo final), ganadores:[{lugar,nombre,pts}] (solo validados por Noé)}
 //   participante: {lugar, pts, delta, oculto, enTop5, transformacion:{c1..c4}, constancia:[{semana, areas}], avisos}
-// Sin ranking completo (R1), nombre completo (R2), Top 5 sin posiciones (R3). Estado vacío amable sin datos.
+// Sin ranking completo (R1), nombre completo (R2), Top 5 sin posiciones (R3), podio SIN puntos (R10). Estado vacío amable sin datos.
 var _rt={nip:null, act:null, mio:null, listo:false, tab:'mi'};
 var RT_AREAS=['pesas','nutricion','cardio','actividad','registro'];
 var RT_ICON={pesas:'🏋️',nutricion:'🥗',cardio:'❤️',actividad:'👟',registro:'📝'};
@@ -6077,9 +6077,9 @@ function _rtTop(f){
   var by={}; G.forEach(function(g){ by[g.lugar]=g; });
   var med={1:'oro',2:'plata',3:'bronce'}, prem={1:t('rt_prem1'),2:t('rt_prem2'),3:t('rt_prem3')};
   h+='<div class="md-card rt-gan"><div class="md-ct">'+t('rt_gan_t')+'</div><div class="rt-podio">'+[2,1,3].map(function(l){ var g=by[l]; if(!g) return '<div></div>'; var me=_rtYo(g.nombre);
-    return '<div class="rt-p rt-p'+l+(me?' md-me':'')+'">'+_rtMed(med[l],l===1?78:60,true,t('rt_lugar_n',{n:l}))+'<b class="rt-pn">'+_rtE(g.nombre)+(me?' <span class="md-tu">'+t('md_tu')+'</span>':'')+'</b><small>'+_rtN(g.pts)+' '+t('md_pts')+'</small><div class="rt-base"><span>'+l+'</span></div><small class="rt-prem">'+_rtE(prem[l])+'</small></div>'; }).join('')+'</div>';
+    return '<div class="rt-p rt-p'+l+(me?' md-me':'')+'">'+_rtMed(med[l],l===1?78:60,true,t('rt_lugar_n',{n:l}))+'<b class="rt-pn">'+_rtE(g.nombre)+(me?' <span class="md-tu">'+t('md_tu')+'</span>':'')+'</b><div class="rt-base"><span>'+l+'</span></div><small class="rt-prem">'+_rtE(prem[l])+'</small></div>'; }).join('')+'</div>';
   h+='<div class="md-rows" style="margin-top:12px">'+[4,5].map(function(l){ var g=by[l]; if(!g) return ''; var me=_rtYo(g.nombre);
-    return '<div class="md-row'+(me?' md-me':'')+'"><span class="md-pos">'+l+'.º</span><span class="md-nm">'+_rtE(g.nombre)+(me?' <span class="md-tu">'+t('md_tu')+'</span>':'')+'</span><span class="md-pt">'+_rtN(g.pts)+'<small>'+t('md_pts')+'</small></span></div>'; }).join('')+'</div></div>';
+    return '<div class="md-row'+(me?' md-me':'')+'"><span class="md-pos">'+l+'.º</span><span class="md-nm">'+_rtE(g.nombre)+(me?' <span class="md-tu">'+t('md_tu')+'</span>':'')+'</span></div>'; }).join('')+'</div></div>';
   h+='<p class="md-muted" style="margin:0;text-align:center">'+t('rt_gracias_todos')+'</p>';
   return h;
 }
