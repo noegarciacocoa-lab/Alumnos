@@ -465,6 +465,31 @@ input[type=range]{width:100%;height:4px;border-radius:20px;accent-color:var(--te
 .md-ed-f input{width:100%;min-height:40px;border:1.5px solid #B9E3EC;border-radius:10px;padding:0 10px;font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--text);background:var(--surface)}
 .md-btn.md-sm{min-height:40px;font-size:13px}
 @media (prefers-reduced-motion: reduce){.md-med .md-disc::after,.md-en_riesgo .md-disc{animation:none}}
+/* D20: ESTRELLAS = logros por área · INSIGNIAS HEXAGONALES = hitos (medallas solo para lugares de honor) */
+.md-st{--s:28px;position:relative;display:inline-flex;flex:none;width:var(--s);height:var(--s);border-radius:28%;align-items:center;justify-content:center;background:linear-gradient(145deg,#0A8FA8,#065666);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.25)}
+.md-st-s{display:flex;gap:0;align-items:center;justify-content:center}
+.md-st-s i{font-style:normal;font-size:calc(var(--s)*.3);line-height:1;color:rgba(255,255,255,.28)}
+.md-st-s i.on{color:#FFC93C}
+.md-st-s i:nth-child(2){transform:translateY(calc(var(--s)*-.08))}
+.md-st-s b{color:var(--text3);font-size:calc(var(--s)*.4)}
+.md-st-l0{background:var(--surface2);box-shadow:inset 0 0 0 1.5px var(--border2)}
+.md-st-l0 .md-st-s i{color:#C3CCD2}
+.md-st-lna{background:transparent;border:1.5px dashed #C3CCD2;box-shadow:none}
+.md-st-en_riesgo{box-shadow:inset 0 0 0 2px var(--red)}
+.md-st-perdida{background:linear-gradient(145deg,#B9C3C9,#8C989F);opacity:.8}
+.md-st-perdida .md-st-s i.on{color:#E7ECEF}
+.md-st-por_confirmar{box-shadow:inset 0 0 0 2px var(--amber)}
+.md-st .md-flag{position:absolute;right:-5px;top:-5px;bottom:auto;width:14px;height:14px;font-size:9px}
+.md-st.md-st-en_riesgo .md-flag{background:var(--red)}
+.md-st.md-st-por_confirmar .md-flag{background:var(--amber);color:#3A2200}
+.md-hx{--s:48px;position:relative;display:inline-flex;flex:none;flex-direction:column;align-items:center}
+.md-hx svg{display:block}
+.md-hx-ic{position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);min-width:20px;height:20px;padding:0 3px;border-radius:10px;background:#fff;border:1.5px solid #D9A72E;display:flex;align-items:center;justify-content:center;font-size:11px;line-height:1}
+.md-hx-no .md-hx-ic{border-color:#C3CCD2;filter:grayscale(1)}
+.md-hitos{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:12px 8px}
+.md-hito{display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;min-width:0}
+.md-hito b{font-size:12px;line-height:1.25;overflow-wrap:anywhere}
+.md-hito small{font-size:11px;color:var(--text2)}
 /* MEDALLERO DEL RETO · coach (8 nov 2026) */
 .rtc{display:flex;flex-direction:column;gap:12px}
 .rtc-vacio{text-align:left}
@@ -496,6 +521,12 @@ input[type=range]{width:100%;height:4px;border-radius:20px;accent-color:var(--te
 #rtc-validar{width:100%;justify-content:center}
 .rtc-ok{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--green-light);color:var(--text)}
 .rtc-ok ol{margin:6px 0;padding-left:20px}
+.rtc-likes{display:flex;flex-direction:column;gap:8px;margin:6px 0 10px}
+.rtc-likes label{display:flex;align-items:center;gap:10px;justify-content:space-between}
+.rtc-likes label span{display:flex;flex-direction:column;min-width:0}
+.rtc-likes label small{font-size:11.5px;color:var(--text2)}
+.rtc-likes input{width:96px;min-height:42px;border-radius:10px;border:1px solid var(--border2);padding:0 8px;font-family:inherit;font-size:15px;background:var(--surface);color:var(--text);flex-shrink:0}
+#rtc-guardar-likes{width:100%;justify-content:center}
 </style>
 </head>
 <body>
@@ -843,7 +874,7 @@ input[type=range]{width:100%;height:4px;border-radius:20px;accent-color:var(--te
     <button class="nav-item" id="nav-alertas" onclick="nav('alertas')"><div class="nav-inner"><span class="nav-icon">🔔</span><span>Alertas</span></div><span class="nav-badge" id="nav-badge-alertas" style="display:none">!</span></button>
     <button class="nav-item" id="nav-listas" onclick="nav('listas')"><div class="nav-inner"><span class="nav-icon">🎓</span><span>Listas</span></div></button>
     <button class="nav-item" id="nav-reportes" onclick="nav('reportes')"><div class="nav-inner"><span class="nav-icon">📄</span><span>Reportes</span></div></button>
-    <button class="nav-item" id="nav-medallero" onclick="nav('medallero')"><div class="nav-inner"><span class="nav-icon">🏅</span><span>Medallero</span></div></button>
+    <button class="nav-item" id="nav-medallero" onclick="nav('medallero')"><div class="nav-inner"><span class="nav-icon">⭐</span><span>Logros</span></div></button>
   </div>
 </div>
 
@@ -5952,8 +5983,27 @@ function mdcMedal(m,e,px,cinta){
   if(cinta) cls+=' md-cinta';
   return '<span class="'+cls+'" style="--s:'+(px||28)+'px" aria-hidden="true">'+(cinta?'<svg class="md-rib" viewBox="0 0 74 43" preserveAspectRatio="none" aria-hidden="true"><polygon points="11.8,0 33.3,0 47.4,43 25.9,43" fill="#065666"/><polygon points="40.7,0 62.2,0 48.1,43 26.6,43" fill="#0A8FA8"/></svg>':'')+'<span class="md-disc"><span class="md-core"><img src="'+_mdcLogo()+'" alt=""></span></span>'+fl+'</span>';
 }
-function _mdcNivel(m){ return m==='oro'?'Oro':m==='plata'?'Plata':m==='bronce'?'Bronce':'Sin medalla'; }
-function _mdcEst(a){ var e=a&&a.estado; return e==='en_riesgo'?'<span class="md-tag t-risk">En riesgo</span>':e==='perdida'?'<span class="md-tag t-risk">Perdida</span>':e==='por_confirmar'?'<span class="md-tag t-conf">Por confirmar</span>':e==='sin_asignar'?'<span class="md-tag" style="background:var(--surface2);color:var(--text2)">No aplica</span>':(a&&a.medalla)?'<span class="md-tag" style="background:var(--green-light);color:var(--green)">Ganada</span>':'<span class="md-tag" style="background:var(--surface2);color:var(--text2)">Por ganar</span>'; }
+function _mdcNivel(m){ return m==='oro'?'Oro':m==='plata'?'Plata':m==='bronce'?'Bronce':'Sin medalla'; }   // SOLO lugares de honor (Rival)
+// D20 (Noé 8 nov 19:32–19:34): medallas = lugares · estrellas = nivel por área (logros) · insignias hexagonales = hitos.
+function _mdcLogro(m){ return m==='oro'?'⭐⭐⭐ Excelente':m==='plata'?'⭐⭐ Destacado':m==='bronce'?'⭐ Cumplido':'Sin logro'; }
+function mdcStars(m,e,px){
+  var lv=MDC_LV[m]||0, na=e==='sin_asignar', st='';
+  for(var i=1;i<=3;i++) st+='<i class="'+(i<=lv?'on':'')+'">★</i>';
+  var fl=e==='en_riesgo'?'<span class="md-flag">!</span>':e==='por_confirmar'?'<span class="md-flag">?</span>':'';
+  return '<span class="md-st md-st-l'+(na?'na':lv)+(e&&e!=='ganada'?' md-st-'+e:'')+'" style="--s:'+(px||28)+'px" aria-hidden="true"><span class="md-st-s">'+(na?'<b>—</b>':st)+'</span>'+fl+'</span>';
+}
+var MDC_HITO_IC={racha:'🔥',top10:'🏆',honor:'🥇',atiempo:'⏱️',transf:'💪'};
+function mdcHito(h,px){
+  var ok=!!(h&&h.logrado), s=px||48, id='mdchx'+Math.random().toString(36).slice(2,8);
+  return '<span class="md-hx'+(ok?' md-hx-ok':' md-hx-no')+'" style="--s:'+s+'px"><svg viewBox="0 0 100 112" width="'+s+'" height="'+Math.round(s*1.12)+'" aria-hidden="true"><defs><linearGradient id="'+id+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+(ok?'#0A8FA8':'#C9D1D6')+'"/><stop offset="1" stop-color="'+(ok?'#065666':'#97A3AB')+'"/></linearGradient></defs><polygon points="50,3 95,29 95,83 50,109 5,83 5,29" fill="url(#'+id+')" stroke="'+(ok?'#D9A72E':'#B7C0C6')+'" stroke-width="'+(ok?3:2)+'"'+(ok?'':' stroke-dasharray="5 4"')+'/><image href="'+_mdcLogo()+'" x="27" y="26" width="46" height="46" opacity="'+(ok?1:.55)+'"/></svg><span class="md-hx-ic">'+(ok?(MDC_HITO_IC[h.tipo]||'✨'):'🔒')+'</span></span>';
+}
+function _mdcHitos(x){
+  var H=_mdcArr(x.hitos); if(!H.length) return '';
+  return '<div><div class="md-ct">Hitos · '+H.filter(function(h){return h.logrado;}).length+' de '+H.length+'</div><div class="md-hitos">'+H.map(function(h){
+    var sub=h.logrado?(h.semana?'desde '+_mdcE(h.semana):'logrado'):(h.estado==='no_alcanzado'?'no alcanzado':(h.progreso&&h.progreso.de?_mdcE(h.progreso.n)+' de '+_mdcE(h.progreso.de):'pendiente'));
+    return '<div class="md-hito'+(h.logrado?' on':'')+'">'+mdcHito(h,46)+'<b>'+_mdcE(h.titulo||h.id)+'</b><small>'+sub+'</small></div>'; }).join('')+'</div></div>';
+}
+function _mdcEst(a){ var e=a&&a.estado; return e==='en_riesgo'?'<span class="md-tag t-risk">En riesgo</span>':e==='perdida'?'<span class="md-tag t-risk">No se sostuvo</span>':e==='por_confirmar'?'<span class="md-tag t-conf">Por confirmar</span>':e==='sin_asignar'?'<span class="md-tag" style="background:var(--surface2);color:var(--text2)">No aplica</span>':(a&&a.medalla)?'<span class="md-tag" style="background:var(--green-light);color:var(--green)">Logrado</span>':'<span class="md-tag" style="background:var(--surface2);color:var(--text2)">Por ganar</span>'; }
 function _mdcDelta(d){ if(d==null||d==='') return ''; d=+d; if(isNaN(d)) return ''; return d>0?'<span class="md-up">▲ '+d+'</span>':d<0?'<span class="md-dn">▼ '+(-d)+'</span>':'<span class="md-eq">=</span>'; }
 function _mdcAlumnos(){ return _mdcArr(_mdc.coach&&_mdc.coach.alumnos).map(function(a){ if(!a||a.lugarCategoria==null) return a; var o={}; for(var k in a) o[k]=a[k]; o.lugarGlobal=a.lugar; o.lugar=a.lugarCategoria; if(a.deltaCategoria!==undefined){ o.deltaGlobal=a.delta; o.delta=a.deltaCategoria; } return o; }).sort(function(a,b){ return (+a.lugar||9999)-(+b.lugar||9999); }); }
 function _mdcFlags(x){
@@ -6022,7 +6072,7 @@ function mdcRender(){
   var el=document.getElementById('md-coach'); if(!el) return;
   var C=_mdc.coach, A=_mdc.act, h='';
   var paus=!!(C&&C.pausado===true);
-  h+='<div class="md-hd"><div><h2>🏅 Medallero</h2><p>Solo gestión integral activos · provisional visible desde hoy · cierre oficial cada lunes 8:00</p></div><button type="button" class="md-reload" onclick="mdcCargar()">↻ Actualizar</button></div>';
+  h+='<div class="md-hd"><div><h2>⭐ Logros</h2><p>Solo gestión integral activos · provisional visible desde hoy · cierre oficial cada lunes 8:00</p></div><button type="button" class="md-reload" onclick="mdcCargar()">↻ Actualizar</button></div>';
   if(!_mdc.listo){ el.innerHTML=h+'<div class="md-box md-empty">Cargando medallero…</div>'; return; }
   var sem=(C&&C.semana)||(A&&A.semana);
   h+='<div class="md-pills">'+(sem?'<span class="md-pill">'+_mdcE(_mdcSem(sem))+'</span>':'')+(A&&A.provisional?'<span class="md-pill md-am">Provisional</span>':(A&&A.publicado?'<span class="md-pill md-gr">Publicado '+_mdcE(_mdcFH(A.publicado))+'</span>':''))+(paus?'<span class="md-pill md-rd">Publicación en pausa</span>':'')+(_mdcCierre()?'<span class="md-pill">Cierre '+_mdcE(_mdcFH(_mdcCierre()))+'</span>':'')+'</div>';
@@ -6038,20 +6088,20 @@ function mdcRender(){
 }
 function _mdcPasa(x,f){ var g=_mdcFlags(x); return f==='todos'||(f==='top'&&g.top)||(f==='risk'&&g.risk)||(f==='conf'&&g.conf)||(f==='racha'&&g.racha)||(f==='none'&&g.none); }
 function _mdcRank(){
-  var L=_mdcAlumnos(), F=[['todos','Todos'],['top','Top 10'],['risk','En riesgo'],['conf','Por confirmar'],['racha','Con racha 🔥'],['none','Sin medalla']];
+  var L=_mdcAlumnos(), F=[['todos','Todos'],['top','Top 10'],['risk','En riesgo'],['conf','Por confirmar'],['racha','Con racha 🔥'],['none','Sin logros']];
   var cats=_mdcHayCats(); if(cats&&_mdc.cat!=='todas') L=L.filter(function(x){ return _mdcCatDe(x)===_mdc.cat; });
   var h=(cats?_mdcCatSeg(_mdc.cat,'mdcCat',true):'')+'<div class="md-chips" role="group" aria-label="Filtrar ranking">'+F.map(function(f){ var n=L.filter(function(x){return _mdcPasa(x,f[0]);}).length; return '<button type="button" class="md-chipf" aria-pressed="'+(_mdc.filtro===f[0])+'" onclick="mdcFiltro(\''+f[0]+'\')">'+f[1]+' <i>'+n+'</i></button>'; }).join('')+'</div>';
   h+='<input class="md-search" type="search" placeholder="🔍 Buscar alumno" aria-label="Buscar alumno" value="'+_mdcE(_mdc.q)+'" oninput="mdcBuscar(this.value)" autocomplete="off">';
   h+='<div class="md-box"><div id="md-rk-list">'+_mdcLista()+'</div>';
-  h+='<div class="md-legend"><span>'+mdcMedal('oro','ganada',16)+'Oro</span><span>'+mdcMedal('plata','ganada',16)+'Plata</span><span>'+mdcMedal('bronce','ganada',16)+'Bronce</span><span>'+mdcMedal(null,'ganada',16)+'Sin medalla</span><span>'+mdcMedal('plata','en_riesgo',16)+'En riesgo</span><span>'+mdcMedal('plata','perdida',16)+'Perdida</span><span>'+mdcMedal('plata','por_confirmar',16)+'Por confirmar</span><span>'+mdcMedal(null,'sin_asignar',16)+'No aplica</span></div>';
-  h+='<div class="md-pad md-note" style="border-top:1px solid var(--border2)">Orden de medallas: Pesas · Nutrición · Cardio · Actividad · Registro · Avance físico. Puntos: oro 15 · plata 10 · bronce 5 por área; avance físico 25 · 15 · 8 solo en semana de chequeo; total sobre 100 según lo asignado. Desempate: más oros, mejor registro, menos avisos. La racha 🔥 no suma puntos. Toca un alumno para ver su ficha. Los alumnos ven «Nombre I.» y nunca fotos. Ranking separado por objetivo: los lugares 1–2–3 son los títulos Rival Oro/Plata/Bronce; los ocupa solo quien alcanza el estándar (si nadie, queda vacante).</div></div>';
+  h+='<div class="md-legend"><span>'+mdcStars('oro','ganada',18)+'Excelente</span><span>'+mdcStars('plata','ganada',18)+'Destacado</span><span>'+mdcStars('bronce','ganada',18)+'Cumplido</span><span>'+mdcStars(null,'ganada',18)+'Sin logro</span><span>'+mdcStars('plata','en_riesgo',18)+'En riesgo</span><span>'+mdcStars('plata','perdida',18)+'No se sostuvo</span><span>'+mdcStars('plata','por_confirmar',18)+'Por confirmar</span><span>'+mdcStars(null,'sin_asignar',18)+'No aplica</span><span>'+mdcMedal('oro','ganada',16)+'Medalla = solo lugar de honor</span></div>';
+  h+='<div class="md-pad md-note" style="border-top:1px solid var(--border2)">Orden de los logros (estrellas): Pesas · Nutrición · Cardio · Actividad · Registro · Avance físico. Puntos: ⭐⭐⭐ 15 · ⭐⭐ 10 · ⭐ 5 por área; avance físico 25 · 15 · 8 solo en semana de chequeo; total sobre 100 según lo asignado. Desempate: más ⭐⭐⭐, mejor registro, menos avisos. Las medallas son solo para los lugares de honor; los hitos son insignias hexagonales. La racha 🔥 no suma puntos. Toca un alumno para ver su ficha. Los alumnos ven «Nombre I.» y nunca fotos. Ranking separado por objetivo: los lugares 1–2–3 son los títulos Rival Oro/Plata/Bronce; los ocupa solo quien alcanza el estándar (si nadie, queda vacante).</div></div>';
   return h;
 }
 function _mdcFila(x){
   var g=_mdcFlags(x), ar=x.areas||{}, lu=+x.lugar, ti=MDC_LV[x.titulo]?x.titulo:null;
   return '<button type="button" class="md-row'+(ti?' md-tit md-rv-'+ti:'')+'" onclick="mdcFicha(\''+_mdcE(x.nip)+'\')"><span class="md-pos'+(lu>=1&&lu<=3?' p'+lu:'')+'">'+(ti?mdcMedal(ti,'ganada',26,true):_mdcE(x.lugar!=null?x.lugar:'—'))+'</span><span class="md-who"><span class="md-nm">'+(ti?_mdcE(x.lugar)+'. ':'')+_mdcE(x.nombreCompleto||x.nip)+'</span>'+
     '<span class="md-tags">'+(ti?'<span class="md-tit-tag">'+MDC_TITN[ti]+'</span>':'')+(g.top&&!ti?'<span class="md-tag t-top">Top 10</span>':'')+(g.risk?'<span class="md-tag t-risk">En riesgo</span>':'')+(g.conf?'<span class="md-tag t-conf">Por confirmar</span>':'')+(g.racha?'<span class="md-tag t-fire">'+_mdcE(_mdcRachaTxt(x))+'</span>':'')+(g.avisos?'<span class="md-tag" style="background:var(--surface2);color:var(--text2)">'+g.avisos+' aviso'+(g.avisos>1?'s':'')+'</span>':'')+'</span>'+
-    '<span class="md-meds">'+MDC_AREAS.map(function(k){ var a=ar[k[0]]||{estado:'sin_asignar'}; return '<span title="'+k[1]+': '+_mdcNivel(a.medalla)+'">'+mdcMedal(a.medalla,a.estado,20)+'</span>'; }).join('')+'</span></span>'+
+    '<span class="md-meds">'+MDC_AREAS.map(function(k){ var a=ar[k[0]]||{estado:'sin_asignar'}; return '<span title="'+k[1]+': '+_mdcLogro(a.medalla)+'">'+mdcStars(a.medalla,a.estado,22)+'</span>'; }).join('')+'</span></span>'+
     '<span class="md-side"><span class="md-pts">'+_mdcN(x.pts)+'<small>pts</small></span><span class="md-dl">'+_mdcDelta(x.delta)+'</span></span></button>';
 }
 function _mdcListaDe(L, conRivales, cat){
@@ -6082,11 +6132,12 @@ function _mdcFichaHtml(nip){
   var tot=_mdcArr(_mdc.coach.alumnos).filter(function(a){ return !_mdcHayCats()||_mdcCatDe(a)===_mdcCatDe(x); }).length;
   h+='<div class="md-box"><div class="md-fh"><span class="md-av">'+_mdcE(ini)+'</span><div style="min-width:0;flex:1"><h3>'+_mdcE(x.nombreCompleto||x.nip)+'</h3><div class="md-meta">NIP '+_mdcE(x.nip)+(x.hid?' · Harbiz '+_mdcE(x.hid):'')+'</div><div class="md-meta">Ve: «'+_mdcE(_mdcCortoAct(x))+'»'+(_mdcCatDe(x)?' · '+_mdcE(_mdcCatNom(_mdcCatDe(x))):'')+'</div>'+(MDC_LV[x.titulo]?'<span class="md-tit-tag" style="margin-top:4px">'+MDC_TITN[x.titulo]+' de su categoría</span>':'')+'</div><div class="md-big"><b>'+_mdcN(x.pts)+'</b><span>pts · lugar '+_mdcE(x.lugar!=null?x.lugar:'—')+' de '+tot+'</span><br><span>'+(x.delta!=null&&+x.delta!==0?(+x.delta>0?'▲ ':'▼ ')+Math.abs(+x.delta)+' vs. semana anterior':(x.delta!=null?'= vs. semana anterior':''))+'</span></div></div>';
   h+='<div class="md-pad" style="display:flex;flex-direction:column;gap:12px">';
-  if(x.racha&&+x.racha.n>0) h+='<span class="md-tag t-fire" style="align-self:flex-start;font-size:12px;padding:3px 10px">'+_mdcE(_mdcRachaTxt(x))+' en oro (solo motivacional)</span>';
+  if(x.racha&&+x.racha.n>0) h+='<span class="md-tag t-fire" style="align-self:flex-start;font-size:12px;padding:3px 10px">'+_mdcE(_mdcRachaTxt(x))+' con ⭐⭐⭐ (solo motivacional)</span>';
   var av=_mdcArr(x.avisosActivos);
   if(av.length) h+='<div><div class="md-ct">Avisos activos</div><div style="display:flex;flex-direction:column;gap:6px">'+av.map(function(a){ var tx=typeof a==='object'?(a.texto||a.titulo||a.detalle||a.tipo||JSON.stringify(a)):a; var nv=typeof a==='object'?String(a.nivel||a.tipo||''):''; return '<div class="md-al'+(/riesgo|n1|n2|n3|nivel/.test(nv)?' md-r':'')+'"><span>⚠️</span><span>'+(typeof a==='object'&&a.area?'<b>'+_mdcE(a.area)+':</b> ':'')+_mdcE(tx)+'</span></div>'; }).join('')+'</div></div>';
-  h+='<div><div class="md-ct">Medallas de la semana · con el dato que las justifica</div><div class="md-areas">'+MDC_AREAS.map(function(k){ var a=(x.areas||{})[k[0]]||{estado:'sin_asignar'}; var cl=a.estado==='en_riesgo'||a.estado==='perdida'?' md-r':a.estado==='por_confirmar'?' md-cf':'';
-    return '<div class="md-area'+cl+'">'+mdcMedal(a.medalla,a.estado,40)+'<div class="md-atx"><div class="md-an">'+k[1]+' '+_mdcEst(a)+(+a.racha>0?'<span class="md-tag t-fire">🔥 '+(+a.racha)+' sem.</span>':'')+'</div><div style="font-size:12px;font-weight:700;color:var(--text2)">'+_mdcNivel(a.medalla)+'</div>'+(a.valor?'<div class="md-av2">'+_mdcE(a.valor)+'</div>':'')+(a.detalle?'<div class="md-src">'+_mdcE(a.detalle)+'</div>':'')+(a.siguiente?'<div class="md-nx">'+_mdcE(a.siguiente)+'</div>':'')+'</div></div>'; }).join('')+'</div></div>';
+  h+=_mdcHitos(x);
+  h+='<div><div class="md-ct">Logros de la semana (estrellas) · con el dato que los justifica</div><div class="md-areas">'+MDC_AREAS.map(function(k){ var a=(x.areas||{})[k[0]]||{estado:'sin_asignar'}; var cl=a.estado==='en_riesgo'||a.estado==='perdida'?' md-r':a.estado==='por_confirmar'?' md-cf':'';
+    return '<div class="md-area'+cl+'">'+mdcStars(a.medalla,a.estado,40)+'<div class="md-atx"><div class="md-an">'+k[1]+' '+_mdcEst(a)+(+a.racha>0?'<span class="md-tag t-fire">🔥 '+(+a.racha)+' sem.</span>':'')+'</div><div style="font-size:12px;font-weight:700;color:var(--text2)">'+_mdcLogro(a.medalla)+'</div>'+(a.valor?'<div class="md-av2">'+_mdcE(a.valor)+'</div>':'')+(a.detalle?'<div class="md-src">'+_mdcE(a.detalle)+'</div>':'')+(a.siguiente?'<div class="md-nx">'+_mdcE(a.siguiente)+'</div>':'')+'</div></div>'; }).join('')+'</div></div>';
   h+='<div class="md-note">El avance físico (fotos y medidas) es privado: el alumno lo ve solo en su propia ficha; en el ranking, Top 10 y Mayor avance solo aparece «Nombre I.».</div></div></div>';
   return h;
 }
@@ -6135,7 +6186,7 @@ function _mdcPub(){
   var cas=_mdcAlumnos().filter(function(x){ var g=_mdcFlags(x); return g.conf; });
   h+='<div class="md-box md-pad"><div class="md-ct">Por confirmar antes del cierre · '+cas.length+'</div>';
   h+= cas.length?'<ul class="md-list">'+cas.map(function(x){ var det=[]; MDC_AREAS.forEach(function(k){ var a=(x.areas||{})[k[0]]; if(a&&a.estado==='por_confirmar') det.push(k[1]+(a.detalle?': '+a.detalle:'')); });
-    return '<li><button type="button" onclick="mdcFicha(\''+_mdcE(x.nip)+'\')">'+mdcMedal('plata','por_confirmar',26)+'<span class="md-g"><b>'+_mdcE(x.nombreCompleto)+'</b><span>'+_mdcE(det.join(' · '))+'</span></span><span aria-hidden="true">›</span></button></li>'; }).join('')+'</ul>':'<div class="md-note">Sin casos por confirmar.</div>';
+    return '<li><button type="button" onclick="mdcFicha(\''+_mdcE(x.nip)+'\')">'+mdcStars('plata','por_confirmar',26)+'<span class="md-g"><b>'+_mdcE(x.nombreCompleto)+'</b><span>'+_mdcE(det.join(' · '))+'</span></span><span aria-hidden="true">›</span></button></li>'; }).join('')+'</ul>':'<div class="md-note">Sin casos por confirmar.</div>';
   h+='</div>';
   return h;
 }
@@ -6166,18 +6217,18 @@ function _mdcRes(){
   var n=L.length, prom=n?L.reduce(function(s,x){return s+(+x.pts||0);},0)/n:0;
   var risk=L.filter(function(x){return _mdcFlags(x).risk;}), conf=L.filter(function(x){return _mdcFlags(x).conf;}).length, none=L.filter(function(x){return _mdcFlags(x).none;}).length, rach=L.filter(function(x){return _mdcFlags(x).racha;}).length;
   var t10=_mdcHayCats()?null:L.filter(function(x){return +x.lugar===10;})[0], nTit=L.filter(function(x){ return MDC_LV[x.titulo]; }).length;
-  h+='<div class="md-kpis"><div class="md-kpi"><b>'+n+'</b><span>alumnos en el medallero</span></div><div class="md-kpi"><b>'+_mdcN(prom)+'</b><span>puntos promedio</span></div><div class="md-kpi md-r"><b>'+risk.length+'</b><span>con medalla en riesgo o perdida</span></div><div class="md-kpi"><b>'+conf+'</b><span>por confirmar</span></div><div class="md-kpi"><b>'+none+'</b><span>sin ninguna medalla</span></div><div class="md-kpi"><b>'+rach+'</b><span>con racha 🔥</span></div>'+(t10?'<div class="md-kpi"><b>'+_mdcN(t10.pts)+'</b><span>corte del Top 10</span></div>':'')+(_mdcHayCats()?'<div class="md-kpi"><b>'+nTit+' de 9</b><span>lugares de honor ocupados (Rival Oro/Plata/Bronce)</span></div>':'')+'</div>';
+  h+='<div class="md-kpis"><div class="md-kpi"><b>'+n+'</b><span>alumnos en el medallero</span></div><div class="md-kpi"><b>'+_mdcN(prom)+'</b><span>puntos promedio</span></div><div class="md-kpi md-r"><b>'+risk.length+'</b><span>con logro en riesgo o no sostenido</span></div><div class="md-kpi"><b>'+conf+'</b><span>por confirmar</span></div><div class="md-kpi"><b>'+none+'</b><span>sin ningún logro</span></div><div class="md-kpi"><b>'+rach+'</b><span>con racha 🔥</span></div>'+(t10?'<div class="md-kpi"><b>'+_mdcN(t10.pts)+'</b><span>corte del Top 10</span></div>':'')+(_mdcHayCats()?'<div class="md-kpi"><b>'+nTit+' de 9</b><span>lugares de honor ocupados (Rival Oro/Plata/Bronce)</span></div>':'')+'</div>';
   // Distribución por área
   var rows=MDC_AREAS.map(function(k){ var c={oro:0,plata:0,bronce:0,z:0,t:0}; L.forEach(function(x){ var a=(x.areas||{})[k[0]]; if(!a||a.estado==='sin_asignar') return; c.t++; if(a.medalla&&a.estado!=='perdida'&&a.estado!=='por_confirmar') c[a.medalla]++; else c.z++; }); c.k=k; c.pc=c.t?Math.round((c.oro+c.plata+c.bronce)/c.t*100):null; return c; });
   var minpc=Math.min.apply(null,rows.filter(function(r){return r.pc!=null;}).map(function(r){return r.pc;}).concat([101]));
-  h+='<div class="md-box md-pad"><div class="md-ct">Medallas por área</div><div class="md-dist">'+rows.map(function(r){
+  h+='<div class="md-box md-pad"><div class="md-ct">Logros por área (estrellas)</div><div class="md-dist">'+rows.map(function(r){
     if(!r.t) return '<div class="md-drow"><span class="md-dn2">'+r.k[1]+'</span><span class="md-pc">no aplica esta semana</span></div>';
     var w=function(v){ return (v/r.t*100).toFixed(1)+'%'; };
-    return '<div class="md-drow'+(r.pc===minpc?' md-weak':'')+'"><span class="md-dn2">'+r.k[1]+(r.pc===minpc?' · la más débil':'')+'</span><span class="md-pc">'+r.pc+' % con medalla</span><div class="md-bar" role="img" aria-label="'+r.k[1]+': '+r.oro+' oro, '+r.plata+' plata, '+r.bronce+' bronce, '+r.z+' sin medalla">'+(r.oro?'<span class="g" style="width:'+w(r.oro)+'">'+r.oro+'</span>':'')+(r.plata?'<span class="s" style="width:'+w(r.plata)+'">'+r.plata+'</span>':'')+(r.bronce?'<span class="b" style="width:'+w(r.bronce)+'">'+r.bronce+'</span>':'')+(r.z?'<span class="z" style="width:'+w(r.z)+'">'+r.z+'</span>':'')+'</div></div>'; }).join('')+'</div>';
-  h+='<div class="md-legend" style="padding:10px 0 0;border:0"><span><i class="md-sw" style="display:inline-block;width:11px;height:11px;border-radius:3px;background:#D9A72E"></i>Oro</span><span><i style="display:inline-block;width:11px;height:11px;border-radius:3px;background:#A9B3BC"></i>Plata</span><span><i style="display:inline-block;width:11px;height:11px;border-radius:3px;background:#B8723E"></i>Bronce</span><span><i style="display:inline-block;width:11px;height:11px;border-radius:3px;background:#E4ECEF"></i>Sin medalla</span></div></div>';
+    return '<div class="md-drow'+(r.pc===minpc?' md-weak':'')+'"><span class="md-dn2">'+r.k[1]+(r.pc===minpc?' · la más débil':'')+'</span><span class="md-pc">'+r.pc+' % con logro</span><div class="md-bar" role="img" aria-label="'+r.k[1]+': '+r.oro+' excelente, '+r.plata+' destacado, '+r.bronce+' cumplido, '+r.z+' sin logro">'+(r.oro?'<span class="g" style="width:'+w(r.oro)+'">'+r.oro+'</span>':'')+(r.plata?'<span class="s" style="width:'+w(r.plata)+'">'+r.plata+'</span>':'')+(r.bronce?'<span class="b" style="width:'+w(r.bronce)+'">'+r.bronce+'</span>':'')+(r.z?'<span class="z" style="width:'+w(r.z)+'">'+r.z+'</span>':'')+'</div></div>'; }).join('')+'</div>';
+  h+='<div class="md-legend" style="padding:10px 0 0;border:0"><span><i class="md-sw" style="display:inline-block;width:11px;height:11px;border-radius:3px;background:#D9A72E"></i>⭐⭐⭐ Excelente</span><span><i style="display:inline-block;width:11px;height:11px;border-radius:3px;background:#A9B3BC"></i>⭐⭐ Destacado</span><span><i style="display:inline-block;width:11px;height:11px;border-radius:3px;background:#B8723E"></i>⭐ Cumplido</span><span><i style="display:inline-block;width:11px;height:11px;border-radius:3px;background:#E4ECEF"></i>Sin logro</span></div></div>';
   // A quién buscar
   h+='<div class="md-box md-pad"><div class="md-ct">A quién buscar · '+risk.length+'</div>'+(risk.length?'<ul class="md-list">'+risk.map(function(x){ var d=[]; MDC_AREAS.forEach(function(k){ var a=(x.areas||{})[k[0]]; if(a&&(a.estado==='en_riesgo'||a.estado==='perdida')) d.push(k[1]+' '+(a.estado==='perdida'?'perdida':'en riesgo')+(a.siguiente?' ('+a.siguiente+')':'')); });
-    return '<li><button type="button" onclick="mdcFicha(\''+_mdcE(x.nip)+'\')">'+mdcMedal('plata','en_riesgo',26)+'<span class="md-g"><b>'+_mdcE(x.nombreCompleto)+'</b><span>'+_mdcE(d.join(' · '))+'</span></span><span aria-hidden="true">›</span></button></li>'; }).join('')+'</ul>':'<div class="md-note">Nadie con medallas en riesgo esta semana.</div>')+'</div>';
+    return '<li><button type="button" onclick="mdcFicha(\''+_mdcE(x.nip)+'\')">'+mdcStars('plata','en_riesgo',26)+'<span class="md-g"><b>'+_mdcE(x.nombreCompleto)+'</b><span>'+_mdcE(d.join(' · '))+'</span></span><span aria-hidden="true">›</span></button></li>'; }).join('')+'</ul>':'<div class="md-note">Nadie con logros en riesgo esta semana.</div>')+'</div>';
   // Lo que mande el motor en «resumen» (texto libre)
   var extra=Object.keys(R).filter(function(k){ var v=R[k]; return v!=null&&(typeof v!=='object'||Array.isArray(v)); });
   if(extra.length) h+='<div class="md-box md-pad"><div class="md-ct">Notas del motor</div><ul class="md-list">'+extra.map(function(k){ var v=R[k]; v=Array.isArray(v)?v.map(function(z){return typeof z==='object'?JSON.stringify(z):z;}).join(' · '):v; return '<li style="padding:8px 0;font-size:13px"><b>'+_mdcE(k)+':</b> '+_mdcE(v)+'</li>'; }).join('')+'</ul></div>';
@@ -6223,7 +6274,7 @@ function _rtcHtml(){
   var antes=(!C&&!A)||(C&&C.fase==='antes')||(!C&&A&&A.fase==='antes');
   h+='<div class="md-hd" style="margin-top:2px"><div><h2 style="font-size:17px">🏆 Reto Body Art 3</h2><p>Ranking general (todos contra todos, sin rivales) · 50 composición + 30 visual + 20 constancia · solo tú ves el ranking completo</p></div><button type="button" class="md-reload" onclick="rtcCargar()">↻</button></div>';
   if(antes){
-    h+='<div class="md-box md-empty rtc-vacio"><b>El reto arranca el lunes 11 de enero de 2027.</b><br>Aquí vas a ver el ranking completo después de cada chequeo (23 ene, 6 feb, 20 feb y 6 mar), la sugerencia de Claude (puntos + dictamen + comparación de fotos) y los botones para fijar el orden final del Top 10 y validar a los ganadores.'+(C&&C.inscritos?'<br><br>Inscritos hoy: <b>'+_rtcE(C.inscritos)+'</b>.':'')+(_rtc.err?'<br><br>No se pudo leer <b>fittrack_medallero_reto</b> (revisa la conexión).':'')+'</div>';
+    h+='<div class="md-box md-empty rtc-vacio"><b>El reto arranca el lunes 11 de enero de 2027.</b><br>Aquí vas a ver el ranking completo después de cada chequeo (sáb 23 ene, 6 feb, 20 feb y vie 5 mar), la sugerencia de Claude (puntos + dictamen + comparación de fotos) y los botones para fijar el orden final del Top 10 y validar a los ganadores.'+(C&&C.inscritos?'<br><br>Inscritos hoy: <b>'+_rtcE(C.inscritos)+'</b>.':'')+(_rtc.err?'<br><br>No se pudo leer <b>fittrack_medallero_reto</b> (revisa la conexión).':'')+'</div>';
     return h;
   }
   if(!C){ return h+'<div class="md-box md-empty">Todavía no hay cálculo del reto. El motor lo publica después de cada revisión.</div>'; }
@@ -6232,13 +6283,13 @@ function _rtcHtml(){
   var hu=_rtcArr(C.huecos); if(hu.length) h+='<div class="md-box md-pad"><div class="md-ct">Pendientes del cálculo · '+hu.length+'</div><ul class="rtc-hu">'+hu.slice(0,12).map(function(x){ return '<li>'+_rtcE(x)+'</li>'; }).join('')+'</ul></div>';
   h+=_rtcRanking(C);
   h+=_rtcFotos(C);
-  if(C.fase==='final'||C.fase==='ganadores'||n>=_rtcArr(C.chequeos).length&&n) h+=_rtcGanadores(C); else h+=_rtcOrden(C);
+  if(C.fase==='final'||C.fase==='ganadores'||n>=_rtcArr(C.chequeos).length&&n){ h+=_rtcLikes(C); h+=_rtcGanadores(C); } else h+=_rtcOrden(C);
   return h;
 }
 function _rtcRanking(C){
   var R=_rtcRank(), h='<div class="md-box"><div class="md-pad" style="padding-bottom:6px"><div class="md-ct">Ranking completo · chequeo '+_rtcE(C.chequeo)+' · '+R.length+' con punto de partida</div></div><div class="rtc-tbl" role="table">';
   h+='<div class="rtc-tr rtc-th" role="row"><span>#</span><span>Participante</span><span>Comp.</span><span>Const.</span><span>Vis.</span><span>Total</span></div>';
-  h+=R.map(function(x){ var tr=x.transformacion||{}; var meds=Object.keys(tr).sort().map(function(k){ return mdcMedal(tr[k],'ganada',18); }).join('');
+  h+=R.map(function(x){ var tr=x.transformacion||{}; var meds=Object.keys(tr).sort().map(function(k){ return mdcStars(tr[k],'ganada',20); }).join('');   // D20: transformación = estrellas
     return '<div class="rtc-tr" role="row"><span class="rtc-l">'+(x.lugar!=null?_rtcE(x.lugar):'—')+'</span><span class="rtc-nm"><b>'+_rtcE(x.nombre)+'</b><small>'+_rtcE(RTC_GR[x.grupo]||x.grupo||'')+(x.delta?' · '+_mdcDelta(x.delta):'')+(x.finalOk===false?' · <span class="md-tag t-risk">final tarde</span>':'')+'</small><span class="rtc-meds">'+meds+'</span></span><span>'+_rtcN(x.composicion)+'</span><span>'+_rtcN(x.constancia)+'</span><span>'+_rtcN(x.visual)+'</span><span><b>'+_rtcN(x.total)+'</b></span></div>'; }).join('');
   h+='</div>';
   var sr=_rtcArr(C.sinRanking); if(sr.length) h+='<div class="md-pad md-note" style="border-top:1px solid var(--border2)">Fuera del ranking: '+sr.map(function(z){ return _rtcE(z.nombre)+' ('+_rtcE(z.motivo)+')'; }).join(' · ')+'</div>';
@@ -6279,6 +6330,30 @@ function rtcGuardarOrden(){
   db.ref('fittrack_medallero_reto/final/c'+n).set(v).then(function(){ _rtc.guardando=false; _rtc.fin=_rtc.fin||{}; _rtc.fin['c'+n]=v; mdcRender(); try{ showToast('✓ Orden final guardado'); }catch(e){} })
     .catch(function(){ _rtc.guardando=false; mdcRender(); try{ showToast('No se pudo guardar. Revisa la conexión.'); }catch(e){} });
 }
+// R17 (Noé 8 nov 20:05–20:2x): likes de Instagram de los 5 finalistas (vie 5 y sáb 6 mar, corte 23:59) = 10 de 100 pts del
+// final (40 composición + 30 visual + 20 constancia + 10 likes; 10/8/6/4/2 por lugar en likes). Solo el coach los captura:
+// fittrack_medallero_reto/final/likes = {likes:{<id>: n}, por, en}. Sin likes no se publican ganadores.
+function _rtcLikes(C){
+  var I=C.instagram||{}, F=_rtcArr(I.finalistas), h='<div class="md-box md-pad"><div class="md-ct">📸 Likes de Instagram · 5 finalistas</div>';
+  if(!F.length) return h+'<div class="md-note">Los finalistas salen del chequeo final (viernes 5 de marzo).</div></div>';
+  var L=((_rtc.fin||{}).likes||{}).likes||{};
+  h+='<div class="md-note" style="margin-bottom:8px">Captura los likes de la foto de los 5 finalistas al corte del <b>sábado 6 de marzo a las 23:59</b>. Reparto: 10/8/6/4/2 pts por lugar en likes (empate = promedio). Calificación final: 40 composición + 30 visual + 20 constancia + 10 likes.</div>';
+  h+='<div class="rtc-likes">'+F.map(function(z){ var v=L[z.id]!=null?L[z.id]:(z.likes!=null?z.likes:'');
+    return '<label><span><b>'+_rtcE(z.nombre)+'</b><small>'+(z.ptsLikes!=null?_rtcN(z.ptsLikes)+' pts likes · final '+_rtcN(z.totalFinal):'base '+_rtcN(z.base)+' pts')+'</small></span><input type="number" inputmode="numeric" min="0" step="1" id="rtc-lk-'+_rtcE(z.id)+'" value="'+_rtcE(v)+'" aria-label="Likes de '+_rtcE(z.nombre)+'"></label>'; }).join('')+'</div>';
+  h+='<button type="button" class="md-btn" id="rtc-guardar-likes" onclick="rtcGuardarLikes()"'+(_rtc.guardando?' disabled':'')+'>Guardar likes</button>';
+  var fl=(_rtc.fin||{}).likes; if(fl&&fl.en) h+='<div class="md-note" style="margin-top:6px">Guardados '+_rtcE(_mdcFH(fl.en))+'. El motor los usa en la siguiente revisión.</div>';
+  return h+'</div>';
+}
+function rtcGuardarLikes(){
+  var F=_rtcArr(((_rtc.coach||{}).instagram||{}).finalistas); if(_rtc.guardando||!F.length) return;
+  var L={}, bad=false; F.forEach(function(z){ var e=document.getElementById('rtc-lk-'+z.id); var raw=e?String(e.value).trim():''; var n=Number(raw); if(raw===''||isNaN(n)||n<0||Math.floor(n)!==n) bad=true; L[z.id]=n; });
+  if(bad){ window.alert('Escribe los likes de los 5 finalistas (números enteros, 0 o más).'); return; }
+  if(!window.confirm('¿Guardar los likes de Instagram?\n\n'+F.map(function(z){ return z.nombre+': '+L[z.id]; }).join('\n')+'\n\nCuentan el 10 % de la calificación final (10/8/6/4/2 por lugar en likes).')) return;
+  var v={likes:L, por:'Noé', en:new Date().toISOString()};
+  _rtc.guardando=true; mdcRender();
+  db.ref('fittrack_medallero_reto/final/likes').set(v).then(function(){ _rtc.guardando=false; _rtc.fin=_rtc.fin||{}; _rtc.fin.likes=v; mdcRender(); try{ showToast('✓ Likes guardados'); }catch(e){} })
+    .catch(function(){ _rtc.guardando=false; mdcRender(); try{ showToast('No se pudo guardar. Revisa la conexión.'); }catch(e){} });
+}
 function _rtcGanadores(C){
   var S=C.sugerencia||{}, T5=_rtcArr(S.top5), G=_rtc.gv, h='<div class="md-box md-pad"><div class="md-ct">Sugerencia de ganadores (puntos + dictamen + fotos)</div>';
   if(!T5.length) return h+'<div class="md-note">Aún no hay Top 5 calificado.</div></div>';
@@ -6286,7 +6361,7 @@ function _rtcGanadores(C){
     return '<li><span class="rtc-l">'+_rtcE(z.lugarPorPuntos)+'</span><span class="rtc-nm"><b>'+_rtcE(z.nombre)+'</b><small>'+_rtcN(z.total)+' pts · comp. '+_rtcN(z.composicion)+' · const. '+_rtcN(z.constancia)+' · visual '+_rtcN(z.visual)+(z.puntoFuerte?' · fuerte en '+_rtcE(z.puntoFuerte):'')+'</small><small>Fotos: '+(f.puntaje!=null?_rtcN(f.puntaje)+'/100 · '+_rtcE(f.nota||''):(f.estado==='sin_fotos'?'sin fotos comparables':'pendiente'))+'</small></span></li>'; }).join('')+'</ol>';
   _rtcArr(S.notas).forEach(function(x){ h+='<div class="rtc-dest">💡 '+_rtcE(x)+'</div>'; });
   if(G){
-    h+='<div class="rtc-ok"><b>✓ Ganadores validados</b> '+_rtcE(_mdcFH(G.en))+'<ol>'+_rtcArr(G.lugares).map(function(g){ return '<li>'+_rtcE(g.lugar)+'.º '+_rtcE(g.nombre)+'</li>'; }).join('')+'</ol><div class="md-note">Se publican a los participantes el domingo 7 de marzo (en la revisión siguiente a la validación).</div></div>';
+    h+='<div class="rtc-ok"><b>✓ Ganadores validados</b> '+_rtcE(_mdcFH(G.en))+'<ol>'+_rtcArr(G.lugares).map(function(g){ return '<li>'+_rtcE(g.lugar)+'.º '+_rtcE(g.nombre)+'</li>'; }).join('')+'</ol><div class="md-note">Se publican a los participantes el domingo 7 de marzo (en la revisión siguiente a la validación), siempre que ya estén los likes de Instagram.</div></div>';
     return h+'</div>';
   }
   if(!_rtc.gan){ var p=_rtcArr(S.propuesta); _rtc.gan=p.map(function(z){ return z.id; }); }
