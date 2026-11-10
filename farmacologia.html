@@ -469,7 +469,7 @@ function getCurrentWeek(cy){
   const totalDays=total*7;
   const wk=Math.min(Math.max(Math.floor(diffDays/7)+1,1),total);
   const pct=Math.max(Math.min(Math.round(((diffDays+1)/totalDays)*100),100),0);
-  return{wk,total,pct,finished:wk>=total};
+  return{wk,total,pct,finished:diffDays>=totalDays};   // FARMA-428 (Noé 9 nov): terminado al ACABAR la última semana (antes: al entrar a ella); en la última semana aún se reportan efectos
 }
 
 let nipIn='',me=null,curWk=1,curCid=null,fxState={},customFxList=[],pendingFx={};
@@ -965,19 +965,44 @@ updDots();
 </script>
 
 <script>
-// ── Pago de seguimiento (cada 8 semanas desde la semana 1 del ciclo activo) ──
+// ── Pago de seguimiento (regla 183, FARMA-428 · Noé 9 nov 2026) ──
+// Parcialidades en las semanas W = 9, 17, 25… mientras W < duración (igual que FitTrack y el panel). Una semana W ya no se
+// cobra si fittrack_farma/<nip>/pagos/<W> tiene pagado:true o noContinua:true (lo marca Noé en el panel o en FitTrack Coach).
+// Antes esta tarjeta decía «Esta semana te toca tu pago» aunque Noé ya lo hubiera marcado como pagado. Nunca muestra cantidades.
+var _pagos183={nip:null,v:null,t:0,cargando:false};
+function _hoyMx183(){ try{ return new Date().toLocaleDateString('en-CA',{timeZone:'America/Mexico_City'}); }catch(e){ return new Date().toISOString().slice(0,10); } }
+function _sumaDias183(iso,n){ var d=new Date(iso+'T12:00:00Z'); d.setUTCDate(d.getUTCDate()+n); return d.toISOString().slice(0,10); }
+function _cargaPagos183(nip){
+  if(_pagos183.cargando || (_pagos183.nip===nip && Date.now()-_pagos183.t<60000)) return;
+  _pagos183.cargando=true;
+  fetch('https://fittrack-pro-1ef09-default-rtdb.firebaseio.com/fittrack_farma/'+encodeURIComponent(nip)+'/pagos.json',{cache:'no-store'})
+    .then(function(r){ return r.ok?r.json():null; })
+    .then(function(v){ _pagos183={nip:nip,v:v||{},t:Date.now(),cargando:false}; try{renderPago();}catch(e){} })
+    .catch(function(){ _pagos183.cargando=false; _pagos183.t=Date.now(); _pagos183.nip=nip; _pagos183.err=true; try{renderPago();}catch(e){} });
+}
 function renderPago(){
   var card=document.getElementById('pago-card'); if(!card||!me) return;
   var cy=getActiveCycle(me.id), wi=getCurrentWeek(cy);
   if(!cy||!wi||wi.finished||!cy.startDate){ card.style.display='none'; return; }
-  var total=wi.total, wk=wi.wk, start=parseLocalDate(cy.startDate);
-  var fmt=function(n){ var d=new Date(start.getTime()+(n-1)*7*864e5); return d.toLocaleDateString('es-MX',{day:'numeric',month:'long'}); };
+  var nip=String(me.nip||''); _cargaPagos183(nip);
+  var P=(_pagos183.nip===nip && _pagos183.v)||null;
   var main=document.getElementById('pago-main'), sub=document.getElementById('pago-sub');
+  var total=wi.total, ini0=String(cy.startDate).slice(0,10), hoy=_hoyMx183();
+  var fmt=function(iso){ return new Date(iso+'T12:00:00Z').toLocaleDateString('es-MX',{day:'numeric',month:'long',timeZone:'UTC'}); };
+  var cu=[]; for(var W=9; W<total; W+=8){ var a=_sumaDias183(ini0,(W-1)*7); cu.push({sem:W,ini:a,fin:_sumaDias183(a,6)}); }
+  var cubierta=function(q){ var x=P&&P[q.sem]; return !!(x&&(x.pagado||x.noContinua)); };
   card.style.display='block';
-  if(wk>1 && (wk-1)%8===0){ main.textContent='Esta semana te toca tu pago'; main.style.color='var(--warning)'; sub.textContent='Semana '+wk+' de tu ciclo (desde el '+fmt(wk)+').'; return; }
-  var next=wk+(8-((wk-1)%8));
-  if(next<=total){ main.textContent='Próximo pago: semana '+next; main.style.color=''; sub.textContent='A partir del '+fmt(next)+'.'; }
-  else { main.textContent='Sin pagos pendientes'; main.style.color=''; sub.textContent='Tu ciclo termina antes de la siguiente semana de pago.'; }
+  if(!P && _pagos183.err){ main.textContent='Pago de seguimiento'; main.style.color=''; sub.textContent='No pude revisar tu pago en este momento; vuelve a abrir esta sección más tarde.'; return; }
+  if(!P){ main.textContent='Revisando tu pago…'; main.style.color=''; sub.textContent=''; return; }   // sin datos todavía: no decir «te toca» a ciegas
+  var vencida=cu.filter(function(q){ return hoy>q.fin && !cubierta(q); })[0];
+  var actual=cu.filter(function(q){ return hoy>=q.ini && hoy<=q.fin; })[0];
+  if(vencida){ main.textContent='Tu pago de la semana '+vencida.sem+' está pendiente'; main.style.color='var(--danger, #e05a5a)'; sub.textContent='Era del '+fmt(vencida.ini)+' al '+fmt(vencida.fin)+'. Si ya lo hiciste, avísale a tu coach.'; return; }
+  if(actual && !cubierta(actual)){ main.textContent='Esta semana te toca tu pago'; main.style.color='var(--warning)'; sub.textContent='Semana '+actual.sem+' de tu ciclo (del '+fmt(actual.ini)+' al '+fmt(actual.fin)+').'; return; }
+  var prox=cu.filter(function(q){ return q.ini>hoy && !cubierta(q); })[0];
+  if(actual && cubierta(actual)){ main.textContent='✅ Pago de esta semana al corriente'; main.style.color='var(--success)'; sub.textContent=prox?('Próximo pago: semana '+prox.sem+', a partir del '+fmt(prox.ini)+'.'):'No tienes más pagos en este ciclo.'; return; }
+  if(prox){ var dias=Math.round((new Date(prox.ini+'T12:00:00Z')-new Date(hoy+'T12:00:00Z'))/864e5);
+    main.textContent=dias<=3?'Tu pago se acerca: semana '+prox.sem:'Próximo pago: semana '+prox.sem; main.style.color=dias<=3?'var(--warning)':''; sub.textContent='A partir del '+fmt(prox.ini)+'.'; return; }
+  main.textContent='Sin pagos pendientes'; main.style.color=''; sub.textContent=cu.length?'Tus pagos de este ciclo están al corriente.':'Tu ciclo termina antes de la semana de pago.';
 }
 (function(){
   var _rwb=renderWeekBanner;
