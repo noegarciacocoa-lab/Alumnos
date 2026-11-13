@@ -5563,6 +5563,60 @@ function _recalcAprobHarbiz(nombre){
   var a = ALUMNOS_DATA[nombre];
   if(recalcAprobRevision(nombre) && a.pctAprob < 100) a.notificado100 = false;
 }
+// REV-SYNC 1311 (Noé 13 nov): foto «antes» y conservación de revisión al aplicar una rutina de Harbiz
+// (misma lógica que motor/rutinas_harbiz.js __conservarRevisionCalc; prueba work/plan_f3/pruebas/test_revsync_app.js).
+function _rsVal(o, d, i){ var x = o && o[d]; var v = x ? x[i] : undefined; return (v === undefined || v === null) ? null : v; }
+function _rsMask(a, rut, d){
+  var l = _listaDia((rut||{})[d]);
+  if(esSinRevisionA(a)) return l.map(function(){ return false; });
+  if(!enRevisionDefinida(a)) return l.map(function(){ return true; });
+  var c = {}; _listaDia(a.enRevision[d]).forEach(function(n){ var k=_normEj(n); c[k]=(c[k]||0)+1; });
+  return l.map(function(n){ var k=_normEj(n); if(c[k]>0){ c[k]--; return true; } return false; });
+}
+function _rsFoto(a, vieja){
+  if(!a || esSinRevisionA(a)) return null;
+  var pool = [];
+  DIAS_RUTINA.forEach(function(d){ var m = _rsMask(a, vieja, d);
+    _listaDia(vieja[d]).forEach(function(n, i){ pool.push({d:d, i:i, n:n, k:_normEj(n), rev:m[i], ap:_rsVal(a.aprobaciones,d,i), as:_rsVal(a.aprobSemana,d,i), as50:_rsVal(a.aprobSemana50,d,i), usado:false}); }); });
+  return pool;
+}
+function _rsPon(a, campo, d, j, v){
+  a[campo] = a[campo] || {};
+  if(Array.isArray(a[campo][d])) a[campo][d] = Object.assign({}, a[campo][d]);
+  a[campo][d] = a[campo][d] || {};
+  a[campo][d][j] = v;
+}
+function _rsConserva(a, nueva, pool, nombre){
+  var res = {agregados:[], restaurados:[]};
+  if(!pool || esSinRevisionA(a)) return res;
+  var par = {};
+  DIAS_RUTINA.forEach(function(d){ _listaDia(nueva[d]).forEach(function(n, j){ var k=_normEj(n);
+    var p = pool.find(function(x){ return !x.usado && x.d===d && x.k===k; }); if(p){ p.usado = true; par[d+'|'+j] = p; } }); });
+  DIAS_RUTINA.forEach(function(d){ _listaDia(nueva[d]).forEach(function(n, j){ if(par[d+'|'+j]) return; var k=_normEj(n);
+    var c = pool.filter(function(x){ return !x.usado && x.k===k; }).sort(function(x, y){ return (y.ap===null?-1:Number(y.ap)) - (x.ap===null?-1:Number(x.ap)); })[0];
+    if(c){ c.usado = true; par[d+'|'+j] = c; } }); });
+  var def = enRevisionDefinida(a);
+  DIAS_RUTINA.forEach(function(d){
+    var m = _rsMask(a, nueva, d);
+    _listaDia(nueva[d]).forEach(function(n, j){
+      var p = par[d+'|'+j], debe = p ? p.rev : true;
+      if(def && debe && !m[j]){
+        var l = _listaDia(a.enRevision[d]); l.push(n); a.enRevision[d] = l; m[j] = true;
+        res.agregados.push({d:d, j:j, n:n, motivo: p ? 'estaba en revisión' : 'nuevo'});
+        if(_rsVal(a.aprobaciones, d, j) === null && !(p && p.ap !== null)) _rsPon(a, 'aprobaciones', d, j, 0);
+      }
+      if(p && m[j]) [['aprobaciones','ap'], ['aprobSemana','as'], ['aprobSemana50','as50']].forEach(function(cx){
+        if(p[cx[1]] !== null && _rsVal(a[cx[0]], d, j) === null){ _rsPon(a, cx[0], d, j, p[cx[1]]); res.restaurados.push({d:d, j:j, n:n, campo:cx[0], valor:p[cx[1]]}); }
+      });
+    });
+  });
+  if(res.agregados.length || res.restaurados.length){
+    console.log('[REV-SYNC] '+nombre+' · en revisión: '+res.agregados.map(function(x){ return x.n+' ('+x.d+', '+x.motivo+')'; }).join(', ')+
+      (res.restaurados.length ? ' · valores conservados: '+res.restaurados.length : ''));
+    try{ (window.__REVSYNC_LOG = window.__REVSYNC_LOG || []).push({nombre:nombre, ts:Date.now(), agregados:res.agregados, restaurados:res.restaurados}); }catch(e){}
+  }
+  return res;
+}
 function aplicarRutinasHarbiz(){
   if(typeof SYNC_READY !== 'undefined' && !SYNC_READY) return;
   var H = PROP.harbiz || {}, lista = H.rutinas || {}, oks = H.rutinas_ok || {};
@@ -5611,11 +5665,9 @@ function aplicarRutinasHarbiz(){
       var cambios = 0;
       previo[nip] = {nombre:nombre, hash:a.rutinaHarbizHash, ts:a.rutinaHarbizTs};
       if(JSON.stringify(vieja) !== JSON.stringify(nueva)){
-        // Revisión real sin enRevision: los ejercicios actuales (los que el coach
-        // eligió evaluar) quedan "en revisión"; lo nuevo de Harbiz es solo referencia.
-        if(!esSinRevisionA(a) && !enRevisionDefinida(a) && !_rutinaVacia(vieja)){
-          var _e0 = {}; DIAS_RUTINA.forEach(function(d){ _e0[d] = vieja[d].slice(); }); a.enRevision = _e0;
-        }
+        // REV-SYNC 1311: sin enRevision ({_v:0} = todos en revisión) se queda así; antes se convertía en la
+        // lista VIEJA y lo nuevo de Harbiz quedaba fuera de revisión (caso 6245). Foto «antes» para conservar marcas.
+        var _rsAntes = _rsFoto(a, vieja);
         var ap = {}, as = {}, as50 = {}, info = {}, enRevMov = [], logMov = [];
         DIAS_RUTINA.forEach(function(d){
           ap[d] = {}; as[d] = {}; as50[d] = {}; info[d] = {sinPar:[], sobrantes:[]};
@@ -5644,6 +5696,7 @@ function aplicarRutinasHarbiz(){
             a.enRevision[d] = _listaDia(a.enRevision[d]).filter(function(n){ var k=_normEj(n); if(cnt[k]>0){ cnt[k]--; return true; } return false; });
           });
         }
+        _rsConserva(a, nueva, _rsAntes, nombre);   // REV-SYNC 1311: conserva marcas/aprobaciones y mete en revisión lo nuevo
         // Sin revisión: los campos de aprobación (null/'noaplica') no se tocan.
         if(!esSinRevisionA(a)) _recalcAprobHarbiz(nombre);
         // Historial (reporte): solo revisiones reales y solo si cambió la lista
@@ -9573,6 +9626,21 @@ window.FA={
 .pse-acc button{flex:1;border-radius:10px;padding:8px 6px;font:700 12.5px 'DM Sans',sans-serif;cursor:pointer;border:1.5px solid var(--teal);background:transparent;color:var(--teal)}
 .pse-acc button.pri{background:linear-gradient(135deg,var(--teal),var(--teal-2));color:#fff;border-color:transparent}
 .pse-nota{font-size:11.5px;color:var(--text2);background:var(--surface2);border-radius:10px;padding:8px 10px;margin-bottom:10px;line-height:1.45}
+.pse-acd{margin-top:8px;border-top:1px dashed var(--border2);padding-top:8px}
+.pse-acd-t{font:700 12px 'DM Sans',sans-serif;color:var(--text2);margin:4px 0}
+.pse-m{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--border2);cursor:pointer}
+.pse-m.ig{opacity:.55}
+.pse-m input{margin-top:3px;flex:0 0 auto}
+.pse-mn{flex:1;min-width:0;font-size:12px;line-height:1.4;overflow-wrap:anywhere}
+.pse-mn b{display:block;font-size:12.5px}
+.pse-mn span{color:var(--text2)}
+.pse-mv{flex:0 0 auto;font:700 13px 'Space Grotesk',sans-serif;white-space:nowrap}
+.pse-rend{font-size:12.5px;margin:8px 0 4px;color:var(--text)}
+.pse-acc button.neg{border-color:#e5a5a0;color:var(--red)}
+.pse-desc{margin-top:8px;background:#fff5f4;border:1px solid #f0b4ae;border-radius:10px;padding:8px}
+.pse-desc label{font-size:11.5px;font-weight:700;color:var(--text2)}
+.pse-desc input{width:100%;margin-top:4px;background:var(--surface);border:1.5px solid var(--border2);border-radius:8px;padding:8px;font:13px 'DM Sans',sans-serif}
+.pse-it.recien{box-shadow:0 0 0 2px var(--green-light)}
 </style>
 <script>
 // ══ SECCIÓN «PROPUESTAS DE EVALUACIÓN» (Noé 13 nov 10:29) ═════════════════════════════════════════════════════════════
@@ -9583,7 +9651,12 @@ window.FA={
 // Esta pantalla NO escribe nada; lo único que escribe la app sigue siendo lo de siempre (aplicar/descartar en Evaluar).
 (function(){
   var FRESCA_DIAS = 7;   // una propuesta «lista» con más de 7 días se marca vieja (se hizo con datos que ya cambiaron)
-  var ST = {est:'todas', nivel:'todos', orden:'chequeo', q:'', pronto:false, inact:false, prox:null, proxEn:0};
+  var ST = {est:'todas', nivel:'todos', orden:'chequeo', q:'', pronto:false, inact:false, prox:null, proxEn:0, abierto:null, recien:{}, visitada:false, scroll:0, desc:null};
+  // 11:14: se conserva filtro, búsqueda, tarjeta abierta y posición al salir y volver (variable + sessionStorage)
+  var GUARDA=['est','nivel','orden','q','pronto','inact','abierto','scroll','visitada'];
+  try{ var _g=JSON.parse(sessionStorage.getItem('pse_estado')||'null'); if(_g) GUARDA.forEach(function(k){ if(_g[k]!==undefined) ST[k]=_g[k]; }); }catch(x){}
+  function guardar(){ try{ var o={}; GUARDA.forEach(function(k){ o[k]=ST[k]; }); sessionStorage.setItem('pse_estado',JSON.stringify(o)); }catch(x){} }
+  function contenido(){ return document.querySelector('.content'); }
   // Regla 456 (lista viva = fuente de verdad): archivados, bajas y pausas NO cuentan en el aviso ni en la lista principal.
   function inactivo(a){ var x=String(estadoDe(a)||'').toLowerCase(), s=String((a&&a.status)||'').toLowerCase(); return x==='archivado'||x==='pausa'||x==='baja'||s==='baja'||s==='pausa'; }
   window.alumnoInactivo456=inactivo;
@@ -9605,6 +9678,7 @@ window.FA={
       else if(ev&&(ev.estado==='aplicada'||ev.estado==='descartada')){ cls='decidida'; lbl=ev.estado==='aplicada'?'Aplicada':'Descartada'; ts=ev.ts||null; }
       else if(ev){ cls='decidida'; lbl=String(ev.estado||'—'); ts=ev.ts||null; }
       else { cls='sin'; lbl='Sin propuesta'; }
+      if(ST.recien[nip]){ cls='decidida'; lbl=ST.recien[nip]==='aprobada'?'✅ Aprobada ahora':'🗑️ Descartada ahora'; }
       var px=PX[nip]||null, pf=px&&px.fecha&&px.estado!=='cerrado'?px.fecha:null;
       var m=(ev&&ev.metricas)||{}, nc=Object.keys(m).filter(function(k){ return m[k]&&m[k].propuesta!==m[k].actual; }).length;
       return {nombre:n,a:a,nip:nip,ev:ev,sol:sol,cls:cls,lbl:lbl,ts:ts,dias:dias(ts),ag:ag,prox:pf,proxEst:px&&px.estado,proxCerr:px&&px.estado==='cerrado'?px.fecha:null,dProx:difDias(pf),nc:nc,nn:((ev&&ev.notas)||[]).length,nivel:a.nivel||'—',pausa:estadoDe(a)==='pausa',arch:inactivo(a),est456:estadoDe(a)};
@@ -9613,6 +9687,7 @@ window.FA={
   function filtrar(F){ var q=String(ST.q||'').toLowerCase().trim();
     return F.filter(function(r){
       if(!!r.arch!==!!ST.inact) return false;
+      if(ST.recien[r.nip]&&(!q||r.nombre.toLowerCase().indexOf(q)>=0||r.nip.indexOf(q)>=0)) return true;   // la recién decidida se queda en su lugar, marcada
       if(ST.est==='listas'&&!(r.cls==='fresca'||r.cls==='vieja')) return false;
       if(['fresca','vieja','cola','sin'].indexOf(ST.est)>=0&&r.cls!==ST.est) return false;
       if(ST.est==='decidida'&&r.cls!=='decidida') return false;
@@ -9624,18 +9699,33 @@ window.FA={
       if(ST.orden==='actualizada') return (y.ts||0)-(x.ts||0)||x.nombre.localeCompare(y.nombre,'es');
       if(ST.orden==='antigua') return ((x.ts||9e15)-(y.ts||9e15))||x.nombre.localeCompare(y.nombre,'es');
       var a=x.dProx==null?9999:x.dProx, b=y.dProx==null?9999:y.dProx; return a-b||x.nombre.localeCompare(y.nombre,'es'); }); }
+  function fuentesClaras(r){ var f=String((r.ev&&r.ev.fuentes)||''), wa=/whats/i.test(f)&&!/whats[^·;|]*(no le|sin leer|pendiente)/i.test(f)&&r.dProx!=null&&r.dProx<=7;
+    return '<span style="color:var(--text3)">WhatsApp: '+(wa?'revisado':'se revisa 7 días antes del chequeo')+' · Formulario, fotos y medidas: llegan con el chequeo</span>'; }
+  function acordeon(r){ var ev=propEval(r.nip)||r.ev||{}, M=ev.metricas||{}, N=ev.notas||[], a=r.a, act=a.metricas||{};
+    var keys=['ef','es','in','fu','re','rm','ca','tc','ud'], NM=(typeof METRICAS_NOMBRES!=='undefined'&&METRICAS_NOMBRES)||{};
+    var h='<div class="pse-acd"><div class="pse-acd-t">Métricas propuestas</div>'+keys.map(function(k){ var x=M[k]||{actual:act[k]||0,propuesta:act[k]||0,motivo:'Sin evidencia nueva.'}; var ig=x.actual===x.propuesta, col=x.propuesta>x.actual?'var(--green)':x.propuesta<x.actual?'var(--red)':'var(--text3)';
+      return '<label class="pse-m'+(ig?' ig':'')+'"><input type="checkbox" class="pse-cm" data-k="'+k+'" data-v="'+e(x.propuesta)+'"'+(ig?' disabled':' checked')+'><span class="pse-mn"><b>'+e(NM[k]||k)+'</b><span>'+e(x.motivo||'')+'</span></span><span class="pse-mv" style="color:'+col+'">'+e(x.actual)+' → '+e(x.propuesta)+'</span></label>'; }).join('')+
+      '<div class="pse-rend" data-rend="'+e(r.nip)+'">'+rendTxt(r.nip)+'</div>'+
+      (N.length?'<div class="pse-acd-t">Notas propuestas</div>'+N.map(function(n,i){ return '<label class="pse-m"><input type="checkbox" class="pse-cn" data-i="'+i+'" checked><span class="pse-mn"><b style="color:'+(n.tipo==='positive'?'var(--green)':'var(--red)')+'">'+e(n.etiqueta||'')+(n.fecha?' · '+e(n.fecha):'')+'</b><span style="color:var(--text)">'+e(n.txt||'')+'</span></span></label>'; }).join(''):'<div class="pse-sub" style="margin:4px 0">Sin notas propuestas.</div>')+
+      (ST.desc===r.nip?'<div class="pse-desc"><label>Motivo del descarte (opcional)</label><input type="text" id="pse-dmot" placeholder="p. ej. la reviso en el chequeo"><div class="pse-acc"><button type="button" class="neg" data-descartar-ok="'+e(r.nip)+'">🗑️ Confirmar descarte</button><button type="button" data-descartar-no="1">Cancelar</button></div></div>':'')+
+      '<div class="pse-acc"><button type="button" class="pri" data-aprobar="'+e(r.nip)+'">✅ Aprobar</button>'+(window.PSE_EDIT?'<button type="button" data-ped="'+e(r.nip)+'">✏️ Editar</button>':'')+'<button type="button" class="neg" data-descartar="'+e(r.nip)+'">🗑️ Descartar</button></div>'+
+      '<div class="pse-sub" style="margin-top:6px">Aprobar aplica lo marcado igual que «Revisar propuesta» dentro del alumno (métricas y notas en su evaluación).</div></div>';
+    return h; }
+  function rendTxt(nip){ try{ var n=nombrePorNip(nip), a=ALUMNOS_DATA[n], m=JSON.parse(JSON.stringify(a.metricas||{})); var box=document.querySelector('[data-acdnip="'+nip+'"]');
+      var ev=propEval(nip)||{}, M=ev.metricas||{}; Object.keys(M).forEach(function(k){ var c=box&&box.querySelector('.pse-cm[data-k="'+k+'"]'); if(M[k].propuesta!==M[k].actual&&(!c||c.checked)) m[k]=M[k].propuesta; });
+      var antes=(a.pctRend!==undefined&&a.pctRend!==null)?a.pctRend:calcRendFromMetricas(a.metricas), desp=calcRendFromMetricas(m); return 'Rendimiento: '+antes+'% → <b>'+desp+'%</b> ('+TIPO_REND_META[tipoRendNivel(desp,a.nivel)].short+')'; }catch(x){ return ''; } }
   function fila(r){
     var ch=r.prox?('<span class="pse-chq'+(r.dProx!=null&&r.dProx<=2?' pronto':(r.dProx!=null&&r.dProx<=7?' semana':''))+'">📅 Chequeo '+e(fFecha(r.prox))+(r.dProx!=null?(r.dProx===0?' (hoy)':r.dProx<0?' (hace '+(-r.dProx)+' d)':' (en '+r.dProx+' d)'):'')+'</span>'):(r.proxCerr?'<span class="pse-chq">Último chequeo '+e(fFecha(r.proxCerr))+' (cerrado)</span>':'<span class="pse-chq">Sin chequeo programado</span>');
     var det='';
-    if(r.ev){ det+='Actualizada <b>'+e(fFecha(r.ev.ts,1))+'</b>'+(r.dias!=null?' · hace '+r.dias+' día'+(r.dias===1?'':'s'):'')+(r.ev.periodo?' · periodo '+e(r.ev.periodo):'');
-      if(r.cls==='fresca'||r.cls==='vieja') det+='<br>'+r.nc+' métrica'+(r.nc===1?'':'s')+' con cambio · '+r.nn+' nota'+(r.nn===1?'':'s')+(r.ev.fuentes?' · '+e(r.ev.fuentes):'');
+    if(r.ev){ det+='Actualizada <b>'+e(fFecha(r.ev.ts,1))+'</b>'+(r.dias!=null?(r.dias===0?' (hoy)':' (hace '+r.dias+' día'+(r.dias===1?'':'s')+')'):'')+(r.ev.periodo?' · periodo '+e(String(r.ev.periodo).replace(/ 20\d\d$/,'')):'');
+      if(r.cls==='fresca'||r.cls==='vieja'||ST.recien[r.nip]) det+=' · '+r.nc+' métrica'+(r.nc===1?'':'s')+' con cambio · '+r.nn+' nota'+(r.nn===1?'':'s')+'<br>'+fuentesClaras(r);
       if(r.ev.decididoEn) det+='<br>'+(r.ev.estado==='descartada'?'Descartada':'Aplicada')+' el '+e(fFecha(r.ev.decididoEn,1));
       if(r.cls==='vieja') det+='<br><span style="color:#9a5b00">⚠️ Tiene más de '+FRESCA_DIAS+' días: se armó con datos que ya cambiaron; conviene pedir una nueva antes de aplicarla.</span>'; }
     if(r.sol&&r.cls==='cola') det+=(det?'<br>':'')+'Solicitada '+e(fFecha(r.sol.ts,1))+' · Claude la revisa a las '+e(proxRevision());
     if(r.ag) det+=(det?'<br>':'')+'<span style="color:var(--text3)">Autogestión: no lleva evaluación.</span>';
-    return '<div class="pse-it '+r.cls+'"><div class="pse-top"><div><div class="pse-nom">'+e(r.nombre)+'</div><div class="pse-sub">NIP '+e(r.nip)+' · '+e(r.nivel)+(r.arch?' · <b style="color:var(--red)">'+e(String(r.est456==='activo'?r.a.status:r.est456).toUpperCase())+'</b> (fuera del conteo, regla 456)':'')+(r.a.pctRend!=null?' · rendimiento '+e(r.a.pctRend)+' %':'')+'</div></div><span class="pse-b '+r.cls+'">'+e(r.lbl)+'</span></div>'+
+    return '<div class="pse-it '+r.cls+(ST.recien[r.nip]?' recien':'')+'" data-acdnip="'+e(r.nip)+'"><div class="pse-top"><div><div class="pse-nom">'+e(r.nombre)+'</div><div class="pse-sub">NIP '+e(r.nip)+' · '+e(r.nivel)+(r.arch?' · <b style="color:var(--red)">'+e(String(r.est456==='activo'?r.a.status:r.est456).toUpperCase())+'</b> (fuera del conteo, regla 456)':'')+(r.a.pctRend!=null?' · rendimiento '+e(r.a.pctRend)+' %':'')+'</div></div><span class="pse-b '+r.cls+'">'+e(r.lbl)+'</span></div>'+
       '<div class="pse-det">'+ch+(det?'<div style="margin-top:4px">'+det+'</div>':'')+'</div>'+
-      '<div class="pse-acc">'+((r.cls==='fresca'||r.cls==='vieja')&&!r.ag?'<button type="button" class="pri" data-rev="'+e(r.nombre)+'">Revisar propuesta</button>':(r.ag?'':'<button type="button" data-rev="'+e(r.nombre)+'">Evaluar</button>'))+(window.PSE_EDIT&&(r.cls==='fresca'||r.cls==='vieja')&&!r.ag?'<button type="button" data-ped="'+e(r.nip)+'">✏️ Editar</button>':'')+'<button type="button" data-perfil="'+e(r.nombre)+'">Perfil</button></div>'+(window.PSE_EDIT?PSE_EDIT.html(r):'')+'</div>';
+      '<div class="pse-acc">'+((r.cls==='fresca'||r.cls==='vieja')&&!r.ag&&!ST.recien[r.nip]?'<button type="button" class="'+(ST.abierto===r.nip?'':'pri')+'" data-acd="'+e(r.nip)+'">'+(ST.abierto===r.nip?'Cerrar propuesta ▴':'Revisar propuesta ▾')+'</button>':(r.ag?'':'<button type="button" data-rev="'+e(r.nombre)+'">Evaluar</button>'))+'<button type="button" data-perfil="'+e(r.nombre)+'">Perfil</button></div>'+(ST.abierto===r.nip&&(r.cls==='fresca'||r.cls==='vieja')&&!r.ag?acordeon(r):'')+(window.PSE_EDIT?PSE_EDIT.html(r):'')+'</div>';
   }
   function pintar(){ var root=document.getElementById('pse-body'); if(!root) return;
     var T=filas(), F=T.filter(function(r){ return !!r.arch===!!ST.inact; }), nIn=T.filter(function(r){ return r.arch; }).length, L=filtrar(T), c={fresca:0,vieja:0,cola:0,decidida:0,sin:0}; F.forEach(function(r){ c[r.cls]=(c[r.cls]||0)+1; });
@@ -9650,7 +9740,7 @@ window.FA={
       '<label><input type="checkbox" id="pse-pronto"'+(ST.pronto?' checked':'')+'> Chequeo en ≤ 7 días</label></div>'+'<div class="pse-row"><label><input type="checkbox" id="pse-inact"'+(ST.inact?' checked':'')+'> Ver solo archivados / bajas / pausas ('+nIn+')</label></div></div>'+
       '<div class="pse-cnt">'+L.length+' de '+F.length+' alumnos '+(ST.inact?'archivados / bajas / pausas (no cuentan)':'activos')+(ST.prox?'':' · leyendo próximos chequeos…')+'</div>'+
       (L.length?L.map(fila).join(''):'<div class="lva-vacio" style="font-size:12px;color:var(--text3)">Ningún alumno con ese filtro.</div>');
-    root.innerHTML=h;
+    var c0=contenido(), sc0=c0?c0.scrollTop:0; root.innerHTML=h; if(c0) c0.scrollTop=sc0; guardar();
     var s1=document.getElementById('pse-est'); if(s1) s1.value=ST.est; var s2=document.getElementById('pse-niv'); if(s2) s2.value=ST.nivel; var s3=document.getElementById('pse-ord'); if(s3) s3.value=ST.orden;
   }
   function pantalla(){
@@ -9660,20 +9750,49 @@ window.FA={
     sc.innerHTML='<div class="back-btn" onclick="nav(\'dashboard\')">← Inicio</div><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div class="section-title">📝 Propuestas de evaluación</div><button type="button" class="lva-btn" id="pse-rec">↻ Actualizar</button></div>'+
       '<div style="font-size:12px;color:var(--text2);margin:4px 0 8px">Todos los alumnos activos con su propuesta, cuándo se actualizó y su próximo chequeo.</div><div id="pse-body"></div>';
     ref.parentNode.insertBefore(sc, ref.nextSibling);
-    sc.addEventListener('click',function(ev){ if(window.PSE_EDIT&&PSE_EDIT.click(ev)) return; var t=ev.target.closest('[data-est],[data-rev],[data-perfil],#pse-rec'); if(!t) return;
+    sc.addEventListener('click',function(ev){ if(window.PSE_EDIT&&PSE_EDIT.click(ev)) return; if(accion(ev)) return; var t=ev.target.closest('[data-est],[data-rev],[data-perfil],#pse-rec'); if(!t) return;
       if(t.id==='pse-rec'){ leerProx(true).then(pintar); pintar(); return; }
       if(t.dataset.est){ ST.est=t.dataset.est; pintar(); return; }
       var n=t.dataset.rev||t.dataset.perfil, a=ALUMNOS_DATA[n]; if(!a) return;
       if(t.dataset.perfil){ openProfileModal(n); return; }
       openEvaluar(n, a.ini, a.nivel, a.pct, a.tipo); });
     sc.addEventListener('input',function(ev){ if(ev.target.id==='pse-q'){ ST.q=ev.target.value; var p=ev.target.selectionStart; pintar(); var q=document.getElementById('pse-q'); if(q){ q.focus(); try{ q.setSelectionRange(p,p); }catch(x){} } } });
-    sc.addEventListener('change',function(ev){ var id=ev.target.id; if(id==='pse-est') ST.est=ev.target.value; else if(id==='pse-niv') ST.nivel=ev.target.value; else if(id==='pse-ord') ST.orden=ev.target.value; else if(id==='pse-pronto') ST.pronto=ev.target.checked; else if(id==='pse-inact'){ ST.inact=ev.target.checked; ST.est=ST.inact?'todas':ST.est; } else return; pintar(); });
+    sc.addEventListener('change',function(ev){ if(ev.target.classList.contains('pse-cm')){ var it=ev.target.closest('[data-acdnip]'), rb=it&&it.querySelector('.pse-rend'); if(rb) rb.innerHTML=rendTxt(it.dataset.acdnip); return; } var id=ev.target.id; if(id==='pse-est') ST.est=ev.target.value; else if(id==='pse-niv') ST.nivel=ev.target.value; else if(id==='pse-ord') ST.orden=ev.target.value; else if(id==='pse-pronto') ST.pronto=ev.target.checked; else if(id==='pse-inact'){ ST.inact=ev.target.checked; ST.est=ST.inact?'todas':ST.est; } else return; pintar(); });
     return sc;
   }
+  function bitacora(nip,o,extra){ var en=new Date().toISOString(), upd={}, P='fittrack_propuestas/evaluaciones/'+nip;
+    upd[P+'/editadoPor']='Noé'; upd[P+'/editadoEn']=en; Object.keys(extra||{}).forEach(function(k){ upd[P+'/'+k]=extra[k]; });
+    upd['fittrack_ediciones_noe/'+nip+'/e'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)]=Object.assign({ts:Date.now(),en:en,por:'Noé',app:'FitTrack Coach · Propuestas',nodo:'fittrack_propuestas/evaluaciones',ruta:P},o);
+    try{ return db.ref().update(upd); }catch(x){ return Promise.reject(x); } }
+  function siguiente(nip){ var L=filtrar(filas()), i=L.map(function(r){ return r.nip; }).indexOf(nip);
+    for(var j=i+1;j<L.length;j++){ var r=L[j]; if((r.cls==='fresca'||r.cls==='vieja')&&!r.ag&&!ST.recien[r.nip]) return r.nip; } return null; }
+  function trasDecidir(nip,que){ ST.recien[nip]=que; ST.desc=null; var nx=siguiente(nip); ST.abierto=nx; pintar();
+    if(nx){ var el=document.querySelector('#sc-propuestas [data-acdnip="'+nx+'"]'); if(el&&el.scrollIntoView) el.scrollIntoView({block:'nearest',behavior:'smooth'}); } }
+  function aprobar(nip,card){ var nombre=nombrePorNip(nip), a=ALUMNOS_DATA[nombre], evp=propEval(nip); if(!a||!evp) return;
+    var met=[], notas=[]; card.querySelectorAll('.pse-cm').forEach(function(c){ if(!c.disabled) met.push([c.dataset.k,c.checked]); }); card.querySelectorAll('.pse-cn').forEach(function(c){ notas.push([c.dataset.i,c.checked]); });
+    var prev=currentEvalAlumno, _oe=openEvaluar, antes=JSON.parse(JSON.stringify(a.metricas||{}));
+    try{ currentEvalAlumno=nombre; abrirRevisionPropuesta(); var ov=document.getElementById('prp-modal'); if(ov) ov.style.display='none';   // MISMO flujo que «Revisar propuesta» dentro del alumno
+      met.forEach(function(x){ var c=ov.querySelector('.prp-met[data-k="'+x[0]+'"]'); if(c&&!c.disabled) c.checked=x[1]; }); notas.forEach(function(x){ var c=ov.querySelector('.prp-nota[data-i="'+x[0]+'"]'); if(c) c.checked=x[1]; });
+      openEvaluar=function(){}; aplicarPropuesta(); }
+    finally{ openEvaluar=_oe; currentEvalAlumno=prev; }
+    bitacora(nip,{tipo:'aprobacion',antes:{metricas:antes},despues:{metricas:a.metricas,notasAplicadas:notas.filter(function(x){ return x[1]; }).length}},{}).catch(function(err){ console.error('[PROPUESTAS]',err); });
+    trasDecidir(nip,'aprobada'); }
+  function descartar(nip){ var nombre=nombrePorNip(nip); if(!nombre) return; var mot=String((document.getElementById('pse-dmot')||{}).value||'').trim(), prev=currentEvalAlumno;
+    try{ currentEvalAlumno=nombre; descartarPropuesta(); } finally{ currentEvalAlumno=prev; }   // MISMO flujo de «Descartar» dentro del alumno
+    bitacora(nip,{tipo:'descarte',motivo:mot||null},mot?{motivoDescarte:mot}:{}).catch(function(err){ console.error('[PROPUESTAS]',err); });
+    trasDecidir(nip,'descartada'); }
+  function accion(ev){ var t=ev.target.closest('[data-acd],[data-aprobar],[data-descartar],[data-descartar-ok],[data-descartar-no]'); if(!t) return false; var d=t.dataset;
+    if(d.acd){ ST.abierto=ST.abierto===d.acd?null:d.acd; ST.desc=null; pintar(); return true; }
+    if(d.aprobar){ aprobar(d.aprobar,t.closest('[data-acdnip]')); return true; }
+    if(d.descartar){ ST.desc=d.descartar; pintar(); var i=document.getElementById('pse-dmot'); if(i) i.focus(); return true; }
+    if(d.descartarNo){ ST.desc=null; pintar(); return true; }
+    if(d.descartarOk){ descartar(d.descartarOk); return true; } return false; }
   window.psePintar=function(){ pintar(); };
-  window.abrirPropuestasSeccion=function(est){ pantalla(); if(est) ST.est=est; nav('propuestas'); pintar(); leerProx().then(function(){ var sc=document.getElementById('sc-propuestas'); if(sc&&sc.classList.contains('active')) pintar(); }); };
+  window.abrirPropuestasSeccion=function(est){ pantalla(); if(est) ST.est=est; ST.visitada=true; nav('propuestas'); pintar(); var c=contenido(); if(c&&ST.scroll) c.scrollTop=ST.scroll; leerProx().then(function(){ var sc=document.getElementById('sc-propuestas'); if(sc&&sc.classList.contains('active')) pintar(); }); };
   // «Ver» del aviso del inicio y «Propuestas listas» del encabezado → esta sección (antes: lista de alumnos ordenada o Evaluar directo)
-  irAPropuestas=function(){ ST.inact=false; window.abrirPropuestasSeccion('listas'); };
+  irAPropuestas=function(){ if(ST.visitada) window.abrirPropuestasSeccion(); else { ST.inact=false; window.abrirPropuestasSeccion('listas'); } };
+  // al salir de la sección se guarda la posición; al volver se restaura (filtros, búsqueda y tarjeta abierta ya están en ST)
+  (function(){ var _nv=nav; nav=function(id){ try{ var sc=document.getElementById('sc-propuestas'), c=contenido(); if(sc&&sc.classList.contains('active')&&id!=='propuestas'&&c){ ST.scroll=c.scrollTop; guardar(); } }catch(x){} return _nv.apply(this,arguments); }; })();
   // conteo del aviso del inicio y del encabezado: solo alumnos activos (regla 456)
   contarPropuestasListas=function(){ return Object.keys(PROP.evaluaciones||{}).filter(function(nip){ if(estadoPropuesta(nip)!=='lista') return false; var n=nombrePorNip(nip); return n&&!inactivo(ALUMNOS_DATA[n]); }).length; };
   try{ actualizarResumen(); }catch(x){}
@@ -9795,6 +9914,55 @@ window.FA={
       t.disabled=true; escribir(upd).then(function(){ PE.nip=null; toast('✅ Propuesta guardada'); window.psePintar(); }).catch(function(err){ console.error('[EDICION]',err); t.disabled=false; toast('No se pudo guardar. Revisa tu conexión.'); });
       return true; }
   };
+})();
+</script>
+
+<style>
+/* ── % de aprobación por día en las pestañas de Evaluar + graduado automático (Noé 13 nov 11:23) ── */
+#eval-daytabs .day-tab{text-align:center;line-height:1.15}
+.dt-p{display:block;font:700 9.5px 'DM Sans',sans-serif;margin-top:2px;padding:1px 6px;border-radius:10px;letter-spacing:.2px}
+.dt-p.g{background:var(--green-light);color:var(--green)}
+.dt-p.a{background:var(--amber-light);color:#9a5b00}
+.dt-p.z{background:var(--surface2);color:var(--text3)}
+.dt-p.n{background:transparent;color:var(--text3);font-weight:600}
+#eval-daytabs .day-tab.active .dt-p.n{color:rgba(255,255,255,.75)}
+</style>
+<script>
+// ══ APROBACIÓN POR DÍA + GRADUADO AUTOMÁTICO (Noé 13 nov 11:23) ═══════════════════════════════════════════════════════
+// 1) Cada pestaña de día de «Evaluar» muestra PEQUEÑO el % de aprobación de ESE entrenamiento, con el mismo dato que alimenta
+//    «Aprobación de ejercicios» (a.aprobaciones[día][i] de los ejercicios EN REVISIÓN: revDia) y el mismo promedio que
+//    guardarAprobaciones. Verde 100 %, ámbar parcial, gris 0 %, «—» sin ejercicios en revisión.
+// 2) GRADUADO AUTOMÁTICO: alumno NUEVO en revisión (status 'activo' = «En proceso de adaptación» y tipoRevision 'ingreso')
+//    que llega a 100 % en TODOS sus entrenamientos → status 'graduado' (el mismo campo que cambia «Guardar» del perfil:
+//    ALUMNOS_DATA[n].status → syncToStorage → fittrack_data/alumnos/<nip>/status) + syncCoachData + listas, y registro en
+//    fittrack_ediciones_noe/<nip>/<id> {tipo:'graduado_auto'}. Lo demás (lista viva 423, perfiles del panel 234) lo toma la
+//    siguiente corrida de cada uno porque leen ese mismo status. Red de seguridad en el motor: tools/graduado_auto.py.
+(function(){
+  function pctDia(nombre,d){ try{ if(esNoAplicaRev(nombre)) return null; var r=revDia(nombre,d); if(!r.i.length) return null;
+    var a=ALUMNOS_DATA[nombre], ds=(a.aprobaciones&&a.aprobaciones[d])||{}, s=0; r.i.forEach(function(i){ s+=(ds[i]||0); }); return Math.round(s/r.i.length); }catch(x){ return null; } }
+  window.pctAprobDia=pctDia;
+  var CORTO={lunes:'Lunes',martes:'Martes',miercoles:'Miércoles',jueves:'Jueves',viernes:'Viernes',sabado:'Sábado',domingo:'Domingo'};
+  function pintarTabs(){ var box=document.getElementById('eval-daytabs'), n=currentEvalAlumno; if(!box||!n||!ALUMNOS_DATA[n]) return;
+    box.querySelectorAll('.day-tab').forEach(function(t){ var m=/selDay\(this,'(\w+)'\)/.exec(t.getAttribute('onclick')||''); if(!m) return; var d=m[1], p=pctDia(n,d);
+      var cls=p==null?'n':p>=100?'g':p>0?'a':'z';
+      t.innerHTML=CORTO[d]+'<span class="dt-p '+cls+'" title="Aprobación de ejercicios de este entrenamiento">'+(p==null?'—':p+'%')+'</span>'; }); }
+  window.pintarTabsAprob=pintarTabs;
+  function todo100(nombre){ var hay=false, ok=true; DIAS_RUTINA.forEach(function(d){ var p=pctDia(nombre,d); if(p==null) return; hay=true; if(p<100) ok=false; }); return hay&&ok; }
+  function graduarSiCorresponde(nombre){ var a=ALUMNOS_DATA[nombre]; if(!a||!a.nip) return false;
+    if(a.status!=='activo'||a.tipoRevision!=='ingreso'||estadoDe(a)==='archivado') return false;
+    if(Number(a.pctAprob)!==100||!todo100(nombre)) return false;
+    var en=new Date().toISOString(); a.status='graduado'; a.graduadoEn=en;
+    try{ marcarAlumnoSucio(nombre); }catch(x){}
+    try{ renderAlumnosList(); renderListas(); }catch(x){}
+    syncToStorage(); syncCoachData();   // mismo camino que «Guardar» del perfil al elegir 🎓 Graduado
+    try{ db.ref('fittrack_ediciones_noe/'+a.nip+'/e'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)).set({ts:Date.now(),en:en,por:'Noé',app:'FitTrack Coach · Evaluar',tipo:'graduado_auto',
+      nodo:'fittrack_data/alumnos',ruta:'fittrack_data/alumnos/'+a.nip+'/status',antes:{status:'activo',tipoRevision:'ingreso'},despues:{status:'graduado'},motivo:'100 % de aprobación en todos sus entrenamientos'}); }catch(x){}
+    try{ showToast('🎓 '+nombre.split(' ')[0]+' graduado(a) · 100 % aprobado'); }catch(x){}
+    return true; }
+  window.graduarSiCorresponde=graduarSiCorresponde;
+  var _ra=renderAprobaciones; renderAprobaciones=function(){ var r=_ra.apply(this,arguments); try{ pintarTabs(); }catch(x){} return r; };
+  var _ta=toggleAprob; toggleAprob=function(){ var r=_ta.apply(this,arguments); try{ pintarTabs(); }catch(x){} return r; };
+  var _cn=checkNotificacion100; checkNotificacion100=function(nombre){ var r=_cn.apply(this,arguments); try{ graduarSiCorresponde(nombre); pintarTabs(); }catch(x){ console.error('[GRADUADO]',x); } return r; };
 })();
 </script>
 
