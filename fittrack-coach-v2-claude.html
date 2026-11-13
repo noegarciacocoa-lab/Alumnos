@@ -805,7 +805,241 @@ details.fa-card>summary .fa-h3{margin:0}
 .fa-cd.hoy{box-shadow:0 0 0 2.5px var(--fa-cian) inset}
 .fa-cd.sel{outline:3px solid var(--fa-pet);outline-offset:1px;z-index:1}
 .fa-dia .fa-h3::first-letter{text-transform:uppercase}
-</style>
+
+/* 🧾 Proceso (9 nov 21:xx): 5 secciones en el expediente */
+.fa-seg2.c5{grid-template-columns:repeat(3,minmax(0,1fr))}
+#sc-farma .fp{margin-bottom:12px}
+
+/* Farmacología · PROCESO + «🧾 Interpretación integral» (Noé 9 nov 2026). Vista compartida: panel (pestaña 💊), FitTrack Coach (💊 Farma)
+   y work/farma_app/ejemplo_reporte.html. Fuente: motor/snippets/farma_proceso_vista.css (+ .js). Estilo A2 «ArtFit Pista». Prefijo fp-.
+   Toma los colores del anfitrión: tokens A2 del panel (--ink, --surface…), los de Coach (--fa-…) o los de respaldo. */
+.fp{--fp-ink:var(--ink,var(--fa-ink,#0C2427));--fp-mut:var(--muted,var(--fa-mut,#48636A));--fp-line:var(--line,var(--fa-line,#D3E2E3));
+  --fp-sf:var(--surface,var(--fa-sf,#FFFFFF));--fp-sf2:var(--surface-2,var(--fa-sf2,#F3F8F8));--fp-acc:var(--accent,var(--fa-teal,#0A7E8B));
+  --fp-acc-s:var(--accent-soft,var(--fa-teal-s,#DAF0F2));--fp-navy:var(--navy,#0A3A41);--fp-pet:#0A2B31;--fp-pet2:#0E3A42;--fp-cian:#2FD3E0;--fp-crema:#EFE8DA;
+  --fp-ok:var(--ok,var(--fa-ok,#137A4B));--fp-ok-s:var(--ok-bg,var(--fa-ok-s,#DCF2E6));--fp-warn:var(--warn,var(--fa-warn,#8F6600));--fp-warn-s:var(--warn-bg,var(--fa-warn-s,#FBF0C9));
+  --fp-bad:var(--bad,var(--fa-bad,#BC3328));--fp-bad-s:var(--bad-bg,var(--fa-bad-s,#FAE1DD));--fp-ora:var(--ora,var(--fa-ora,#B9540F));--fp-ora-s:var(--ora-soft,var(--fa-ora-s,#FCE7D7));
+  --fp-none:var(--none,#5E777B);--fp-none-s:var(--none-bg,#E3ECED);
+  --fp-d:var(--f-display,var(--fa-d,"Big Shoulders Display","Arial Narrow",Impact,sans-serif));--fp-u:var(--f-ui,var(--fa-u,"Archivo",system-ui,sans-serif));
+  font-family:var(--fp-u);color:var(--fp-ink);min-width:0}
+.fp *{box-sizing:border-box}
+.fp-card{background:var(--fp-sf);border-radius:16px;box-shadow:0 1px 0 rgba(10,43,49,.05),0 8px 22px -14px rgba(10,43,49,.30);padding:16px;margin:0 0 12px;min-width:0}
+.fp-h{font:800 22px/1.05 var(--fp-d);color:var(--fp-navy);margin:0 0 4px;letter-spacing:.01em}
+.fp-sub{font-size:12.5px;color:var(--fp-mut);margin:0 0 10px}
+.fp-chip{display:inline-flex;align-items:center;gap:4px;font:650 12px/1.3 var(--fp-u);padding:3px 9px;border-radius:999px;background:var(--fp-none-s);color:var(--fp-none);white-space:nowrap}
+.fp-chip.roja{background:var(--fp-bad-s);color:var(--fp-bad)}.fp-chip.amarilla,.fp-chip.sin_dato{background:var(--fp-warn-s);color:var(--fp-warn)}
+.fp-chip.verde{background:var(--fp-ok-s);color:var(--fp-ok)}.fp-chip.info{background:var(--fp-acc-s);color:var(--fp-acc)}
+/* banda del proceso: carril de etapas */
+.fp-band{border-radius:16px 16px 0 0;padding:16px 16px 14px;color:var(--fp-crema);border-bottom:3px solid var(--fp-cian);
+  background:radial-gradient(60% 160% at 100% 0%,rgba(47,211,224,.22),rgba(47,211,224,0) 60%),repeating-linear-gradient(-58deg,rgba(239,232,218,.035) 0 2px,transparent 2px 26px),linear-gradient(180deg,var(--fp-pet),var(--fp-pet2))}
+.fp-band .fp-k{font:700 11.5px var(--fp-u);letter-spacing:.06em;text-transform:uppercase;color:rgba(239,232,218,.72)}
+.fp-band .fp-t{font:900 30px/.95 var(--fp-d);margin:4px 0 2px;color:var(--fp-crema);overflow-wrap:anywhere}
+.fp-band .fp-m{font-size:13px;color:rgba(239,232,218,.8)}
+.fp-pasos{list-style:none;margin:14px 0 0;padding:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.fp-paso{position:relative;padding-top:16px;min-width:0}
+.fp-paso::before{content:"";position:absolute;left:0;right:0;top:4px;height:6px;border-radius:3px;background:rgba(239,232,218,.16)}
+.fp-paso.hecho::before{background:#7FE9F1}.fp-paso.actual::before{background:var(--fp-cian);box-shadow:0 0 0 2px var(--fp-pet),0 0 0 4px var(--fp-crema)}
+.fp-paso.no_requerida::before,.fp-paso.omitido::before,.fp-paso.no_aplica::before{background:repeating-linear-gradient(90deg,rgba(239,232,218,.28) 0 4px,transparent 4px 8px)}
+.fp-paso.seguimiento::before{background:#F2CB55}
+.fp-paso b{display:block;font:700 11.5px/1.15 var(--fp-u);color:var(--fp-crema)}
+.fp-paso span{display:block;font-size:11px;color:rgba(239,232,218,.7);margin-top:2px;overflow-wrap:anywhere}
+.fp-cuerpo{background:var(--fp-sf);border-radius:0 0 16px 16px;box-shadow:0 1px 0 rgba(10,43,49,.05),0 8px 22px -14px rgba(10,43,49,.30);padding:14px 16px 16px;margin-bottom:12px}
+.fp-al{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border-radius:12px;border-left:4px solid var(--c,var(--fp-line));margin-bottom:6px;font-size:14px;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--c) 10%,var(--fp-sf)),var(--fp-sf) 80%)}
+.fp-al.roja{--c:var(--fp-bad)}.fp-al.amarilla{--c:var(--fp-warn)}.fp-al.info{--c:var(--fp-acc)}
+.fp-ctrl{display:grid;gap:10px;margin-top:10px}
+.fp-fila{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.fp-lbl{font:700 12.5px var(--fp-u);color:var(--fp-mut);min-width:96px}
+.fp-seg{display:inline-flex;border:1.5px solid var(--fp-line);border-radius:12px;padding:3px;gap:3px;background:var(--fp-sf2)}
+.fp-seg button{border:0;background:none;border-radius:9px;min-height:36px;padding:0 12px;font:700 13px var(--fp-u);color:var(--fp-mut);cursor:pointer}
+.fp-seg button[aria-pressed="true"]{background:var(--fp-pet);color:var(--fp-crema)}
+.fp-btn{font:700 13.5px var(--fp-u);border-radius:10px;padding:8px 12px;border:1px solid var(--fp-line);background:var(--fp-sf);color:var(--fp-ink);cursor:pointer;min-height:38px}
+.fp-btn:hover{border-color:var(--fp-acc)}.fp-btn.pri{background:var(--fp-pet);color:var(--fp-crema);border-color:var(--fp-pet)}
+.fp-btn.mini{min-height:30px;padding:4px 9px;font-size:12.5px}
+.fp :focus-visible{outline:3px solid var(--fp-cian);outline-offset:2px}
+.fp-nota{font-size:12.5px;color:var(--fp-mut);margin:6px 0 0}
+/* reporte */
+.fp-rep-h{border-radius:16px;padding:16px;margin-bottom:12px;color:var(--fp-crema);background:linear-gradient(180deg,var(--fp-pet),var(--fp-pet2));border-bottom:3px solid var(--fp-cian)}
+.fp-rep-h h3{margin:0;font:900 30px/.95 var(--fp-d);color:var(--fp-crema)}
+.fp-rep-h .fp-m{font-size:13px;color:rgba(239,232,218,.82);margin-top:6px}
+.fp-aviso{margin:12px 0 0;padding:10px 12px;border-radius:10px;background:rgba(239,232,218,.08);border-left:4px solid #F2CB55;font-size:13.5px;color:var(--fp-crema)}
+.fp-sem{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.fp-sem div{flex:1 1 90px;background:rgba(239,232,218,.08);border-radius:12px;padding:8px 10px;box-shadow:inset 0 0 0 1px rgba(239,232,218,.14)}
+.fp-sem b{display:block;font:900 30px/1 var(--fp-d)}.fp-sem span{font-size:12px;color:rgba(239,232,218,.75)}
+.fp-estado{display:inline-block;margin-top:10px;font:800 13px var(--fp-u);padding:5px 12px;border-radius:999px;background:var(--fp-cian);color:var(--fp-pet)}
+.fp-estado.roja{background:#FF8A7E;color:#2A0905}
+.fp-res h4,.fp-sec h4{font:800 18px var(--fp-d);color:var(--fp-navy);margin:12px 0 6px;letter-spacing:.01em}
+.fp-li{display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.4;padding:6px 0;border-top:1px solid var(--fp-line)}
+.fp-li:first-of-type{border-top:0}
+.fp-li i{flex:none;width:10px;height:10px;border-radius:50%;margin-top:5px;background:var(--fp-none)}
+.fp-li.roja i{background:var(--fp-bad)}.fp-li.amarilla i,.fp-li.sin_dato i{background:#E0B000}.fp-li.verde i{background:var(--fp-ok)}.fp-li.info i{background:var(--fp-acc)}
+.fp-li small{display:block;color:var(--fp-mut);font-size:11.5px;margin-top:1px}
+.fp-sec{background:var(--fp-sf);border-radius:16px;box-shadow:0 1px 0 rgba(10,43,49,.05),0 8px 22px -14px rgba(10,43,49,.30);margin:0 0 10px;overflow:hidden}
+.fp-sec>summary{list-style:none;cursor:pointer;display:flex;gap:10px;align-items:center;padding:14px 16px;min-height:52px}
+.fp-sec>summary::-webkit-details-marker{display:none}
+.fp-sec>summary .n{flex:none;width:30px;height:30px;border-radius:9px;background:var(--fp-pet);color:var(--fp-crema);font:900 18px/30px var(--fp-d);text-align:center}
+.fp-sec>summary .t{flex:1;font:800 17px/1.15 var(--fp-u);min-width:0}
+.fp-sec>summary .c{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.fp-sec>summary::after{content:"▾";color:var(--fp-mut);font-size:14px;transition:transform .2s}
+.fp-sec[open]>summary::after{transform:rotate(180deg)}
+.fp-sec .b{padding:0 16px 16px}
+.fp-kv{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:4px 12px;font-size:13.5px;margin:0 0 8px;padding:10px 12px;border-radius:12px;background:var(--fp-sf2)}
+.fp-kv dt{color:var(--fp-mut);font-weight:650}.fp-kv dd{margin:0;overflow-wrap:anywhere}
+/* 🔬 interpretación de estudios */
+.fp-lab-p{border:1px solid var(--fp-line);border-radius:14px;padding:10px 12px;margin:0 0 10px}
+.fp-lab-p>header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 8px;align-items:center;margin-bottom:6px}
+.fp-lab-p>header .fp-chip{white-space:normal;max-width:100%}
+.fp-lab-p>header b{font:800 16px var(--fp-u)}
+.fp-lab-p.vacio{background:var(--fp-sf2);border-style:dashed}
+.fp-val{display:grid;grid-template-columns:minmax(0,1.3fr) auto;gap:2px 10px;padding:8px 0;border-top:1px solid var(--fp-line);font-size:14px}
+.fp-val:first-of-type{border-top:0}
+.fp-val .nm{font-weight:750}.fp-val .rs{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.fp-val .rs b{font:900 22px/1 var(--fp-d)}
+.fp-val .sg,.fp-val .td{grid-column:1/-1;font-size:13px;color:var(--fp-mut);line-height:1.4}
+.fp-val .td{color:var(--fp-ink)}
+.fp-semlab{display:inline-flex;align-items:center;gap:5px;font:750 12px var(--fp-u);padding:2px 8px;border-radius:999px}
+.fp-semlab.dentro{background:var(--fp-ok-s);color:var(--fp-ok)}.fp-semlab.limite{background:var(--fp-warn-s);color:var(--fp-warn)}
+.fp-semlab.fuera{background:var(--fp-bad-s);color:var(--fp-bad)}.fp-semlab.sin_rango{background:var(--fp-none-s);color:var(--fp-none)}
+.fp-ctx{margin:6px 0 0;padding:8px 10px;border-radius:10px;background:var(--fp-acc-s);font-size:13px;color:var(--fp-ink)}
+.fp-ctx ul{margin:2px 0 0;padding-left:18px}
+.fp-labres{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:10px;margin-top:6px}
+.fp-labres>div{border-radius:12px;padding:10px 12px;background:var(--fp-sf2)}
+.fp-labres>div.c{background:var(--fp-bad-s)}.fp-labres>div.v{background:var(--fp-warn-s)}
+.fp-labres b{display:block;margin-bottom:4px}.fp-labres ul{margin:0;padding-left:18px;font-size:13.5px}
+.fp-medico{border-radius:14px;padding:12px 14px;border-left:5px solid var(--fp-acc);background:var(--fp-acc-s);font-size:14px}
+.fp-medico.requiere{border-color:var(--fp-bad);background:var(--fp-bad-s)}.fp-medico.sugiere{border-color:var(--fp-warn);background:var(--fp-warn-s)}
+.fp-medico b{display:block;font-size:15px;margin-bottom:4px}.fp-medico ul{margin:4px 0;padding-left:18px}
+.fp-cierre{font:800 15px var(--fp-u);text-align:center;margin:12px 0 0;color:var(--fp-navy)}
+.fp-pend{border:2px dashed var(--fp-line);border-radius:16px;padding:18px;text-align:center;color:var(--fp-mut);font-size:14px;background:var(--fp-sf)}
+.fp-pend b{display:block;color:var(--fp-ink);font-size:16px;margin-bottom:4px}
+/* estudios registrados y editor */
+.fp-est{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--fp-line);font-size:14px}
+.fp-est:first-of-type{border-top:0}
+.fp-ed{display:grid;gap:10px}
+.fp-ed label{display:flex;flex-direction:column;gap:4px;font:700 12.5px var(--fp-u);color:var(--fp-mut);min-width:0}
+.fp-ed input,.fp-ed select,.fp-ed textarea{font:500 15px var(--fp-u);color:var(--fp-ink);background:var(--fp-sf2);border:1px solid var(--fp-line);border-radius:10px;padding:8px 10px;min-height:40px;width:100%}
+.fp-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,170px),1fr));gap:8px 10px}
+.fp-vrow{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr auto;gap:6px;align-items:end;padding:8px;border-radius:12px;background:var(--fp-sf2)}
+@media (max-width:620px){
+  .fp-pasos{grid-template-columns:repeat(4,minmax(0,1fr));row-gap:10px}
+  .fp-vrow{grid-template-columns:1fr 1fr 1fr}
+  .fp-vrow label:first-child{grid-column:1/-1}
+  .fp-band .fp-t,.fp-rep-h h3{font-size:26px}
+  .fp-kv{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){.fp *{transition:none!important}}
+
+/*FARMA_F3_CSS_INI*/
+/* Farmacología · FASE 3 «🩺 Chequeos» + «⚖️ Aprovechamiento» (Noé 12 nov 2026). Vista compartida panel + FitTrack Coach.
+   Fuente: motor/snippets/farma_chequeos_vista.css (+ .js). Estilo A2 «ArtFit Pista» (mismo que farma_proceso_vista). Prefijo fc-.
+   Toma los colores del anfitrión: tokens A2 del panel (--ink, --surface…), los de Coach (--fa-…) o los de respaldo. */
+.fc{--fc-ink:var(--ink,var(--fa-ink,#0C2427));--fc-mut:var(--muted,var(--fa-mut,#48636A));--fc-line:var(--line,var(--fa-line,#D3E2E3));
+  --fc-sf:var(--surface,var(--fa-sf,#FFFFFF));--fc-sf2:var(--surface-2,var(--fa-sf2,#F3F8F8));--fc-acc:var(--accent,var(--fa-teal,#0A7E8B));
+  --fc-acc-s:var(--accent-soft,var(--fa-teal-s,#DAF0F2));--fc-navy:var(--navy,#0A3A41);--fc-pet:#0A2B31;--fc-pet2:#0E3A42;--fc-cian:#2FD3E0;--fc-crema:#EFE8DA;
+  --fc-ok:var(--ok,var(--fa-ok,#137A4B));--fc-ok-s:var(--ok-bg,var(--fa-ok-s,#DCF2E6));--fc-warn:var(--warn,var(--fa-warn,#8F6600));--fc-warn-s:var(--warn-bg,var(--fa-warn-s,#FBF0C9));
+  --fc-bad:var(--bad,var(--fa-bad,#BC3328));--fc-bad-s:var(--bad-bg,var(--fa-bad-s,#FAE1DD));--fc-ora:var(--ora,var(--fa-ora,#B9540F));--fc-ora-s:var(--ora-soft,var(--fa-ora-s,#FCE7D7));
+  --fc-wa:#128C4A;--fc-d:var(--f-display,var(--fa-d,"Big Shoulders Display","Arial Narrow",Impact,sans-serif));--fc-u:var(--f-ui,var(--fa-u,"Archivo",system-ui,sans-serif));
+  font-family:var(--fc-u);color:var(--fc-ink);min-width:0}
+.fc *{box-sizing:border-box}
+.fc-card{background:var(--fc-sf);border-radius:16px;box-shadow:0 1px 0 rgba(10,43,49,.05),0 8px 22px -14px rgba(10,43,49,.30);padding:16px;margin:0 0 12px;min-width:0}
+.fc-h{font:800 22px/1.1 var(--fc-d);color:var(--fc-navy);margin:0 0 4px;letter-spacing:.01em;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.fc-sub{font-size:12.5px;color:var(--fc-mut);margin:0 0 10px;line-height:1.4}
+.fc-nota{font-size:12.5px;color:var(--fc-mut);margin:6px 0 0;line-height:1.4}
+.fc-k,.fc-k2{font:700 11.5px var(--fc-u);letter-spacing:.06em;text-transform:uppercase}
+.fc-k2{color:var(--fc-mut)}
+.fc-band{border-radius:16px;padding:16px;margin:0 0 12px;color:var(--fc-crema);border-bottom:3px solid var(--fc-cian);
+  background:radial-gradient(60% 160% at 100% 0%,rgba(47,211,224,.22),rgba(47,211,224,0) 60%),repeating-linear-gradient(-58deg,rgba(239,232,218,.035) 0 2px,transparent 2px 26px),linear-gradient(180deg,var(--fc-pet),var(--fc-pet2))}
+.fc-band .fc-k{color:rgba(239,232,218,.72)}
+.fc-band .fc-t{font:900 30px/.95 var(--fc-d);margin:4px 0 4px;color:var(--fc-crema);overflow-wrap:anywhere}
+.fc-band .fc-m{font-size:13px;color:rgba(239,232,218,.82);line-height:1.4}
+.fc-chip{display:inline-flex;align-items:center;font:650 12px/1.3 var(--fc-u);padding:3px 9px;border-radius:999px;background:var(--fc-sf2);color:var(--fc-mut);white-space:nowrap;box-shadow:inset 0 0 0 1px var(--fc-line)}
+.fc-chip.ok{background:var(--fc-ok-s);color:var(--fc-ok);box-shadow:none}.fc-chip.warn{background:var(--fc-warn-s);color:var(--fc-warn);box-shadow:none}
+.fc-chip.ora{background:var(--fc-ora-s);color:var(--fc-ora);box-shadow:none}.fc-chip.acc{background:var(--fc-acc-s);color:var(--fc-acc);box-shadow:none}
+.fc-chip.bad{background:var(--fc-bad-s);color:var(--fc-bad);box-shadow:none}
+.fc-al{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:12px;border-left:4px solid var(--c,var(--fc-line));margin:0 0 8px;font-size:14px;line-height:1.4;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--c) 11%,var(--fc-sf)),var(--fc-sf) 85%);box-shadow:0 1px 0 rgba(10,43,49,.04)}
+.fc-al>div{min-width:0;overflow-wrap:anywhere}
+.fc-al small{display:block;font-size:12px;color:var(--fc-mut);margin-top:2px}
+.fc-al.roja{--c:var(--fc-bad)}.fc-al.amarilla{--c:#D9A400}.fc-al.info{--c:var(--fc-acc)}
+.fc-al.atendida{--c:var(--fc-line);opacity:.75}
+.fc-rojas{border:2px solid var(--fc-bad);background:linear-gradient(180deg,var(--fc-bad-s),var(--fc-sf) 70%)}
+.fc-rojas .fc-h{color:var(--fc-bad)}
+.fc-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font:700 13.5px var(--fc-u);border-radius:10px;padding:8px 12px;border:1px solid var(--fc-line);
+  background:var(--fc-sf);color:var(--fc-ink);cursor:pointer;min-height:40px;text-decoration:none;flex:none}
+.fc-btn:hover{border-color:var(--fc-acc)}.fc-btn.pri{background:var(--fc-pet);color:var(--fc-crema);border-color:var(--fc-pet)}
+.fc-btn.mini{min-height:32px;padding:4px 10px;font-size:12.5px}
+.fc-btn.on{background:var(--fc-ok-s);color:var(--fc-ok);border-color:var(--fc-ok)}
+.fc-btn.wa{background:var(--fc-wa);color:#fff;border-color:var(--fc-wa)}
+.fc-btn.wa::before{content:"";width:16px;height:16px;border-radius:50%;background:#fff;-webkit-mask:radial-gradient(circle at 50% 50%,transparent 4px,#000 4.5px);mask:radial-gradient(circle at 50% 50%,transparent 4px,#000 4.5px)}
+.fc-btn.wa.off{opacity:.5}
+.fc-mini{font:650 12px var(--fc-u);border:1px dashed var(--fc-line);background:var(--fc-sf2);color:var(--fc-ink);border-radius:999px;padding:5px 10px;cursor:pointer;min-height:30px}
+.fc-mini:hover{border-color:var(--fc-acc);color:var(--fc-acc)}
+.fc :focus-visible{outline:3px solid var(--fc-cian);outline-offset:2px}
+.fc-fila{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.fc-fila.sp{justify-content:space-between;align-items:flex-start;margin-top:0}
+.fc-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.fc-in{width:100%;font:400 14.5px/1.45 var(--fc-u);color:var(--fc-ink);background:var(--fc-sf2);border:1.5px solid var(--fc-line);border-radius:10px;padding:9px 11px;resize:vertical;min-height:40px}
+.fc-in:focus{border-color:var(--fc-acc);outline:none;background:var(--fc-sf)}
+.fc-check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;line-height:1.4;padding:6px 0;cursor:pointer}
+.fc-check input{width:18px;height:18px;margin:1px 0 0;flex:none;accent-color:var(--fc-acc)}
+.fc-blk{border-top:1px solid var(--fc-line);padding-top:14px;margin-top:14px}
+.fc-blk h4{font:800 18px var(--fc-d);color:var(--fc-navy);margin:0 0 4px;letter-spacing:.01em}
+.fc-blk>summary{cursor:pointer;font-size:14.5px;min-height:40px;display:flex;align-items:center;gap:6px}
+.fc-msg>summary{cursor:pointer;display:flex;flex-wrap:wrap;gap:8px;align-items:center;min-height:36px;font-size:15px}
+.fc-msg[open]>summary{margin-bottom:6px}
+.fc-linea{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+.fc-ch{display:grid;gap:4px;justify-items:start;text-align:left;padding:10px 12px 12px;border-radius:14px;border:1.5px solid var(--fc-line);background:var(--fc-sf);cursor:pointer;font-family:var(--fc-u);color:var(--fc-ink);position:relative;overflow:hidden}
+.fc-ch::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--fc-acc)}
+.fc-ch.t-inicial::before{background:var(--fc-cian)}.fc-ch.t-cierre::before{background:var(--fc-pet)}.fc-ch.t-reestudio::before{background:var(--fc-ora)}
+.fc-ch.on{border-color:var(--fc-pet);box-shadow:0 0 0 2px var(--fc-cian)}
+.fc-ch-t{font:800 15px/1.15 var(--fc-u)}.fc-ch-m{font-size:12.5px;color:var(--fc-mut)}
+.fc-q{border:1px solid var(--fc-line);border-radius:12px;padding:8px;margin:0 0 8px;background:var(--fc-sf)}
+.fc-q.aplicada{border-color:var(--fc-ok);background:linear-gradient(90deg,var(--fc-ok-s),var(--fc-sf) 70%)}
+.fc-q small{display:block;font-size:11.5px;color:var(--fc-mut);margin-top:4px;overflow-wrap:anywhere}
+.fc-q .fc-fila{margin-top:6px}
+.fc-sel{border:1px solid var(--fc-line);border-radius:12px;padding:4px 10px;margin:0 0 8px;max-height:260px;overflow:auto;background:var(--fc-sf2)}
+.fc-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.fc-form label{display:grid;gap:4px;font:700 12.5px var(--fc-u);color:var(--fc-mut);min-width:0}
+.fc-form label.ancho{grid-column:1/-1}
+@media (max-width:520px){.fc-form{grid-template-columns:1fr}}
+.fc-hist{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.fc-hi{display:grid;gap:2px;text-align:left;padding:10px;border-radius:12px;border:1px solid var(--fc-line);background:var(--fc-sf2);cursor:pointer;font:400 13px var(--fc-u);color:var(--fc-ink)}
+.fc-hi b{font:900 22px/1 var(--fc-d);color:var(--fc-navy)}.fc-hi.on{border-color:var(--fc-pet);box-shadow:0 0 0 2px var(--fc-cian)}
+.fc-histver{margin-top:12px}
+/* ⚖️ balanza */
+.fc-apro.dentro{box-shadow:none;border:1.5px solid var(--fc-line);margin-top:14px}
+.fc-apro .fc-k{color:var(--fc-mut);margin-bottom:6px}
+.fc-apro-g{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:14px;align-items:center}
+/* Arreglo Aprovechamiento (Noé 12 nov): el veredicto va DEBAJO de la balanza cuando la TARJETA mide menos de 515 px de ancho
+   (container query sobre el envoltorio .fc de la tarjeta, que mide lo mismo que ella; no sobre la pantalla). */
+.fc:has(> .fc-apro){container-type:inline-size;container-name:fcapro}
+@container fcapro (max-width:514.98px){.fc-apro-g{grid-template-columns:1fr}}
+@supports not (selector(:has(*))){@media (max-width:620px){.fc-apro-g{grid-template-columns:1fr}}}
+.fc-bal{width:100%;max-width:320px;height:auto;display:block}
+.fc-bal .fc-base{fill:var(--fc-pet)}.fc-bal .fc-poste{stroke:var(--fc-pet);stroke-width:6;stroke-linecap:round}
+.fc-bal .fc-brazo{stroke:var(--fc-pet);stroke-width:7;stroke-linecap:round}.fc-bal .fc-eje{fill:var(--fc-cian);stroke:var(--fc-pet);stroke-width:3}
+.fc-bal .fc-hilo{stroke:var(--fc-mut);stroke-width:1.5}
+.fc-bal .fc-plato{stroke:var(--fc-pet);stroke-width:2}.fc-bal .fc-plato.a{fill:var(--fc-acc-s)}.fc-bal .fc-plato.r{fill:var(--fc-ora-s)}
+.fc-bal .fc-pv{font:900 22px var(--fc-d);fill:var(--fc-ink)}.fc-bal .fc-pl{font:800 11px var(--fc-u);letter-spacing:.08em;fill:var(--fc-mut)}
+.fc-ver{font:800 17px/1.3 var(--fc-u);margin:0;padding:10px 12px;border-radius:12px;background:var(--fc-sf2);border-left:4px solid var(--fc-line)}
+.fc-ver.ok{background:var(--fc-ok-s);border-color:var(--fc-ok);color:var(--fc-ok)}.fc-ver.warn{background:var(--fc-warn-s);border-color:#D9A400;color:var(--fc-warn)}
+.fc-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:12px}
+@media (max-width:620px){.fc-cols{grid-template-columns:1fr}}
+.fc-cols h4{font:800 17px var(--fc-d);color:var(--fc-navy);margin:0 0 4px}
+.fc-ul{list-style:none;margin:0;padding:0}
+.fc-ul li{display:flex;justify-content:space-between;gap:10px;align-items:baseline;padding:6px 0;border-top:1px solid var(--fc-line);font-size:13.5px}
+.fc-ul li:first-child{border-top:0}
+.fc-ul li span{min-width:0;overflow-wrap:anywhere}.fc-ul small{color:var(--fc-mut);font-size:12px;display:block}
+.fc-ul b{font-weight:800;white-space:nowrap}
+.fc-e{font:700 12px var(--fc-u);padding:2px 8px;border-radius:999px;background:var(--fc-sf2);color:var(--fc-mut)}
+.fc-e.ok{background:var(--fc-ok-s);color:var(--fc-ok)}.fc-e.bad{background:var(--fc-bad-s);color:var(--fc-bad)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fc-bal .fc-base,:root:not([data-theme="light"]) .fc-bal .fc-brazo{fill:var(--fc-cian);stroke:var(--fc-cian)}}
+:root[data-theme="dark"] .fc-bal .fc-brazo,:root[data-theme="dark"] .fc-bal .fc-poste{stroke:var(--fc-cian)}
+
+/* «Reporte para el alumno»: vista previa en palabras de Noé y candado de palabras internas */
+.fc-al-alumno{display:block;margin-top:2px;font-size:12px;color:var(--fc-mut);font-style:italic}
+.fc-aviso{margin:8px 0 0;padding:8px 10px;border-radius:10px;background:#fdecea;color:#8a1c12;font-size:13px;line-height:1.4;border-left:4px solid #d93025}
+
+/*FARMA_F3_CSS_FIN*/</style>
 </head>
 <body>
 <div class="device">
@@ -6775,6 +7009,644 @@ function embPintarCoach(){
 })();
 // ── fin REGLA 415 (coach) ──
 </script>
+<script id="farma-proceso-vista">
+/* Farmacología · PROCESO + «🧾 Interpretación integral» (Noé 9 nov 2026, reglas 428–433). Vista compartida, sin dependencias:
+   la usan el panel (pestaña 💊 Farmacología, inyectada por tools/farma_panel_inyectar.py), FitTrack Coach (💊 Farma) y
+   work/farma_app/ejemplo_reporte.html (tools/farma_reporte.py html). calcular() = calcular() de tools/farma_reporte.py
+   (lo comprueba tools/test_farma_proceso.py). Solo PINTA: las escrituras las hace cada anfitrión con los data-fp.
+   LÍMITE: nada de sustancias, dosis, combinaciones ni protocolos. La decisión es de Noé. */
+(function(){
+'use strict';
+var MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function dMx(iso){ var t=String(iso||''); if(t.length>10&&t.indexOf('T')===10){ var x=Date.parse(t); if(!isNaN(x)) return new Date(x-6*3600e3).toISOString().slice(0,10); } return t.slice(0,10); }   // marcas de tiempo → día en México
+function fd(iso){ if(!iso) return '—'; var p=dMx(iso).split('-').map(Number); if(p.length<3||isNaN(p[2])) return String(iso); return p[2]+' '+MES[p[1]-1]+' '+p[0]; }
+function dias(a,b){ if(!a||!b) return null; var x=Date.parse(dMx(a)+'T12:00:00Z'), y=Date.parse(dMx(b)+'T12:00:00Z'); return isNaN(x)||isNaN(y)?null:Math.round((x-y)/864e5); }
+function hoyMx(){ return new Date(Date.now()-6*3600e3).toISOString().slice(0,10); }
+function vals(o){ return o&&typeof o==='object'?Object.keys(o).map(function(k){return o[k];}).filter(function(x){return x&&typeof x==='object';}):[]; }
+
+function clasifica(v,lo,hi){
+  var n=parseFloat(v); if(v===null||v===undefined||v===''||isNaN(n)) return 'sin_valor';
+  var a=(lo===null||lo===undefined||lo==='')?null:parseFloat(lo), b=(hi===null||hi===undefined||hi==='')?null:parseFloat(hi);
+  if(a===null&&b===null) return 'sin_rango'; if(a!==null&&n<a) return 'bajo'; if(b!==null&&n>b) return 'alto'; return 'normal';
+}
+function semaforoLab(v,lo,hi){
+  var st=clasifica(v,lo,hi); if(st==='sin_valor'||st==='sin_rango') return ['sin_rango',null]; if(st==='alto'||st==='bajo') return ['fuera',st];
+  var n=parseFloat(v), a=(lo==null||lo==='')?null:parseFloat(lo), b=(hi==null||hi==='')?null:parseFloat(hi);
+  if(a!==null&&b!==null){ var w=(b-a)*0.05; if(n>=b-w) return ['limite','alto']; if(n<=a+w) return ['limite','bajo']; }
+  else if(b!==null&&n>=0.95*b) return ['limite','alto']; else if(a!==null&&n<=1.05*a) return ['limite','bajo'];
+  return ['dentro',null];
+}
+function fechasEstudios(P,an){
+  var fs=[]; vals((P||{}).estudios).forEach(function(e){ if(e.fecha||e.registradoEn) fs.push(String(e.fecha||e.registradoEn).slice(0,10)); });
+  (an||[]).forEach(function(a){ if(a&&(a.date||a.createdAt)) fs.push(String(a.date||a.createdAt).slice(0,10)); });
+  return fs.sort();
+}
+// = calcular() de tools/farma_reporte.py
+function calcular(P,ctx){
+  P=P||{}; ctx=ctx||{}; var C=P.control||{}, R=P.reporte||{}, D=(P.deteccion||{}).entrevista||{}, hoy=ctx.hoy||hoyMx();
+  var fs=fechasEstudios(P,ctx.analytics), ok=fs.length>0, ult=ok?fs[fs.length-1]:null, ent=C.entrevista||null, resp=D.status==='completed';
+  var rojas=parseInt((R.semaforo||{}).rojas)||0, modo=ctx.ciclo?'seguimiento':'inicial';
+  var dec=(C.decision&&C.decision.estado)?C.decision:null, med=(C.revisionMedica&&C.revisionMedica.fecha)?C.revisionMedica:null, repOk=!!R.generado&&ok;
+  var pasos=[
+    {k:'filtro',t:'Filtro aprobado',fecha:C.filtroAprobado||null,est:C.filtroAprobado?'hecho':((modo==='seguimiento'||ok||resp)?'omitido':'actual')},
+    {k:'solicitud',t:'Estudios solicitados',fecha:C.estudiosSolicitados||null,est:C.estudiosSolicitados?'hecho':(ok?'omitido':(C.filtroAprobado?'actual':'pendiente'))},
+    {k:'estudios',t:'Estudios recibidos',fecha:ult,est:ok?'hecho':((C.estudiosSolicitados||C.filtroAprobado)?'actual':'pendiente')},
+    {k:'entrevista',t:'Entrevista (Harbiz)',fecha:resp?(D.respondida||null):(C.entrevistaEn||null),est:resp?'hecho':(ent==='no_requerida'?'no_requerida':(ent==='solicitada'?'actual':'por_decidir'))},
+    {k:'reporte',t:'Reporte integral',fecha:R.generado?dMx(R.generado):null,est:repOk?'hecho':(ok?'actual':'pendiente')},
+    {k:'medico',t:'Revisión médica',fecha:(med||{}).fecha||null,est:rojas?(med?'hecho':(repOk?'actual':'pendiente')):'no_aplica'},
+    {k:'decision',t:'Decisión de Noé',fecha:(dec||{}).fecha||null,est:dec?'hecho':(modo==='seguimiento'?'seguimiento':(repOk?'actual':'pendiente'))}
+  ];
+  var etapa=dec?'decision_noe':(rojas&&repOk&&!med)?'en_revision_medica':repOk?'reporte_generado':resp?'entrevista_respondida':ent==='solicitada'?'entrevista_programada':
+    ok?'estudios_recibidos':C.estudiosSolicitados?'estudios_solicitados':C.filtroAprobado?'filtro_aprobado':'sin_iniciar';
+  var al=[], desde=C.estudiosSolicitados||C.filtroAprobado, d;
+  if(!ok&&desde){ d=dias(hoy,desde); if(d!==null&&d>=14) al.push({nivel:'roja',texto:'Sin estudios desde hace '+d+' días (pedidos el '+fd(desde)+')'}); else if(d!==null&&d>=7) al.push({nivel:'amarilla',texto:'Sin estudios desde hace '+d+' días (pedidos el '+fd(desde)+')'}); }
+  if(ok&&modo==='inicial'&&!dec){ d=dias(hoy,ult); if(d!==null&&d>90) al.push({nivel:'amarilla',texto:'Los estudios más recientes tienen '+d+' días (más de 3 meses)'}); }
+  if(ent==='solicitada'&&!resp){ var de=C.entrevistaEn||D.asignada; d=de?dias(hoy,de):null; if(d!==null&&d>=10) al.push({nivel:'roja',texto:'Entrevista solicitada hace '+d+' días y sin responder'}); else if(d!==null&&d>=5) al.push({nivel:'amarilla',texto:'Entrevista solicitada hace '+d+' días y sin responder'}); }
+  if(repOk&&modo==='inicial'&&!dec&&!rojas){ d=dias(hoy,R.generado); if(d!==null&&d>3) al.push({nivel:'amarilla',texto:'Reporte listo hace '+d+' días, sin decisión registrada'}); }
+  if(rojas&&repOk&&!med){ d=dias(hoy,R.generado); al.push({nivel:(d||0)>=14?'amarilla':'info',texto:rojas+' bandera(s) roja(s): requiere valoración médica'+(d?' (reporte de hace '+d+' días)':'')}); }
+  return {etapa:etapa,modo:modo,pasos:pasos,alertas:al,estudiosOk:ok,ultimoEstudio:ult,mostrarReporte:ok};
+}
+var ETAPA={sin_iniciar:'Sin iniciar',filtro_aprobado:'Filtro aprobado',estudios_solicitados:'Estudios solicitados',estudios_recibidos:'Estudios recibidos',
+  entrevista_programada:'Entrevista solicitada',entrevista_respondida:'Entrevista respondida',reporte_generado:'Reporte generado',en_revision_medica:'En revisión médica',decision_noe:'Decisión de Noé'};
+var EST_TX={hecho:'✓',actual:'en curso',pendiente:'pendiente',omitido:'sin registro',no_requerida:'no requerida',por_decidir:'Noé decide',no_aplica:'no aplica',seguimiento:'en seguimiento'};
+var DEC={aprobado:'Aprobado',pospuesto:'Pospuesto',no_candidato:'No candidato'};
+var NIV={roja:'🔴',amarilla:'🟡',sin_dato:'❔',verde:'🟢',info:'ℹ️'};
+
+// ── tablero del proceso ──
+function tablero(P,ctx,op){
+  P=P||{}; op=op||{}; var r=calcular(P,ctx), C=P.control||{}, nip=op.nip||P.nip||'';
+  var h='<div class="fp" data-fp-nip="'+esc(nip)+'"><div class="fp-band"><div class="fp-k">🧾 Proceso de farmacología'+(r.modo==='seguimiento'?' · revisión de seguimiento':'')+'</div>'+
+    '<div class="fp-t">'+esc(op.nombre||P.nombre||'')+'</div><div class="fp-m">Etapa: <b>'+esc(ETAPA[r.etapa]||r.etapa)+'</b>'+(ctx&&ctx.ciclo?' · ciclo activo en la app (semana '+esc(ctx.ciclo.semana||'')+(ctx.ciclo.total?' de '+esc(ctx.ciclo.total):'')+')':'')+'</div>'+
+    '<ol class="fp-pasos" aria-label="Etapas del proceso">'+r.pasos.map(function(p){ return '<li class="fp-paso '+p.est+'"><b>'+esc(p.t)+'</b><span>'+esc(p.est==='hecho'&&p.fecha?fd(p.fecha):EST_TX[p.est]||p.est)+'</span></li>'; }).join('')+'</ol></div>';
+  h+='<div class="fp-cuerpo">';
+  h+=r.alertas.length?r.alertas.map(function(a){ return '<div class="fp-al '+a.nivel+'" role="'+(a.nivel==='roja'?'alert':'note')+'"><b>'+(a.nivel==='roja'?'🔴':a.nivel==='amarilla'?'🟡':'ℹ️')+'</b><span>'+esc(a.texto)+'</span></div>'; }).join(''):'<p class="fp-nota" style="margin:0 0 6px">Sin atrasos.</p>';
+  var ent=C.entrevista||null;
+  h+='<div class="fp-ctrl"><div class="fp-fila"><span class="fp-lbl">Entrevista</span>'+
+    (op.editable?'<span class="fp-seg" role="group" aria-label="Entrevista de farmacología"><button type="button" data-fp="entrevista" data-v="solicitada" aria-pressed="'+(ent==='solicitada')+'">Solicitada</button><button type="button" data-fp="entrevista" data-v="no_requerida" aria-pressed="'+(ent==='no_requerida')+'">No requerida</button></span>'
+      :'<span class="fp-chip '+(ent?'info':'')+'">'+(ent==='solicitada'?'Solicitada':ent==='no_requerida'?'No requerida':'Sin decidir (Noé)')+'</span>')+
+    ((P.deteccion||{}).entrevista&&P.deteccion.entrevista.status?' <span class="fp-chip '+(P.deteccion.entrevista.status==='completed'?'verde':'amarilla')+'">Harbiz: '+(P.deteccion.entrevista.status==='completed'?'respondida '+fd(P.deteccion.entrevista.respondida)+' ('+esc(P.deteccion.entrevista.version||'')+')':'asignada, sin responder')+'</span>':'')+'</div>'+
+    '<p class="fp-nota">La entrevista es opcional: la pide Noé solo si hace falta. «No requerida» nunca cuenta como falta.</p>';
+  if(op.editable){
+    h+='<div class="fp-fila"><span class="fp-lbl">Fechas</span>'+
+      '<button type="button" class="fp-btn mini" data-fp="filtro">'+(C.filtroAprobado?'Filtro aprobado '+fd(C.filtroAprobado):'Marcar filtro aprobado (hoy)')+'</button>'+
+      '<button type="button" class="fp-btn mini" data-fp="solicitud">'+(C.estudiosSolicitados?'Estudios pedidos '+fd(C.estudiosSolicitados):'Estudios solicitados (hoy)')+'</button>'+
+      '<button type="button" class="fp-btn mini pri" data-fp="estudioNuevo">+ Cargar estudio</button></div>'+
+      '<div class="fp-fila"><span class="fp-lbl">Revisión médica</span><button type="button" class="fp-btn mini" data-fp="medico">'+(C.revisionMedica&&C.revisionMedica.fecha?'Hecha '+fd(C.revisionMedica.fecha)+' · deshacer':'Marcar revisión médica hecha (hoy)')+'</button></div>'+
+      '<div class="fp-fila"><span class="fp-lbl">Decisión de Noé</span><span class="fp-seg" role="group" aria-label="Decisión">'+Object.keys(DEC).map(function(k){ return '<button type="button" data-fp="decision" data-v="'+k+'" aria-pressed="'+(!!(C.decision&&C.decision.estado===k))+'">'+DEC[k]+'</button>'; }).join('')+'</span></div>';
+  } else if(C.decision&&C.decision.estado){ h+='<div class="fp-fila"><span class="fp-lbl">Decisión</span><span class="fp-chip info">'+esc(DEC[C.decision.estado]||C.decision.estado)+' · '+fd(C.decision.fecha)+'</span></div>'; }
+  h+='</div>'+estudiosLista(P,ctx,op)+'</div></div>';
+  return h;
+}
+function estudiosLista(P,ctx,op){
+  var E=vals((P||{}).estudios).sort(function(a,b){ return String(b.fecha||'').localeCompare(String(a.fecha||'')); }), A=((ctx||{}).analytics||[]).slice().sort(function(a,b){ return String(b.date||'').localeCompare(String(a.date||'')); });
+  var h='<h4 class="fp-h" style="font-size:18px;margin-top:14px">Estudios</h4>';
+  if(!E.length&&!A.length) return h+'<div class="fp-pend"><b>Pendiente de recibir</b>Todavía no hay estudios. Llegan cuando Noé los carga aquí o cuando avisa «ya mandó sus estudios» (se extraen del chat y se registran).</div>';
+  h+=E.map(function(e){ var vs=e.valores||[], fu=vs.filter(function(v){ return semaforoLab(v.valor,v.refMin,v.refMax)[0]==='fuera'; }).length;
+    return '<div class="fp-est"><span><b>'+fd(e.fecha)+'</b>'+(e.laboratorio?' · '+esc(e.laboratorio):'')+' · '+vs.length+' valor'+(vs.length===1?'':'es')+(fu?' · <span class="fp-chip roja">'+fu+' fuera de rango</span>':'')+
+      (e.lectura==='extraido'&&!e.revisado?' <span class="fp-chip amarilla">extraído: confirmar</span>':'')+'<br><small class="fp-nota">Original: '+esc((e.archivo||{}).referencia||'—')+(e.analiticaId?' · enlazado con la analítica '+esc(e.analiticaId):'')+'</small></span>'+
+      (op&&op.editable?'<span><button type="button" class="fp-btn mini" data-fp="estudioEditar" data-id="'+esc(e.id)+'">Editar</button>'+(e.lectura==='extraido'&&!e.revisado?' <button type="button" class="fp-btn mini" data-fp="estudioRevisado" data-id="'+esc(e.id)+'">Confirmar valores</button>':'')+'</span>':'')+'</div>'; }).join('');
+  h+=A.map(function(a){ return '<div class="fp-est"><span><b>'+fd(a.date)+'</b> · analítica «'+esc(a.cycleNum||'')+'» <small class="fp-nota">(registro de siempre de la app; se usa en el reporte y no se modifica)</small></span></div>'; }).join('');
+  return h;
+}
+
+// ── reporte ──
+function li(it){ return '<div class="fp-li '+esc(it.nivel)+'"><i aria-hidden="true"></i><div><span class="sr" style="position:absolute;left:-9999px">'+(NIV[it.nivel]||'')+'</span>'+esc(it.texto)+(it.fuente?'<small>'+esc(it.fuente)+'</small>':'')+'</div></div>'; }
+function cuenta(items){ var c={roja:0,amarilla:0,sin_dato:0}; (items||[]).forEach(function(i){ if(c[i.nivel]!==undefined) c[i.nivel]++; }); return c; }
+function labHtml(L){
+  if(!L) return '';
+  var h='';
+  if(L.pendiente) h+='<div class="fp-pend" style="margin-bottom:10px"><b>Pendiente de recibir</b>Todavía no hay estudios. Así se verá cada panel cuando lleguen: resultado, rango del propio laboratorio, semáforo, significado y tendencia.</div>';
+  (L.paneles||[]).forEach(function(p){
+    h+='<section class="fp-lab-p'+(p.vacio?' vacio':'')+'"><header><b>'+esc(p.titulo)+'</b>'+(p.vacio?'<span class="fp-chip">'+esc(p.vacioTxt)+'</span>':'<span class="fp-chip info">'+p.valores.length+' valor'+(p.valores.length===1?'':'es')+'</span>')+'</header>';
+    (p.valores||[]).forEach(function(v){
+      var sm={dentro:'Dentro',limite:'Al límite',fuera:'Fuera',sin_rango:'Sin rango'}[v.semaforo]||v.semaforo, fl=v.direccion==='alto'?' ↑':v.direccion==='bajo'?' ↓':'';
+      h+='<div class="fp-val"><div class="nm">'+esc(v.nombre)+' <span class="fp-semlab '+esc(v.semaforo)+'">'+(v.semaforo==='fuera'?'🔴':v.semaforo==='limite'?'🟡':v.semaforo==='dentro'?'🟢':'⚪')+' '+sm+fl+'</span></div>'+
+        '<div class="rs"><b>'+esc(v.valor)+'</b> '+esc(v.unidad||'')+'<br><small class="fp-nota">Ref. '+esc(v.ref||'—')+'</small></div>'+
+        '<div class="sg">'+esc(v.significado)+(v.confirmar?' <i>(leído del texto de la analítica: confirmar contra el original)</i>':'')+(v.marcaNoe?' Noé lo marcó «'+esc(v.marcaNoe)+'».':'')+'</div>'+
+        '<div class="td">'+(v.tendencia&&v.tendencia.length?'Tendencia: '+v.tendencia.map(function(t){ return fd(t.fecha)+': '+esc(t.valor); }).join(' → ')+' → '+fd(v.fecha)+': '+esc(v.valor)+' ('+esc(v.tendTxt)+')':'Muestra del '+fd(v.fecha)+' · sin estudios anteriores para comparar')+' · '+esc(v.fuente)+'</div></div>';
+    });
+    (p.notas||[]).forEach(function(n){ h+='<p class="fp-nota">'+esc(n)+'</p>'; });
+    if(p.contexto&&p.contexto.length) h+='<div class="fp-ctx"><b>Con su contexto</b><ul>'+p.contexto.map(function(c){ return '<li>'+esc(c)+'</li>'; }).join('')+'</ul></div>';
+    h+='</section>';
+  });
+  var R=L.resumen||{};
+  h+='<div class="fp-labres"><div class="c"><b>Consultar con el médico</b>'+((R.consultar||[]).length?'<ul>'+R.consultar.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('')+'</ul>':'<span class="fp-nota">Ningún valor fuera de rango.</span>')+'</div>'+
+    '<div class="v"><b>Vigilar</b>'+((R.vigilar||[]).length?'<ul>'+R.vigilar.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('')+'</ul>':'<span class="fp-nota">Nada por ahora.</span>')+'</div></div>'+
+    (R.nota?'<p class="fp-nota">'+esc(R.nota)+'</p>':'');
+  return h;
+}
+function reporte(rep,calc,op){
+  op=op||{};
+  if(calc&&!calc.mostrarReporte) return '<div class="fp"><div class="fp-pend"><b>🧾 Interpretación integral</b>Se muestra cuando se reciban los estudios de laboratorio (regla 432).</div></div>';
+  if(!rep||!rep.secciones) return '<div class="fp"><div class="fp-pend"><b>🧾 Interpretación integral</b>Ya hay estudios: el reporte se genera en la siguiente revisión (tools/farma_reporte.py).</div></div>';
+  var S=rep.semaforo||{}, E=rep.encabezado||{};
+  var h='<div class="fp"><div class="fp-rep-h"><div class="fp-k" style="font:700 11.5px var(--fp-u);letter-spacing:.06em;text-transform:uppercase;color:rgba(239,232,218,.72)">🧾 Interpretación integral · versión '+esc(rep.version||1)+' · '+esc(fd(rep.generado))+'</div>'+
+    '<h3>'+esc((rep.alumno||{}).nombre||'')+'</h3><div class="fp-m">'+[E.objetivo?'Objetivo: '+esc(E.objetivo):'',E.entrevista?'Entrevista '+esc(E.entrevista.version)+' del '+fd(E.entrevista.fecha):'Sin entrevista',E.ultimosEstudios?'Estudios del '+fd(E.ultimosEstudios):'Estudios pendientes',
+      E.ciclo?'Ciclo activo '+esc(E.ciclo.numero)+' · semana '+esc(E.ciclo.semana)+' de '+esc(E.ciclo.total)+' (revisión de seguimiento)':'',
+      rep.chequeo?({inicial:'Chequeo inicial',seguimiento:'Chequeo de seguimiento',cierre:'Chequeo de cierre'}[rep.chequeo.tipo]||'Chequeo')+' del '+fd(rep.chequeo.fecha):''].filter(Boolean).join(' · ')+'</div>'+
+    '<div class="fp-sem"><div><b>'+(S.rojas||0)+'</b><span>🔴 banderas rojas</span></div><div><b>'+(S.amarillas||0)+'</b><span>🟡 amarillas</span></div><div><b>'+(S.sinDato||0)+'</b><span>❔ sin dato</span></div><div><b>'+(S.verdes||0)+'</b><span>🟢 a favor</span></div></div>'+
+    '<span class="fp-estado'+(S.rojas?' roja':'')+'">'+esc(rep.estadoTxt||'')+'</span><div class="fp-aviso">'+esc(rep.aviso||'')+'</div></div>';
+  var Rz=rep.resumen||{};
+  h+='<div class="fp-card fp-res"><h3 class="fp-h">Resumen de factores a considerar</h3><p class="fp-sub">Lo más importante del reporte completo. Cada punto dice de dónde sale.</p>'+
+    ((Rz.rojas||[]).length?'<h4>🔴 Banderas rojas (revisión médica antes de cualquier decisión)</h4>'+Rz.rojas.map(function(t){ return li({nivel:'roja',texto:t}); }).join(''):'')+
+    ((Rz.amarillas||[]).length?'<h4>🟡 Puntos a considerar</h4>'+Rz.amarillas.map(function(t){ return li({nivel:'amarilla',texto:t}); }).join(''):'')+
+    (Rz.estudios&&((Rz.estudios.consultar||[]).length||(Rz.estudios.vigilar||[]).length)?'<h4>🔬 Estudios</h4>'+(Rz.estudios.consultar||[]).map(function(t){ return li({nivel:'amarilla',texto:'Consultar con el médico: '+t}); }).join('')+(Rz.estudios.vigilar||[]).map(function(t){ return li({nivel:'info',texto:'Vigilar: '+t}); }).join(''):'')+
+    ((Rz.favor||[]).length?'<h4>🟢 A favor</h4>'+Rz.favor.map(function(t){ return li({nivel:'verde',texto:t}); }).join(''):'')+'</div>';
+  // FASE 3 (idea 1): «⚖️ Aprovechamiento del ciclo» dentro del reporte (también va como sección aparte; vista en farma_chequeos_vista.js)
+  if(rep.aprovechamiento&&window.FarmaChequeos) h+=window.FarmaChequeos.balanzaCard(rep.aprovechamiento,{});
+  (rep.secciones||[]).forEach(function(s){
+    var c=cuenta(s.items), abre=s.id==='estudios'||s.id==='medico'||op.abrirTodo;
+    h+='<details class="fp-sec" id="fp-sec-'+esc(s.id)+'"'+(abre?' open':'')+'><summary><span class="n">'+s.n+'</span><span class="t">'+esc(s.titulo)+'</span><span class="c">'+(c.roja?'<span class="fp-chip roja">🔴 '+c.roja+'</span>':'')+(c.amarilla?'<span class="fp-chip amarilla">🟡 '+c.amarilla+'</span>':'')+(c.sin_dato?'<span class="fp-chip sin_dato">❔ '+c.sin_dato+'</span>':'')+'</span></summary><div class="b">';
+    if(s.kv&&s.kv.length) h+='<dl class="fp-kv">'+s.kv.map(function(k){ return '<dt>'+esc(k[0])+'</dt><dd>'+esc(k[1])+'</dd>'; }).join('')+'</dl>';
+    if(s.id==='estudios') h+=labHtml(s.lab)+(s.items&&s.items.length?'<h4>Puntos de los estudios</h4>':'');
+    if(s.id==='medico'&&s.medico){ var m=s.medico; h+='<div class="fp-medico '+esc(m.tipo)+'"><b>'+esc(m.texto)+'</b>'+((m.temas||[]).length?'Temas a llevar al médico:<ul>'+m.temas.map(function(t){ return '<li>'+esc(t)+'</li>'; }).join('')+'</ul>':'')+
+      ((m.laboratorio||[]).length?'Del laboratorio:<ul>'+m.laboratorio.map(function(t){ return '<li>'+esc(t)+'</li>'; }).join('')+'</ul>':'')+(m.llevar?'<div>'+esc(m.llevar)+'.</div>':'')+'</div>'; }
+    else h+=(s.items||[]).map(li).join('')||'<p class="fp-nota">Sin puntos en esta sección.</p>';
+    h+='</div></details>';
+  });
+  if((rep.preguntas||[]).length) h+='<div class="fp-card"><h3 class="fp-h">Preguntas de seguimiento</h3><p class="fp-sub">Para que Noé las use si lo decide. Nadie se las envía al alumno automáticamente.</p><ol style="margin:0;padding-left:20px;font-size:14px">'+rep.preguntas.map(function(p){ return '<li style="margin:0 0 6px">'+esc(p.texto)+'<br><small class="fp-nota">Por: '+esc(p.por)+'</small></li>'; }).join('')+'</ol></div>';
+  h+='<p class="fp-cierre">'+esc(rep.cierre||'La decisión corresponde a Noé.')+'</p></div>';
+  return h;
+}
+
+// ── carga manual de un estudio (registro por estudio, regla 433) ──
+function estudioVacio(){ return {id:'es_'+Date.now(),fecha:hoyMx(),laboratorio:'',notas:'',archivo:{referencia:'',nombre:'',origen:'manual'},valores:[{analito:'',valor:null,unidad:'',refMin:null,refMax:null}],lectura:'manual',revisado:true}; }
+function editorEstudio(E,op){
+  op=op||{}; E=E||estudioVacio(); var A=op.analytics||[];
+  var h='<div class="fp"><div class="fp-card fp-ed" data-fp-editor="'+esc(E.id)+'"><h3 class="fp-h">'+(op.titulo||'Cargar estudio')+'</h3><p class="fp-sub">Copia cada valor con el rango de referencia QUE TRAE el estudio (no se usan rangos genéricos). Las analíticas de siempre se conservan; si este estudio es el mismo que una analítica, enlázalo para no duplicarlo.</p>'+
+    '<div class="fp-g"><label>Fecha de la muestra<input type="date" data-fpe="fecha" value="'+esc(E.fecha||'')+'"></label><label>Laboratorio<input data-fpe="laboratorio" value="'+esc(E.laboratorio||'')+'"></label>'+
+    '<label>Archivo original (dónde está)<input data-fpe="archivo.referencia" placeholder="p. ej. WhatsApp 9 nov, PDF «quimica.pdf»" value="'+esc((E.archivo||{}).referencia||'')+'"></label>'+
+    '<label>Enlazar con analítica<select data-fpe="analiticaId"><option value="">— ninguna —</option>'+A.map(function(a){ return '<option value="'+esc(a.id)+'"'+(E.analiticaId===a.id?' selected':'')+'>'+fd(a.date)+' · '+esc(a.cycleNum||'')+'</option>'; }).join('')+'</select></label></div>';
+  h+='<div style="display:grid;gap:6px">'+(E.valores||[]).map(function(v,i){
+    var st=semaforoLab(v.valor,v.refMin,v.refMax)[0];
+    return '<div class="fp-vrow" data-fpv="'+i+'"><label>Analito<input data-fpk="analito" value="'+esc(v.analito||'')+'" placeholder="Hemoglobina, LDL, TSH…"></label><label>Valor<input inputmode="decimal" data-fpk="valor" value="'+esc(v.valor==null?'':v.valor)+'"></label>'+
+      '<label>Unidad<input data-fpk="unidad" value="'+esc(v.unidad||'')+'"></label><label>Ref. mín.<input inputmode="decimal" data-fpk="refMin" value="'+esc(v.refMin==null?'':v.refMin)+'"></label><label>Ref. máx.<input inputmode="decimal" data-fpk="refMax" value="'+esc(v.refMax==null?'':v.refMax)+'"></label>'+
+      '<span><span class="fp-semlab '+st+'">'+({dentro:'Dentro',limite:'Al límite',fuera:'Fuera',sin_rango:'—'}[st])+'</span> <button type="button" class="fp-btn mini" data-fp="valorQuitar" data-i="'+i+'" aria-label="Quitar valor">✕</button></span></div>'; }).join('')+'</div>'+
+    '<button type="button" class="fp-btn mini" data-fp="valorAgregar">+ Valor</button><label>Notas<textarea data-fpe="notas">'+esc(E.notas||'')+'</textarea></label>'+
+    '<div class="fp-fila" style="justify-content:flex-end"><button type="button" class="fp-btn" data-fp="estudioCancelar">Cancelar</button><button type="button" class="fp-btn pri" data-fp="estudioGuardar">Guardar estudio</button></div></div></div>';
+  return h;
+}
+function num(x){ var t=String(x==null?'':x).trim().replace(',','.'); return t===''||isNaN(Number(t))?null:Number(t); }
+function leerEditor(raiz,E){
+  E=JSON.parse(JSON.stringify(E||estudioVacio())); var q=function(s){ return raiz.querySelector(s); };
+  ['fecha','laboratorio','notas','analiticaId'].forEach(function(k){ var el=q('[data-fpe="'+k+'"]'); if(el) E[k]=el.value; });
+  var ar=q('[data-fpe="archivo.referencia"]'); E.archivo=Object.assign({},E.archivo||{},{referencia:ar?ar.value:''});
+  if(!E.analiticaId) delete E.analiticaId;
+  E.valores=Array.prototype.map.call(raiz.querySelectorAll('[data-fpv]'),function(row){ var g=function(k){ var el=row.querySelector('[data-fpk="'+k+'"]'); return el?el.value:''; };
+    var v={analito:g('analito').trim(),valor:num(g('valor')),unidad:g('unidad').trim(),refMin:num(g('refMin')),refMax:num(g('refMax'))};
+    var t=g('valor').trim(); if(v.valor===null&&t) v.texto=t; v.estado=clasifica(v.valor,v.refMin,v.refMax); return v; }).filter(function(v){ return v.analito; });
+  return E;
+}
+function validarEstudio(E){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(E.fecha||'')) return 'Pon la fecha de la muestra';
+  if(!(E.valores||[]).length) return 'Agrega al menos un valor';
+  if(!String((E.archivo||{}).referencia||'').trim()) return 'Di dónde está el archivo original (chat, PDF, Harbiz…)';
+  return null;
+}
+window.FarmaProceso={calcular:calcular,clasifica:clasifica,semaforoLab:semaforoLab,tablero:tablero,reporte:reporte,estudiosLista:estudiosLista,
+  editorEstudio:editorEstudio,leerEditor:leerEditor,validarEstudio:validarEstudio,estudioVacio:estudioVacio,ETAPA:ETAPA,fd:fd,hoyMx:hoyMx};
+})();
+
+/*FARMA_F3_JS_INI*/
+/* Farmacología · FASE 3 «🩺 Chequeos de farmacología» + «⚖️ Aprovechamiento del ciclo» (Noé 12 nov 2026, regla 434, ideas 1 y 2).
+   Vista y lógica compartidas, sin dependencias: panel (pestaña 💊, inyectada por tools/farma_panel_inyectar.py) y FitTrack Coach
+   (💊 Farma → Expediente, inyectada por tools/farma_coach_inyectar.py). programa(), nivelEfecto(), alertasEfectos(), alertasChequeos() y
+   mensajePendiente() son IDÉNTICAS a tools/farma_chequeos.py (lo prueba tools/test_farma_chequeos.py).
+   Escribe SOLO el sub-nodo proceso/n<NIP>/seguimiento (lo de Noé): accion() devuelve el nodo nuevo y el anfitrión lo guarda
+   (Coach: set al instante · panel: farmaCola → tools/farma_cola.py). WhatsApp: los botones solo ABREN WhatsApp con el texto; Noé envía.
+   LÍMITE: nada de sustancias, dosis, combinaciones, duraciones ni protocolos. Descanso mínimo y re-estudios los fija Noé. */
+(function(){
+'use strict';
+var SEG_DESDE='2026-10-01', CIERRE_DESDE='2026-09-01', MSG_DESDE='2026-11-12', ENCADENADO_DIAS=7, REPETIDO=3;
+var GRAVES=['clitor','ginecomast','pecho','sangr','absceso','infecc','ictericia','desmay','vision','convuls'];
+var FXL={libido_d:'Disminución de libido',libido_u:'Aumento de libido',voz:'Voz más grave',acne:'Acné / piel grasosa',humor:'Cambios de humor / irritabilidad',
+  presion:'Presión alta / palpitaciones',liquidos:'Retención de líquidos',cabello:'Caída de cabello',hepatico:'Dolor hepático / abdominal',
+  menstrual:'Irregularidades menstruales',insomnio:'Insomnio / ansiedad',energia:'Aumento de energía / agresión'};
+var TIPO={inicial:'Chequeo inicial',seguimiento:'Chequeo de seguimiento',cierre:'Chequeo de cierre',reestudio:'Re-estudios'};
+var EST={programado:'Programado',abierto:'Abierto',esperando_estudios:'Esperando estudios',listo:'Listo para evaluar',fijo:'Fijo',cerrado:'Cerrado',omitido:'Lo cubre el cierre'};
+var MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+var PANELES=['Biometría hemática','Química sanguínea','Perfil de lípidos','Perfil hepático','Función renal','Glucosa y HbA1c','Perfil tiroideo','Perfil hormonal','PSA (hombres)','Electrolitos','Examen general de orina'];
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function d10(iso){ var t=String(iso||''); if(t.length>10&&t.charAt(10)==='T'){ var x=Date.parse(t); if(!isNaN(x)) return new Date(x-6*3600e3).toISOString().slice(0,10); } return t.slice(0,10); }
+function mas(f,n){ var x=Date.parse(String(f).slice(0,10)+'T12:00:00Z'); return new Date(x+n*864e5).toISOString().slice(0,10); }
+function dif(a,b){ var x=Date.parse(d10(a)+'T12:00:00Z'), y=Date.parse(d10(b)+'T12:00:00Z'); return isNaN(x)||isNaN(y)?null:Math.round((x-y)/864e5); }
+function hoyMx(){ return new Date(Date.now()-6*3600e3).toISOString().slice(0,10); }
+function fd(iso){ if(!iso) return '—'; var p=d10(iso).split('-').map(Number); if(p.length<3||isNaN(p[2])) return String(iso); return p[2]+' '+MES[p[1]-1]+' '+p[0]; }
+function esFecha(f){ return /^\d{4}-\d{2}-\d{2}$/.test(String(f||'')); }
+function sinAcentos(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''); }
+function obj(v){ return v&&typeof v==='object'&&!Array.isArray(v)?v:{}; }
+function lista(v){ return Array.isArray(v)?v.filter(function(x){return x!=null;}):v&&typeof v==='object'?Object.keys(v).map(function(k){return v[k];}).filter(function(x){return x!=null;}):[]; }
+function totalDe(c){ var n=parseInt(String(c.duration==null?'12':c.duration).trim().split(/\s+/)[0],10); return n||12; }
+function seg(P){ return obj((P||{}).seguimiento); }
+function sch(P,i){ return obj(obj(seg(P).chequeos)[i]); }
+function copia(v){ return JSON.parse(JSON.stringify(v==null?null:v)); }
+
+function fechasEstudios(P,an){
+  var fs=[]; lista(obj((P||{}).estudios)).forEach(function(e){ if(e&&(e.fecha||e.registradoEn)) fs.push(String(e.fecha||e.registradoEn).slice(0,10)); });
+  (an||[]).forEach(function(a){ if(a&&a.date) fs.push(String(a.date).slice(0,10)); });
+  var u={}; fs.forEach(function(f){ if(esFecha(f)) u[f]=1; }); return Object.keys(u).sort();
+}
+
+// ── calendario de chequeos (IDÉNTICO a farma_chequeos.programa) ──
+function programa(P,ctx){
+  ctx=ctx||{}; var hoy=ctx.hoy||hoyMx(), cs=(ctx.cycles||[]).filter(function(c){return c&&c.id;}), fs=fechasEstudios(P,ctx.analytics), C=obj((P||{}).control), out=[];
+  function cerrado(i){ return sch(P,i).estado==='cerrado'; }
+  var ap=C.filtroAprobado||C.estudiosSolicitados||(C.entrevista==='solicitada'?C.entrevistaEn:null);
+  if(ap&&esFecha(String(ap).slice(0,10))){
+    ap=String(ap).slice(0,10); var i='ini_'+ap.replace(/-/g,'');
+    var vinc=cs.filter(function(c){ return String(c.startDate||'').slice(0,10)>=ap; })[0]||null;
+    var con=fs.filter(function(f){ return f>=mas(ap,-90); });
+    var est=(cerrado(i)||(vinc&&String(vinc.startDate).slice(0,10)<=hoy))?'fijo':con.length?'listo':'esperando_estudios';
+    out.push({id:i,tipo:'inicial',fecha:ap,estado:est,cicloId:vinc?vinc.id:null,cicloNum:vinc?String(vinc.number||'').trim():null,estudios:con.length?con[con.length-1]:null});
+  }
+  cs.forEach(function(c,k){
+    var ini=String(c.startDate||'').slice(0,10); if(!esFecha(ini)) return;
+    var tot=totalDe(c), fin=mas(ini,tot*7), arch=c.archivedAt?d10(c.archivedAt):null, termino=arch?(fin<mas(arch,1)?fin:mas(arch,1)):fin;
+    var num=String(c.number||'').trim(), terminado=termino<=hoy;
+    for(var W=9;W<tot;W+=8){
+      var f=mas(ini,(W-1)*7); if(f<SEG_DESDE||(arch&&arch<f)) continue;
+      var i2=c.id+'_s'+W, e2=cerrado(i2)?'cerrado':hoy<f?'programado':terminado?'omitido':'abierto';
+      out.push({id:i2,tipo:'seguimiento',fecha:f,estado:e2,cicloId:c.id,cicloNum:num,semana:W,total:tot});
+    }
+    if(!terminado||termino<CIERRE_DESDE) return;
+    var sig=cs[k+1]; var si=sig?String(sig.startDate||'').slice(0,10):'';
+    if(sig&&esFecha(si)&&(dif(si,termino)||0)<=ENCADENADO_DIAS&&si>=ini) return;
+    var i3=c.id+'_cierre', con3=fs.filter(function(f){ return f>=mas(termino,-7); });
+    var e3=cerrado(i3)?'cerrado':con3.length?'listo':'esperando_estudios';
+    var ch={id:i3,tipo:'cierre',fecha:termino,estado:e3,cicloId:c.id,cicloNum:num,total:tot,estudios:con3.length?con3[con3.length-1]:null};
+    var ci=obj(sch(P,i3).cierre); if(ci.descansoHasta) ch.descansoHasta=String(ci.descansoHasta).slice(0,10);
+    out.push(ch);
+    var rf=String(ci.reestudiosFecha||'').slice(0,10);
+    if(e3==='cerrado'&&esFecha(rf)){
+      var i4=c.id+'_reest', hecho=fs.filter(function(f){ return f>=mas(rf,-7); });
+      out.push({id:i4,tipo:'reestudio',fecha:rf,cicloId:c.id,cicloNum:num,estado:cerrado(i4)?'cerrado':hecho.length?'listo':hoy<rf?'programado':'esperando_estudios',estudios:hecho.length?hecho[hecho.length-1]:null});
+    }
+  });
+  out.sort(function(a,b){ return a.fecha<b.fecha?-1:a.fecha>b.fecha?1:a.id<b.id?-1:a.id>b.id?1:0; });
+  out.forEach(function(x){ x.abierto=['abierto','esperando_estudios','listo'].indexOf(x.estado)>=0; x.dias=dif(hoy,x.fecha); });
+  return out;
+}
+function nivelEfecto(k,label,mujer){
+  var l=sinAcentos(label);
+  if((k==='voz'&&mujer)||k==='presion'||k==='hepatico'||GRAVES.some(function(g){return l.indexOf(g)>=0;})) return 'roja';
+  if(k==='libido_u'||k==='energia') return 'info';
+  return 'amarilla';
+}
+function cicloDeAlertas(cycles,hoy){
+  var cs=(cycles||[]).filter(function(c){return c&&c.id;}), act=cs.filter(function(c){return !c.archivedAt;});
+  if(act.length) return act[act.length-1];
+  for(var i=cs.length-1;i>=0;i--){ var c=cs[i]; var d=dif(hoy,c.archivedAt); if(c.archivedAt&&(d==null?999:d)<=30) return c; }
+  return null;
+}
+function alertasEfectos(P,ctx){
+  ctx=ctx||{}; var hoy=ctx.hoy||hoyMx(), cy=cicloDeAlertas(ctx.cycles,hoy); if(!cy) return [];
+  var ini=String(cy.startDate||'').slice(0,10), cfx={}, ef={};
+  (ctx.customfx||[]).forEach(function(c){ if(c&&c.id) cfx['custom_'+c.id]=c.l; });
+  (ctx.fxlog||[]).forEach(function(x){
+    if(!x||typeof x!=='object') return;
+    if(x.cid){ if(x.cid!==cy.id) return; } else if(!ini||d10(x.timestamp)<ini) return;
+    (x.effects||[]).forEach(function(k){ var e=ef[k]||(ef[k]={n:0,ult:'',sem:{}}); e.n++; var t=String(x.timestamp||''); if(t>e.ult) e.ult=t; var w=parseInt(x.week,10); if(!isNaN(w)) e.sem[w]=1; });
+  });
+  var at=obj(seg(P).alertas), out=[];
+  Object.keys(ef).sort().forEach(function(k){
+    var e=ef[k], lab=FXL[k]||cfx[k]||'Efecto propio', niv=nivelEfecto(k,lab,!!ctx.mujer), grave=niv==='roja', rep=e.n>=REPETIDO;
+    if(niv==='info') return; /* Noé 12 nov 12:48: aumento de libido/energía no son graves */
+    if(!(grave||rep)) return;
+    var clave=cy.id+'|'+k, a=obj(at[clave]), sems=Object.keys(e.sem).map(Number).sort(function(a,b){return a-b;});
+    var mot=(grave?'efecto de consideración':'')+(grave&&rep?' y ':'')+(rep?'reportado '+e.n+' veces en el ciclo':'');
+    out.push({clave:clave,cicloId:cy.id,efecto:k,etiqueta:lab,n:e.n,semanas:sems,ultimo:e.ult,grave:grave,repetido:rep,
+      atendida:!!a.atendida&&(parseInt(a.n,10)||0)>=e.n,nivel:'roja',texto:'«'+lab+'»: '+mot+(sems.length?' (semana'+(sems.length>1?'s':'')+' '+sems.join(', ')+')':'')});
+  });
+  out.sort(function(a,b){ return (a.atendida-b.atendida)||((!a.grave)-(!b.grave))||(b.n-a.n)||(a.efecto<b.efecto?-1:a.efecto>b.efecto?1:0); });
+  return out;
+}
+function alertasChequeos(P,ctx,prog){
+  ctx=ctx||{}; prog=prog||programa(P,ctx); var out=[];
+  prog.forEach(function(x){
+    var d=x.dias||0;
+    if(x.tipo==='seguimiento'&&x.estado==='abierto'&&d>=14) out.push({nivel:'amarilla',id:x.id,texto:'Chequeo de seguimiento (semana '+x.semana+') abierto desde hace '+d+' días'});
+    if((x.tipo==='cierre'||x.tipo==='reestudio')&&x.estado==='esperando_estudios'&&d>=14) out.push({nivel:d>=30?'roja':'amarilla',id:x.id,texto:TIPO[x.tipo]+': '+d+' días sin estudios'});
+    if(x.tipo==='cierre'&&x.descansoHasta){
+      var nuevo=(ctx.cycles||[]).filter(function(c){ var s=String((c||{}).startDate||'').slice(0,10); return s>x.fecha&&s<x.descansoHasta; })[0];
+      if(nuevo) out.push({nivel:'roja',id:x.id,texto:'Ciclo nuevo antes de terminar el descanso mínimo que fijaste (hasta '+x.descansoHasta+')'});
+    }
+  });
+  return out;
+}
+function mensajePendiente(P,ctx){
+  var act=((ctx||{}).cycles||[]).filter(function(c){ return c&&c.id&&!c.archivedAt&&c.startDate; }); if(!act.length) return null;
+  var c=act[act.length-1]; if(d10(c.createdAt||c.savedAt||'')<MSG_DESDE) return null;
+  var m=obj(obj(seg(P).mensajes)['ciclo_'+c.id]); return (m.listo||m.abiertoWa)?null:c.id;
+}
+/** Para las listas del anfitrión: [{nivel:'roja'|'amarilla'|'info', texto}] (efectos no atendidos + calendario + mensaje pendiente). */
+function resumenAlertas(P,ctx){
+  var prog=programa(P,ctx), out=[];
+  alertasEfectos(P,ctx).forEach(function(a){ if(!a.atendida) out.push({nivel:'roja',tipo:'efecto',texto:'Alerta roja: '+a.texto}); });
+  alertasChequeos(P,ctx,prog).forEach(function(a){ out.push({nivel:a.nivel,tipo:'chequeo',texto:a.texto}); });
+  prog.filter(function(x){return x.abierto;}).forEach(function(x){ out.push({nivel:'info',tipo:'abierto',texto:TIPO[x.tipo]+(x.semana?' (semana '+x.semana+')':'')+': '+EST[x.estado].toLowerCase()}); });
+  if(mensajePendiente(P,ctx)) out.push({nivel:'info',tipo:'mensaje',texto:'Ciclo cargado: falta el mensaje de inicio'});
+  return out;
+}
+
+// ── mensajes (borradores en la voz de Noé, sync/voz_noe.md; Noé los aprueba y los edita antes de enviar) ──
+function nom1(n){ var t=String(n||'').trim(); if(t&&t===t.toUpperCase()) t=t.toLowerCase().replace(/(^|\s)(\S)/g,function(m,a,b){return a+b.toUpperCase();}); return t.split(/\s+/)[0]||''; }
+var MSJ={
+  saludo:function(n,sexo){ var x=nom1(n); return sexo==='male'?'Qué onda, buen día '+x+'.':sexo==='female'?'Hola, bonito día '+x+'.':'Hola, buen día '+x+'.'; },
+  cicloCargado:function(n,sexo){ return MSJ.saludo(n,sexo)+' Listo, ya está cargado tu ciclo: ya puedes revisarlo en el área de Farmacología de tu FitTrack (entras con tu mismo NIP).\n\n'+
+    'Antes de arrancar te quiero dejar algo muy claro: el aprovechamiento de un ciclo no lo da el ciclo, lo da tu adherencia al plan. Entrenamiento, alimentación, descanso y registros, todos los días, con disciplina y responsabilidad. Si el plan no se cumple, el ciclo no se aprovecha y no vale la pena el riesgo.\n\n'+
+    'Muy importante: registra en FitTrack cualquier efecto secundario en cuanto lo notes, aunque te parezca menor. Con eso te doy un seguimiento puntual y, si algo requiere atención, lo vemos a tiempo con tu médico.\n\n'+
+    'Cada 8 semanas tenemos tu chequeo de farmacología y, al terminar el ciclo, tu chequeo de cierre con estudios. Ahí estoy al pendiente, vamos con todo.'; },
+  estudios:function(n,sexo,tipo,lst,saludo){
+    var para=tipo==='cierre'?'Para tu chequeo de cierre de ciclo':tipo==='reestudio'?'Ya toca repetir tus estudios':'Para tu evaluación inicial de farmacología';
+    return (saludo?MSJ.saludo(n,sexo)+' ':'')+para+(tipo==='reestudio'?'. Necesito que te hagas estos:':' necesito que te hagas estos estudios:')+'\n\n'+(lst||[]).map(function(x){return '• '+x;}).join('\n')+'\n\n'+
+      'Cuando los tengas, mándamelos por aquí en PDF o en foto clara donde se vean tus valores y los rangos de referencia del laboratorio. '+
+      (tipo==='cierre'?'Con eso evalúo cómo cerró tu ciclo y te paso tu reporte.':tipo==='reestudio'?'Con eso confirmamos que tus valores vayan por buen camino.':'Con eso armo tu evaluación inicial.')+' Quedo al pendiente.'; },
+  preguntas:function(n,sexo,qs,saludo,ch){
+    var cual=ch&&ch.tipo==='seguimiento'?'tu chequeo de seguimiento de farmacología (semana '+ch.semana+' de tu ciclo)':ch&&ch.tipo==='cierre'?'tu chequeo de cierre de farmacología':'tu chequeo de farmacología';
+    return (saludo?MSJ.saludo(n,sexo)+' Te escribo por '+cual+'.':'Retomando '+cual+'.')+' Para revisarlo bien necesito que me ayudes con unas preguntas:\n\n'+
+      (qs||[]).map(function(q,i){return (i+1)+'. '+q;}).join('\n')+'\n\n'+
+      'Contéstame con calma y con toda confianza: todo lo que me compartas me sirve para cuidarte y para que el proceso vaya bien. Ahí estoy al pendiente.'; },
+  reporte:function(n,sexo,texto,ch,saludo){
+    var cual=ch&&ch.tipo==='seguimiento'?'tu chequeo de seguimiento':ch&&ch.tipo==='cierre'?'tu chequeo de cierre':ch&&ch.tipo==='inicial'?'tu evaluación inicial':'tu chequeo';
+    return (saludo?MSJ.saludo(n,sexo)+' ':'')+'Ya revisé '+cual+' de farmacología. Aquí te va lo más importante:\n\n'+String(texto||'').trim()+'\n\nCualquier duda me dices. A seguir dándole con todo.'; },
+  cierre:function(n,sexo,texto,ci,saludo){
+    var h=(saludo?MSJ.saludo(n,sexo)+' ':'')+'Ya revisé tus estudios de cierre de ciclo.'+(String(texto||'').trim()?'\n\n'+String(texto).trim():'');
+    if(ci&&ci.descansoHasta) h+='\n\nTu descanso: antes de volver a usar farmacología, mínimo hasta el '+fd(ci.descansoHasta)+'. Ese descanso es parte del proceso: le da tiempo a tu cuerpo de recuperarse y es lo que cuida tu salud a largo plazo.';
+    if(ci&&ci.reestudiosFecha) h+='\n\nVamos a repetir estudios el '+fd(ci.reestudiosFecha)+(ci.reestudiosMotivo?' ('+ci.reestudiosMotivo+')':'')+' para confirmar que tus valores vayan por buen camino; te aviso unos días antes.';
+    return h+'\n\nSigues con tu plan de entrenamiento y alimentación con la misma disciplina. Ahí estoy al pendiente.'; }
+};
+function waUrl(tel,texto){ var t=String(tel||'').replace(/\D/g,''); return (t?'https://wa.me/'+t:'https://api.whatsapp.com/send')+'?text='+encodeURIComponent(texto||''); }
+
+// ── ⚖️ balanza (F3.2) ──
+function balanzaSvg(ap){
+  var A=ap&&ap.adherencia?ap.adherencia.pct:null, R=ap&&ap.resultados?ap.resultados.pct:null;
+  var ang=(A==null||R==null)?0:Math.max(-14,Math.min(14,(R-A)*0.28));
+  var r=ang*Math.PI/180, cx=160, cy=58, L=118, xl=cx-L*Math.cos(r), yl=cy-L*Math.sin(r), xr=cx+L*Math.cos(r), yr=cy+L*Math.sin(r);
+  function plato(x,y,lbl,v,cl){ return '<line x1="'+x.toFixed(1)+'" y1="'+y.toFixed(1)+'" x2="'+(x-30).toFixed(1)+'" y2="'+(y+46).toFixed(1)+'" class="fc-hilo"/><line x1="'+x.toFixed(1)+'" y1="'+y.toFixed(1)+'" x2="'+(x+30).toFixed(1)+'" y2="'+(y+46).toFixed(1)+'" class="fc-hilo"/>'+
+    '<path d="M'+(x-42).toFixed(1)+' '+(y+46).toFixed(1)+' h84 a42 15 0 0 1 -84 0 z" class="fc-plato '+cl+'"/>'+
+    '<text x="'+x.toFixed(1)+'" y="'+(y+40).toFixed(1)+'" class="fc-pv" text-anchor="middle">'+(v==null?'—':v)+'</text>'+
+    '<text x="'+x.toFixed(1)+'" y="'+(y+80).toFixed(1)+'" class="fc-pl" text-anchor="middle">'+lbl+'</text>'; }
+  return '<svg class="fc-bal" viewBox="0 0 320 170" role="img" aria-label="Balanza: adherencia '+(A==null?'sin dato':A)+' contra resultados '+(R==null?'sin dato':R)+'">'+
+    '<path d="M'+(cx-40)+' 164 h80 l-22 -18 h-36 z" class="fc-base"/><line x1="'+cx+'" y1="148" x2="'+cx+'" y2="'+cy+'" class="fc-poste"/>'+
+    '<line x1="'+xl.toFixed(1)+'" y1="'+yl.toFixed(1)+'" x2="'+xr.toFixed(1)+'" y2="'+yr.toFixed(1)+'" class="fc-brazo"/><circle cx="'+cx+'" cy="'+cy+'" r="7" class="fc-eje"/>'+
+    plato(xl,yl,'ADHERENCIA',A,'a')+plato(xr,yr,'RESULTADOS',R,'r')+'</svg>';
+}
+var EFE={favor:['ok','a favor'],contra:['bad','en contra'],sin_cambio:['','sin cambio'],dato:['','dato']};
+function balanzaCard(ap,op){
+  op=op||{}; if(!ap) return '';
+  var A=ap.adherencia||{}, R=ap.resultados||{}, cub=A.cobertura;
+  var h='<div class="fc"><div class="fc-card fc-apro'+(op.dentro?' dentro':'')+'"><div class="fc-k">⚖️ Aprovechamiento del ciclo'+(ap.ciclo&&ap.ciclo.numero?' '+esc(ap.ciclo.numero):'')+(ap.ciclo&&ap.ciclo.inicio?' · desde el '+fd(ap.ciclo.inicio):'')+'</div>'+
+    '<div class="fc-apro-g">'+balanzaSvg(ap)+'<div><p class="fc-ver '+(ap.inclina==null?'':ap.veredicto.indexOf('Buen')===0?'ok':'warn')+'">'+esc(ap.veredicto||'')+'</p>'+
+    '<p class="fc-nota">La adherencia que se mantiene durante el ciclo contra lo que se ve en el cuerpo. Un buen aprovechamiento es adherencia al plan con disciplina y responsabilidad.</p></div></div>';
+  h+='<div class="fc-cols"><div><h4>Adherencia'+(A.pct!=null?' · '+A.pct+'%':'')+'</h4>'+((A.items||[]).length?'<ul class="fc-ul">'+A.items.map(function(x){return '<li><span>'+esc(x.label)+'</span><b>'+x.pct+'%</b></li>';}).join('')+'</ul>':'<p class="fc-nota">Sin datos del panel.</p>')+
+    (A.ventana?'<p class="fc-nota">Último chequeo del panel: '+fd(A.ventana.desde)+' – '+fd(A.ventana.hasta)+(cub?' · cubre '+cub.dias+' de '+cub.deCiclo+' días del ciclo':'')+'</p>':'')+'</div>'+
+    '<div><h4>Resultados físicos'+(R.pct!=null?' · '+R.pct+'%':'')+'</h4>'+((R.items||[]).length?'<ul class="fc-ul">'+R.items.map(function(x){ var e=EFE[x.efecto]||['',x.efecto];
+      return '<li><span>'+esc(x.label)+(x.cambio!=null?' <small>'+x.antes+' → '+x.ahora+' '+esc(x.unidad||'')+' ('+(x.cambio>0?'+':'')+x.cambio+')</small>':x.texto?' <small>'+esc(x.texto)+'</small>':'')+'</span><b class="fc-e '+e[0]+'">'+e[1]+'</b></li>'; }).join('')+'</ul>':'<p class="fc-nota">Sin mediciones antes y después del inicio.</p>')+'</div></div>';
+  if((ap.faltan||[]).length) h+='<p class="fc-nota">Falta: '+ap.faltan.map(esc).join(' · ')+'</p>';
+  return h+'<p class="fc-nota">Calculado el '+fd(ap.calculado)+' con el objetivo «'+esc(ap.objetivo||'—')+'». No valora el ciclo ni sus sustancias.</p></div></div>';
+}
+
+// ── «📝 Reporte para el alumno» en palabras de Noé (regla 448; Noé 12 nov, después de las 14:59) ──
+// Los puntos del reporte son internos («Reportó «X» en FitTrack (3 veces…): alerta roja (regla 434)», «umbral 85%»…). Al alumno NUNCA
+// le llegan así: cada punto se traduce a una frase en primera persona, coloquial, en tú o usted. El candado palabrasInternas() no deja
+// publicar ni abrir WhatsApp si el texto (armado o editado a mano) trae palabras internas. IDÉNTICO a farma_chequeos.palabras_internas().
+var INTERNAS=[
+  [/alerta\s+(roja|amarilla)/i,'alerta roja/amarilla'],[/\bregla\s*\d+/i,'número de regla'],[/\b(R|PC|FB|PR|SG)-?\d{2,3}\b/,'código interno'],
+  [/\bumbral\b/i,'umbral'],[/\d+(?:[.,]\d+)?\s*%/,'porcentaje'],[/report[oó][^.\n]{0,60}\ben fittrack\b|\bfittrack report[oó](?![a-z])/i,'«reportó en FitTrack»'],
+  [/\(\s*\d+\s+(vez|veces)\s*;/i,'conteo interno'],[/\bsem[aá]foro\b/i,'semáforo'],[/\bsin[_ ]dato\b/i,'sin dato'],[/\bcumplimiento global\b/i,'cumplimiento global'],
+  [/\bconfiabilidad\b/i,'confiabilidad'],[/\bhuella\b/i,'huella'],[/\bpanel\b/i,'panel'],[/\bversi[oó]n\s+\d+|\bv\d+\b/i,'versión'],
+  [/\bno listo para decisi[oó]n\b|\bpendiente de estudios\b/i,'estado interno'],[/\b(dosis|mg|ml)\b/i,'dosis']];
+function palabrasInternas(t){ var s=String(t||''), out=[]; INTERNAS.forEach(function(x){ if(x[0].test(s)&&out.indexOf(x[1])<0) out.push(x[1]); }); return out; }
+function avisoInternas(L){ return 'No se publica: el texto para el alumno trae palabras internas ('+L.join(', ')+'). Escríbelo con tus palabras, como se lo dirías tú.'; }
+function V(u,tu,ust){ return u?ust:tu; }
+function minus1(s){ s=String(s||''); return s.charAt(0).toLowerCase()+s.slice(1); }
+/** Punto interno del reporte → frase para el alumno (o null si no va al alumno: pagos, ciclo, embarazo…). g = 'f' a favor · 'c' a cuidar · 'ap' balanza. */
+function fraseAlumno(g,texto,op){
+  var u=!!(op&&op.usted), t=String(texto||''), m;
+  if(g==='ap'){ var v=t.replace(/^Aprovechamiento del ciclo:\s*/,'');
+    if(/^Buen aprovechamiento/.test(v)) return V(u,'Tu constancia con el plan ya se está viendo en tus resultados; así es como se aprovecha el ciclo.','Su constancia con el plan ya se está viendo en sus resultados; así es como se aprovecha el ciclo.');
+    if(/^Adherencia alta/.test(v)) return V(u,'Estás cumpliendo muy bien el plan; los resultados todavía no se notan del todo, así que vamos a revisar juntos tus medidas y tu descanso.','Está cumpliendo muy bien el plan; los resultados todavía no se notan del todo, así que vamos a revisar juntos sus medidas y su descanso.');
+    if(/^Hay resultados/.test(v)) return 'Ya se ven resultados, pero necesito más constancia con el plan para que se sostengan.';
+    if(/^Bajo aprovechamiento/.test(v)) return V(u,'Necesito que le subas a la constancia con el plan: sin ella el ciclo no se aprovecha.','Necesito que le suba a la constancia con el plan: sin ella el ciclo no se aprovecha.');
+    return null; }
+  if((m=t.match(/^Report[oó] «(.+?)» en FitTrack \((\d+)/))){ var ef=minus1(m[1]), n=parseInt(m[2],10)||1;
+    return n>1?V(u,'Vi que me comentaste «'+ef+'» varias veces; vamos a revisarlo juntos en tu chequeo.','Vi que me comentó «'+ef+'» varias veces; vamos a revisarlo juntos en su chequeo.')
+              :V(u,'Vi que me comentaste «'+ef+'»; quiero que lo revisemos juntos en tu chequeo.','Vi que me comentó «'+ef+'»; quiero que lo revisemos juntos en su chequeo.'); }
+  if(/^Constancia en el registro/.test(t)) return g==='f'?V(u,'Vas muy bien registrando todo el mismo día; eso me ayuda mucho a darte seguimiento.','Va muy bien registrando todo el mismo día; eso me ayuda mucho a darle seguimiento.')
+                                                       :V(u,'Necesito que registres todo el mismo día; así te doy un seguimiento más puntual.','Necesito que registre todo el mismo día; así le doy un seguimiento más puntual.');
+  if(/^Cumplimiento global/.test(t)) return g==='f'?V(u,'Vas muy bien cumpliendo tu plan: entrenamiento, alimentación y registros.','Va muy bien cumpliendo su plan: entrenamiento, alimentación y registros.')
+                                                  :V(u,'Necesito que le subas al cumplimiento de tu plan: entrenamiento, alimentación y registros.','Necesito que le suba al cumplimiento de su plan: entrenamiento, alimentación y registros.');
+  if(/^Sue[nñ]o reportado/.test(t)) return g==='f'?V(u,'Vas bien con tu descanso; sigue cuidándolo.','Va bien con su descanso; siga cuidándolo.'):V(u,'Vamos a cuidar tu descanso: procura dormir al menos 7 horas.','Vamos a cuidar su descanso: procure dormir al menos 7 horas.');
+  if(/Ning[uú]n valor le[ií]do est[aá] fuera/.test(t)) return V(u,'Tus estudios salieron dentro de los rangos de tu laboratorio.','Sus estudios salieron dentro de los rangos de su laboratorio.');
+  if(/fuera del rango/.test(t)) return V(u,'Hay valores de tus estudios que quiero que revises con tu médico.','Hay valores de sus estudios que quiero que revise con su médico.');
+  if(/al l[ií]mite de su rango/.test(t)) return 'Hay valores de '+V(u,'tus','sus')+' estudios que vamos a vigilar en la siguiente revisión.';
+  if(/No hay estudios registrados durante el ciclo|Pendiente de recibir|todav[ií]a no hay estudios/.test(t)) return V(u,'Me hacen falta tus estudios para completar tu revisión; te paso cuáles.','Me hacen falta sus estudios para completar su revisión; le paso cuáles.');
+  if(/^Estudios m[aá]s recientes/.test(t)) return /m[aá]s de 3 meses/.test(t)?V(u,'Tus estudios ya tienen más de 3 meses; toca actualizarlos.','Sus estudios ya tienen más de 3 meses; toca actualizarlos.'):null;
+  if(/conformismo/i.test(t)) return V(u,'Necesito que en tus entrenamientos busques más intensidad y que tus cargas sigan subiendo.','Necesito que en sus entrenamientos busque más intensidad y que sus cargas sigan subiendo.');
+  if(/Cargas estancadas/.test(t)) return 'Vamos a cuidar que '+V(u,'tus','sus')+' cargas sigan subiendo.';
+  if((m=t.match(/^Dolor reportado en (.+?) \(/))) return V(u,'Vi que me comentaste molestia en '+m[1]+'; lo cuidamos en tus entrenamientos.','Vi que me comentó molestia en '+m[1]+'; lo cuidamos en sus entrenamientos.');
+  if(/presi[oó]n/i.test(t)) return V(u,'Vamos a estar al pendiente de tu presión: mídela en reposo unos días y mándame tus lecturas.','Vamos a estar al pendiente de su presión: mídala en reposo unos días y mándeme sus lecturas.');
+  if(/filtro de farmacolog[ií]a se sostiene/.test(t)) return V(u,'Recuerda que tu constancia y tu disciplina se siguen revisando en cada chequeo.','Recuerde que su constancia y su disciplina se siguen revisando en cada chequeo.');
+  if(/^Pago|^Pagos|Ciclo activo|ciclo\(s\) anterior|Embarazo|PAR-Q|Etiquetas|Nota de No[eé]|entrevista/i.test(t)) return null;
+  return g==='f'?V(u,'Vas por buen camino en tu proceso.','Va por buen camino en su proceso.'):V(u,'Hay un punto de tu proceso que quiero platicar contigo en tu chequeo.','Hay un punto de su proceso que quiero platicar con usted en su chequeo.');
+}
+/** Texto para el alumno con los puntos elegidos [{g:'ap'|'f'|'c', t}] (lo usa «Armar texto con lo elegido»). */
+function armarAlumno(sel,op){
+  var u=!!(op&&op.usted), ap=[], fav=[], cui=[];
+  (sel||[]).forEach(function(x){ var f=fraseAlumno(x.g,x.t,op); if(!f||palabrasInternas(f).length) return; var L=x.g==='ap'?ap:x.g==='f'?fav:cui; if(L.indexOf(f)<0) L.push(f); });
+  return ((ap.length?ap.join('\n')+'\n\n':'')+(fav.length?V(u,'Lo que vas haciendo bien:','Lo que va haciendo bien:')+'\n'+fav.map(function(x){return '• '+x;}).join('\n')+'\n\n':'')+
+    (cui.length?'Lo que vamos a cuidar:\n'+cui.map(function(x){return '• '+x;}).join('\n'):'')).trim();
+}
+
+// ── vista del alumno: 🩺 Chequeos ──
+function borrador(P,ch,rep){
+  var s=sch(P,ch.id), qs=Array.isArray(s.preguntas)&&s.preguntas.length?copia(s.preguntas):null;
+  if(!qs){ qs=((rep||{}).preguntas||[]).map(function(p,i){ return {id:'r'+i,texto:p.texto,por:p.por,estado:'sugerida',origen:'reporte'}; }); }
+  return qs;
+}
+function repDe(P,ch){
+  var L=obj(obj((P||{}).chequeos).lista)[ch.id], H=obj((P||{}).historial);
+  if(L&&L.congelado&&L.reporteVersion&&H['v'+L.reporteVersion]) return {rep:H['v'+L.reporteVersion],v:L.reporteVersion,fijo:true};
+  return {rep:(P||{}).reporte||null,v:((P||{}).reporte||{}).version,fijo:false};
+}
+function apDe(P,ch){ var L=obj(obj((P||{}).chequeos).lista)[ch.id]; return (L&&L.aprovechamiento)||(ch.tipo!=='inicial'&&ch.cicloId&&obj((P||{}).chequeos).aprovechamiento&&obj(obj((P||{}).chequeos).aprovechamiento.ciclo).id===ch.cicloId?obj((P||{}).chequeos).aprovechamiento:null); }
+function chip(est){ var c={abierto:'ora',esperando_estudios:'warn',listo:'acc',programado:'',fijo:'ok',cerrado:'ok',omitido:''}[est]; return '<span class="fc-chip '+(c||'')+'">'+esc(EST[est]||est)+'</span>'; }
+function vista(P,ctx,op){
+  op=op||{}; ctx=ctx||{}; P=P||{};
+  var prog=programa(P,ctx), ef=alertasEfectos(P,ctx), alc=alertasChequeos(P,ctx,prog), mp=mensajePendiente(P,ctx), ed=op.editable!==false;
+  var visibles=prog.filter(function(x){return x.estado!=='programado'||x.dias>=-21;});
+  var sel=op.sel&&prog.filter(function(x){return x.id===op.sel;})[0];
+  if(!sel){ var ab=prog.filter(function(x){return x.abierto;}); sel=ab[ab.length-1]||visibles[visibles.length-1]||null; }
+  var h='<div class="fc" data-fc-raiz="1" data-fc-nip="'+esc(op.nip||'')+'">';
+  h+='<div class="fc-band"><div class="fc-k">🩺 Chequeos de farmacología</div><div class="fc-t">'+esc(op.nombre||'')+'</div><div class="fc-m">Aparte de los chequeos generales de 8 semanas: inicial (fijo) · seguimiento cada 8 semanas del ciclo · cierre de ley (abierto hasta que lleguen los estudios).</div></div>';
+  if(ef.length) h+='<div class="fc-card fc-rojas"><h3 class="fc-h">🔴 Alertas por efectos secundarios</h3><p class="fc-sub">Efectos de consideración o reportados 3 veces o más en el ciclo. Requieren tu atención; si hace falta, revisión médica.</p>'+
+    ef.map(function(a){ return '<div class="fc-al roja'+(a.atendida?' atendida':'')+'"><div><b>'+esc(a.etiqueta)+'</b> · '+esc(a.texto.replace(/^«[^»]*»: /,''))+'<small>Último reporte: '+fd(a.ultimo)+(a.atendida?' · atendida':'')+'</small></div>'+
+      (ed&&!a.atendida?'<button type="button" class="fc-btn mini" data-fc="alertaAtendida" data-fc-clave="'+esc(a.clave)+'" data-fc-n="'+a.n+'">Ya lo atendí</button>':'')+'</div>'; }).join('')+'</div>';
+  alc.forEach(function(a){ h+='<div class="fc-al '+a.nivel+'"><div>'+esc(a.texto)+'</div></div>'; });
+  // mensaje al cargar el ciclo (F3.3)
+  var act=(ctx.cycles||[]).filter(function(c){return c&&!c.archivedAt&&c.startDate;}).slice(-1)[0];
+  if(act){
+    var m=obj(obj(seg(P).mensajes)['ciclo_'+act.id]), txt=m.texto||MSJ.cicloCargado(op.nombre,op.sexo);
+    h+='<details class="fc-card fc-msg"'+(mp?' open':'')+'><summary><b>✉️ Mensaje de inicio de ciclo</b> '+(mp?'<span class="fc-chip ora">pendiente</span>':m.abiertoWa?'<span class="fc-chip ok">abierto en WhatsApp '+fd(m.abiertoWa)+'</span>':m.listo?'<span class="fc-chip ok">enviado</span>':'<span class="fc-chip">sin registro (ciclo anterior a esta función)</span>')+'</summary>'+
+      '<p class="fc-sub">Se manda al cargar el ciclo: ya puede verlo en FitTrack, registrar efectos y que el aprovechamiento depende de su adherencia. Edítalo si quieres; el botón solo abre WhatsApp, tú lo envías.</p>'+
+      '<textarea class="fc-in" rows="9" data-fc-in="msgCiclo">'+esc(txt)+'</textarea><div class="fc-fila">'+
+      (ed?'<a class="fc-btn wa" href="#" target="_blank" rel="noopener" data-fc="waCiclo" data-fc-cy="'+esc(act.id)+'">Abrir en WhatsApp</a><button type="button" class="fc-btn" data-fc="msgListo" data-fc-cy="'+esc(act.id)+'">'+(mp?'Ya lo envié':'Guardar texto')+'</button>':'')+'</div></details>';
+  }
+  // descanso y re-estudios vigentes
+  prog.filter(function(x){return x.tipo==='cierre'&&x.estado==='cerrado';}).forEach(function(x){ var ci=obj(sch(P,x.id).cierre);
+    if(ci.descansoHasta||ci.reestudiosFecha) h+='<div class="fc-al info"><div><b>Cierre del ciclo '+esc(x.cicloNum||'')+'</b>'+(ci.descansoHasta?' · descanso mínimo hasta el '+fd(ci.descansoHasta):'')+(ci.reestudiosFecha?' · re-estudios el '+fd(ci.reestudiosFecha):'')+(ci.ajustes?'<small>Ajustes: '+esc(ci.ajustes)+'</small>':'')+'</div></div>'; });
+  // línea de chequeos
+  h+='<div class="fc-card"><h3 class="fc-h">Chequeos</h3>'+(visibles.length?'<div class="fc-linea">'+visibles.map(function(x){
+      return '<button type="button" class="fc-ch t-'+x.tipo+(sel&&sel.id===x.id?' on':'')+'" data-fc="abrir" data-fc-ch="'+esc(x.id)+'" aria-pressed="'+(sel&&sel.id===x.id)+'"><span class="fc-ch-t">'+esc(TIPO[x.tipo])+(x.semana?' · sem '+x.semana:'')+'</span><span class="fc-ch-m">'+fd(x.fecha)+(x.cicloNum?' · ciclo '+esc(x.cicloNum):'')+'</span>'+chip(x.estado)+'</button>'; }).join('')+'</div>'
+    :'<p class="fc-nota">Todavía no hay chequeos de farmacología. El inicial se abre con el filtro aprobado o al pedir estudios; los de seguimiento, en las semanas 9, 17, 25… del ciclo; el de cierre, al terminar el ciclo.</p>')+'</div>';
+  if(sel) h+=detalleChequeo(P,ctx,op,sel,ed);
+  h+=historialHtml(P,op);
+  return h+'</div>';
+}
+function detalleChequeo(P,ctx,op,ch,ed){
+  var s=sch(P,ch.id), R=repDe(P,ch), rep=R.rep, cerr=ch.estado==='cerrado'||ch.estado==='fijo', ap=apDe(P,ch);
+  var h='<div class="fc-card fc-det" data-fc-chsel="'+esc(ch.id)+'"><div class="fc-fila sp"><div><div class="fc-k2">'+esc(TIPO[ch.tipo])+(ch.semana?' · semana '+ch.semana+' de '+ch.total:'')+(ch.cicloNum?' · ciclo '+esc(ch.cicloNum):'')+'</div>'+
+    '<h3 class="fc-h">'+fd(ch.fecha)+' '+chip(ch.estado)+'</h3>'+
+    (ch.tipo==='inicial'?'<p class="fc-sub">Reúne filtro, entrevista (si la pediste), estudios y todo el contexto del proceso. Su reporte queda fijo al iniciar el ciclo o al cerrarlo tú.</p>':
+     ch.tipo==='seguimiento'?'<p class="fc-sub">El filtro se sostiene: adherencia, hábitos, preparación y disciplina se vuelven a evaluar, junto con efectos y estudios.</p>':
+     ch.tipo==='cierre'?'<p class="fc-sub">De ley al terminar el ciclo. Queda abierto hasta que lleguen los estudios; tú lo evalúas, fijas el descanso mínimo y, si hace falta, la fecha de re-estudios.</p>':
+     '<p class="fc-sub">Re-estudios que fijaste al cerrar el ciclo.</p>')+'</div>'+
+    (ed?(ch.estado==='cerrado'?'<button type="button" class="fc-btn" data-fc="reabrir" data-fc-ch="'+esc(ch.id)+'">Reabrir</button>':ch.estado!=='fijo'&&ch.estado!=='programado'?'<button type="button" class="fc-btn pri" data-fc="cerrarChequeo" data-fc-ch="'+esc(ch.id)+'">Cerrar chequeo</button>':''):'')+'</div>';
+  // estudios a indicar (inicial, cierre, re-estudios)
+  if(ch.tipo!=='seguimiento'){
+    var ei=s.estudiosIndicados||'';
+    h+='<div class="fc-blk"><h4>🔬 Estudios que debe hacerse</h4>'+(ch.estudios?'<p class="fc-nota">✓ Ya hay estudios del '+fd(ch.estudios)+'.</p>':'<p class="fc-nota">'+(ch.tipo==='cierre'?'El chequeo sigue abierto hasta que lleguen.':'Todavía no hay estudios registrados.')+'</p>')+
+      '<textarea class="fc-in" rows="4" data-fc-in="estudios" placeholder="Uno por renglón: los que tú indiques">'+esc(ei)+'</textarea>'+
+      (ed?'<div class="fc-chips">'+PANELES.map(function(p){return '<button type="button" class="fc-mini" data-fc="estAgregar" data-fc-v="'+esc(p)+'">+ '+esc(p)+'</button>';}).join('')+'</div>'+
+      '<div class="fc-fila"><button type="button" class="fc-btn" data-fc="estGuardar" data-fc-ch="'+esc(ch.id)+'">Guardar</button><a class="fc-btn wa" href="#" target="_blank" rel="noopener" data-fc="waEstudios" data-fc-ch="'+esc(ch.id)+'">Enviar indicaciones por WhatsApp</a>'+
+      (obj(s.wa).estudios?'<span class="fc-nota">Abierto en WhatsApp el '+fd(s.wa.estudios)+'</span>':'')+'</div>':'')+'</div>';
+  }
+  if(ap) h+=balanzaCard(ap,{dentro:true});
+  // preguntas de seguimiento
+  var qs=borrador(P,ch,rep), vivas=qs.filter(function(q){return q.estado!=='borrada';}), apl=qs.filter(function(q){return q.estado==='aplicada';});
+  h+='<div class="fc-blk"><h4>❓ Preguntas de seguimiento</h4><p class="fc-sub">Edita cada una y dale «Aplicar» para que entre al mensaje, o «Borrar» si no va. Solo las aplicadas se mandan.</p>'+
+    (vivas.length?vivas.map(function(q){ return '<div class="fc-q '+q.estado+'" data-fc-qid="'+esc(q.id)+'"><textarea class="fc-in" rows="2" data-fc-in="q" data-fc-q="'+esc(q.id)+'">'+esc(q.texto)+'</textarea>'+
+      (q.por?'<small>Por: '+esc(q.por)+'</small>':'')+(ed?'<div class="fc-fila"><button type="button" class="fc-btn mini'+(q.estado==='aplicada'?' on':'')+'" data-fc="qAplicar" data-fc-q="'+esc(q.id)+'">'+(q.estado==='aplicada'?'✓ Aplicada':'Aplicar')+'</button><button type="button" class="fc-btn mini" data-fc="qBorrar" data-fc-q="'+esc(q.id)+'">Borrar</button></div>':'')+'</div>'; }).join('')
+      :'<p class="fc-nota">Sin preguntas. Agrega las tuyas.</p>')+
+    (ed?'<div class="fc-fila"><button type="button" class="fc-btn" data-fc="qAgregar" data-fc-ch="'+esc(ch.id)+'">+ Agregar pregunta</button>'+(qs.length>vivas.length?'<button type="button" class="fc-btn" data-fc="qRestaurar" data-fc-ch="'+esc(ch.id)+'">Recuperar borradas ('+(qs.length-vivas.length)+')</button>':'')+'</div>'+
+      '<label class="fc-check"><input type="checkbox" data-fc-in="saludo" checked> Incluir saludo (no han platicado hoy)</label>'+
+      '<div class="fc-fila"><a class="fc-btn wa'+(apl.length?'':' off')+'" href="#" target="_blank" rel="noopener" data-fc="waPreguntas" data-fc-ch="'+esc(ch.id)+'">Enviar por WhatsApp ('+apl.length+')</a>'+(obj(s.wa).preguntas?'<span class="fc-nota">Abierto en WhatsApp el '+fd(s.wa.preguntas)+'</span>':'')+'</div>':'')+'</div>';
+  // reporte para el alumno (editable: Noé elige qué va)
+  var Rz=(rep||{}).resumen||{}, inc={}; ((obj(s.alumno).incluir)||[]).forEach(function(k){inc[k]=1;});
+  var items=[].concat((Rz.favor||[]).map(function(t,i){return ['f'+i,'🟢',t];}),(Rz.amarillas||[]).map(function(t,i){return ['a'+i,'🟡',t];}),(Rz.rojas||[]).map(function(t,i){return ['r'+i,'🔴',t];}));
+  if(ap&&ap.veredicto) items.unshift(['ap','⚖️','Aprovechamiento del ciclo: '+ap.veredicto]);
+  h+='<div class="fc-blk"><h4>📝 Reporte para el alumno</h4><p class="fc-sub">Elige qué puntos van, arma el texto y edítalo con tus palabras. Nada se manda solo.</p>'+
+    (items.length?'<div class="fc-sel">'+items.map(function(x){ var fr=fraseAlumno(x[0]==='ap'?'ap':x[0].charAt(0)==='f'?'f':'c',x[2],op);
+      return '<label class="fc-check"><input type="checkbox" data-fc-in="inc" value="'+esc(x[0])+'" data-fc-t="'+esc(x[2])+'"'+(inc[x[0]]?' checked':'')+'> <span>'+x[1]+' '+esc(x[2])+
+        '<small class="fc-al-alumno">'+(fr?'Al alumno: «'+esc(fr)+'»':'No va al alumno')+'</small></span></label>';}).join('')+'</div>':'<p class="fc-nota">El reporte aparece cuando haya estudios (regla 432).</p>')+
+    '<textarea class="fc-in" rows="6" data-fc-in="alumnoTexto" placeholder="Texto para el alumno (en tus palabras)">'+esc(obj(s.alumno).texto||'')+'</textarea>'+
+    (palabrasInternas(obj(s.alumno).texto).length?'<p class="fc-aviso">⚠️ '+esc(avisoInternas(palabrasInternas(obj(s.alumno).texto)))+'</p>':'')+
+    (ed?'<div class="fc-fila"><button type="button" class="fc-btn" data-fc="alArmar">Armar texto con lo elegido</button><button type="button" class="fc-btn" data-fc="alGuardar" data-fc-ch="'+esc(ch.id)+'">Guardar</button>'+
+      '<a class="fc-btn wa" href="#" target="_blank" rel="noopener" data-fc="waReporte" data-fc-ch="'+esc(ch.id)+'">Enviar por WhatsApp</a>'+
+      '<label class="fc-check"><input type="checkbox" data-fc="alPublicar" data-fc-ch="'+esc(ch.id)+'"'+(obj(s.alumno).publicado?' checked':'')+'> Mostrarlo en su área de Farmacología de FitTrack</label></div>':'')+'</div>';
+  // cierre: descanso y re-estudios (los fija Noé)
+  if(ch.tipo==='cierre'){
+    var ci=obj(s.cierre);
+    h+='<div class="fc-blk"><h4>🛑 Cierre del ciclo</h4><p class="fc-sub">Según los resultados del cierre, fija el descanso mínimo antes de volver a usar farmacología y, si hubo problemas en los estudios, la fecha para repetirlos. El sistema no propone cifras.</p>'+
+      '<div class="fc-form"><label>Descanso mínimo (semanas)<input class="fc-in" type="number" min="0" max="104" inputmode="numeric" data-fc-in="descansoSemanas" value="'+esc(ci.descansoSemanas==null?'':ci.descansoSemanas)+'"></label>'+
+      '<label>Descanso hasta<input class="fc-in" type="date" data-fc-in="descansoHasta" value="'+esc(ci.descansoHasta||'')+'"></label>'+
+      '<label>Repetir estudios el<input class="fc-in" type="date" data-fc-in="reestudiosFecha" value="'+esc(ci.reestudiosFecha||'')+'"></label>'+
+      '<label>Motivo de los re-estudios<input class="fc-in" data-fc-in="reestudiosMotivo" value="'+esc(ci.reestudiosMotivo||'')+'" placeholder="p. ej. perfil hepático fuera de rango"></label>'+
+      '<label class="ancho">Ajustes registrados<textarea class="fc-in" rows="3" data-fc-in="ajustes">'+esc(ci.ajustes||'')+'</textarea></label></div>'+
+      (ed?'<div class="fc-fila"><button type="button" class="fc-btn" data-fc="cierreGuardar" data-fc-ch="'+esc(ch.id)+'">Guardar cierre</button><a class="fc-btn wa" href="#" target="_blank" rel="noopener" data-fc="waCierre" data-fc-ch="'+esc(ch.id)+'">Enviar cierre por WhatsApp</a></div>':'')+'</div>';
+  }
+  // reporte completo de este chequeo
+  if(rep&&rep.secciones&&window.FarmaProceso){
+    var cy=(ctx.cycles||[]).filter(function(c){return c&&!c.archivedAt;}).slice(-1)[0];
+    h+='<details class="fc-blk fc-rep"><summary><b>🧾 Reporte completo</b> · versión '+esc(R.v||'—')+(R.fijo?' (fija de este chequeo)':'')+'</summary>'+window.FarmaProceso.reporte(rep,{mostrarReporte:true},{})+'</details>';
+  }
+  return h+'</div>';
+}
+function historialHtml(P,op){
+  var H=obj((P||{}).historial), ks=Object.keys(H).sort(function(a,b){return (parseInt(b.slice(1),10)||0)-(parseInt(a.slice(1),10)||0);});
+  var h='<div class="fc-card"><h3 class="fc-h">🗂️ Historial de reportes</h3><p class="fc-sub">Cada versión del reporte se guarda y nunca se sobrescribe.</p>';
+  if(!ks.length) return h+'<p class="fc-nota">El historial empieza con la próxima versión del reporte.</p></div>';
+  h+='<div class="fc-hist">'+ks.map(function(k){ var r=H[k]||{}, S=r.semaforo||{};
+    return '<button type="button" class="fc-hi'+(op.hist===k?' on':'')+'" data-fc="histVer" data-fc-v="'+esc(k)+'"><b>'+esc(k)+'</b><span>'+fd(r.generado)+' · '+esc(r.modo||'')+'</span><span>🔴 '+(S.rojas||0)+' · 🟡 '+(S.amarillas||0)+'</span><span class="fc-nota">'+esc(r.estadoTxt||'')+'</span></button>'; }).join('')+'</div>';
+  if(op.hist&&H[op.hist]&&window.FarmaProceso) h+='<div class="fc-histver">'+window.FarmaProceso.reporte(H[op.hist],{mostrarReporte:true},{})+'</div>';
+  return h+'</div>';
+}
+/** ⚖️ sección aparte: la balanza actual + la de cada chequeo. */
+function aprovechamientoVista(P,ctx,op){
+  op=op||{}; var Ch=obj((P||{}).chequeos), ap=Ch.aprovechamiento, L=obj(Ch.lista), prog=programa(P,ctx);
+  var h='<div class="fc"><div class="fc-band"><div class="fc-k">⚖️ Aprovechamiento del ciclo</div><div class="fc-t">'+esc(op.nombre||'')+'</div><div class="fc-m">Adherencia mantenida durante el ciclo contra resultados físicos. También va dentro de cada chequeo.</div></div>';
+  h+=ap?balanzaCard(ap):'<div class="fc-card"><p class="fc-nota">Sin ciclo activo o reciente, o todavía no se calcula (se arma en la revisión con los datos del panel y de Harbiz).</p></div>';
+  var hist=prog.filter(function(x){ return L[x.id]&&L[x.id].aprovechamiento&&L[x.id].congelado; });
+  if(hist.length) h+='<div class="fc-card"><h3 class="fc-h">En cada chequeo</h3>'+hist.map(function(x){ var a=L[x.id].aprovechamiento; return '<div class="fc-al info"><div><b>'+esc(TIPO[x.tipo])+(x.semana?' · semana '+x.semana:'')+' · '+fd(x.fecha)+'</b> — adherencia '+(a.adherencia.pct==null?'—':a.adherencia.pct+'%')+' · resultados '+(a.resultados.pct==null?'—':a.resultados.pct+'%')+'<small>'+esc(a.veredicto)+'</small></div></div>'; }).join('')+'</div>';
+  return h+'</div>';
+}
+
+// ── acciones: devuelven el sub-nodo seguimiento NUEVO (el anfitrión lo guarda) ──
+function leer(raiz,k){ var e=raiz&&raiz.querySelector('[data-fc-in="'+k+'"]'); return e?(e.type==='checkbox'?e.checked:e.value):null; }
+function segBase(P,op){ var s=copia(seg(P))||{}; s.chequeos=obj(s.chequeos); s.alertas=obj(s.alertas); s.mensajes=obj(s.mensajes); s.nip=String(op.nip||s.nip||''); if(op.nombre) s.nombre=op.nombre; return s; }
+function chq(s,id){ return s.chequeos[id]||(s.chequeos[id]={}); }
+function qsDom(raiz,base){ var q=copia(base)||[]; q.forEach(function(x){ var e=raiz&&raiz.querySelector('[data-fc-q="'+x.id+'"][data-fc-in="q"]'); if(e) x.texto=e.value.trim()||x.texto; }); return q; }
+function limpiar(s){ ['chequeos','alertas','mensajes'].forEach(function(k){ if(!Object.keys(s[k]||{}).length) delete s[k]; }); s.por=s.por||''; s.en=new Date().toISOString(); return s; }
+function chDe(P,ctx,id){ return programa(P,ctx).filter(function(x){return x.id===id;})[0]||null; }
+/** t = elemento con data-fc. Devuelve {seg?, resumen?, sel?, hist?, render?}. Para los enlaces de WhatsApp pone el href (sincrónico, antes de navegar). */
+function accion(t,P,ctx,op){
+  op=op||{}; var a=t.getAttribute('data-fc'), raiz=t.closest('[data-fc-raiz]'), id=t.getAttribute('data-fc-ch')||(t.closest('[data-fc-chsel]')||{getAttribute:function(){return null;}}).getAttribute('data-fc-chsel');
+  var s=segBase(P,op), ch=id?chDe(P,ctx,id):null, R=ch?repDe(P,ch):{}, sal=leer(raiz,'saludo')!==false;
+  function fin(res){ if(res.seg) res.seg=limpiar(res.seg); return res; }
+  if(a==='abrir') return {sel:id,render:true};
+  if(a==='histVer') return {hist:op.hist===t.getAttribute('data-fc-v')?null:t.getAttribute('data-fc-v'),render:true};
+  if(a==='estAgregar'){ var ta=raiz.querySelector('[data-fc-in="estudios"]'); if(ta){ var v=t.getAttribute('data-fc-v'); if(ta.value.split('\n').map(function(x){return x.trim();}).indexOf(v)<0) ta.value=(ta.value.trim()?ta.value.trim()+'\n':'')+v; } return {}; }
+  if(a==='alArmar'){ var sel=[].slice.call(raiz.querySelectorAll('[data-fc-in="inc"]:checked')).map(function(e){ var v=e.value; return {g:v==='ap'?'ap':v.charAt(0)==='f'?'f':'c',t:e.getAttribute('data-fc-t')}; });
+    var ta2=raiz.querySelector('[data-fc-in="alumnoTexto"]'); if(ta2) ta2.value=armarAlumno(sel,op); return {}; }
+  if(a==='alertaAtendida'){ s.alertas[t.getAttribute('data-fc-clave')]={atendida:new Date().toISOString(),n:parseInt(t.getAttribute('data-fc-n'),10)||0}; return fin({seg:s,resumen:'Alerta roja atendida'}); }
+  if(a==='msgListo'||a==='waCiclo'){ var cy=t.getAttribute('data-fc-cy'), txt=leer(raiz,'msgCiclo')||MSJ.cicloCargado(op.nombre,op.sexo), m=s.mensajes['ciclo_'+cy]||{};
+    m.texto=txt; if(a==='waCiclo'){ t.href=waUrl(op.tel,txt); m.abiertoWa=new Date().toISOString(); } else m.listo=new Date().toISOString();
+    s.mensajes['ciclo_'+cy]=m; return fin({seg:s,resumen:a==='waCiclo'?'Mensaje de inicio de ciclo abierto en WhatsApp':'Mensaje de inicio de ciclo listo'}); }
+  if(!ch) return {};
+  var c=chq(s,ch.id);
+  if(a==='cerrarChequeo'){ c.estado='cerrado'; c.cerradoEn=new Date().toISOString(); return fin({seg:s,resumen:TIPO[ch.tipo]+' cerrado',render:true}); }
+  if(a==='reabrir'){ delete c.estado; delete c.cerradoEn; return fin({seg:s,resumen:TIPO[ch.tipo]+' reabierto',render:true}); }
+  if(a==='estGuardar'||a==='waEstudios'){ c.estudiosIndicados=String(leer(raiz,'estudios')||'').trim();
+    if(a==='waEstudios'){ var L=c.estudiosIndicados.split('\n').map(function(x){return x.trim();}).filter(Boolean); t.href=waUrl(op.tel,MSJ.estudios(op.nombre,op.sexo,ch.tipo,L,true)); c.wa=obj(c.wa); c.wa.estudios=new Date().toISOString(); }
+    return fin({seg:s,resumen:a==='waEstudios'?'Indicaciones de estudios abiertas en WhatsApp':'Estudios a indicar guardados'}); }
+  var q=qsDom(raiz,borrador(P,ch,R.rep)), qid=t.getAttribute('data-fc-q');
+  if(a==='qAplicar'||a==='qBorrar'){ q.forEach(function(x){ if(x.id===qid) x.estado=a==='qAplicar'?(x.estado==='aplicada'?'sugerida':'aplicada'):'borrada'; }); c.preguntas=q; return fin({seg:s,resumen:a==='qAplicar'?'Pregunta aplicada':'Pregunta borrada',render:true}); }
+  if(a==='qAgregar'){ q.push({id:'n'+Date.now(),texto:'Escribe tu pregunta',estado:'sugerida',origen:'noe'}); c.preguntas=q; return fin({seg:s,resumen:'Pregunta agregada',render:true}); }
+  if(a==='qRestaurar'){ q.forEach(function(x){ if(x.estado==='borrada') x.estado='sugerida'; }); c.preguntas=q; return fin({seg:s,resumen:'Preguntas recuperadas',render:true}); }
+  if(a==='waPreguntas'){ var ap2=q.filter(function(x){return x.estado==='aplicada';}).map(function(x){return x.texto;}); if(!ap2.length){ t.removeAttribute('href'); return {aviso:'Aplica al menos una pregunta'}; }
+    t.href=waUrl(op.tel,MSJ.preguntas(op.nombre,op.sexo,ap2,sal,ch)); c.preguntas=q; c.wa=obj(c.wa); c.wa.preguntas=new Date().toISOString(); return fin({seg:s,resumen:'Preguntas de seguimiento abiertas en WhatsApp'}); }
+  var incl=[].slice.call(raiz.querySelectorAll('[data-fc-in="inc"]:checked')).map(function(e){return e.value;}), atx=String(leer(raiz,'alumnoTexto')||'').trim();
+  var malas=palabrasInternas(atx);
+  if(malas.length&&((a==='alPublicar'&&t.checked)||a==='waReporte'||a==='waCierre')){ if(t.removeAttribute) t.removeAttribute('href'); if(a==='alPublicar') t.checked=false; return {aviso:avisoInternas(malas)}; }
+  if(a==='alGuardar'||a==='alPublicar'||a==='waReporte'){ c.alumno=obj(c.alumno); c.alumno.incluir=incl; c.alumno.texto=atx;
+    if(a==='alPublicar'){ c.alumno.publicado=!!t.checked; c.alumno.publicadoEn=new Date().toISOString(); }
+    if(a==='waReporte'){ t.href=waUrl(op.tel,MSJ.reporte(op.nombre,op.sexo,atx,ch,sal)); c.wa=obj(c.wa); c.wa.reporte=new Date().toISOString(); }
+    return fin({seg:s,resumen:a==='alPublicar'?(t.checked?'Reporte visible en su FitTrack':'Reporte oculto en su FitTrack'):a==='waReporte'?'Reporte al alumno abierto en WhatsApp':malas.length?'Borrador guardado (no se puede publicar: trae palabras internas)':'Reporte al alumno guardado',render:a==='alGuardar'&&!!malas.length}); }
+  if(a==='cierreGuardar'||a==='waCierre'){
+    var sem=leer(raiz,'descansoSemanas'), hasta=leer(raiz,'descansoHasta');
+    var ci={descansoSemanas:sem===''||sem==null?null:Math.max(0,Math.min(104,parseInt(sem,10)||0)),descansoHasta:hasta||null,reestudiosFecha:leer(raiz,'reestudiosFecha')||null,reestudiosMotivo:String(leer(raiz,'reestudiosMotivo')||'').trim()||null,ajustes:String(leer(raiz,'ajustes')||'').trim()||null};
+    if(ci.descansoSemanas!=null&&!ci.descansoHasta) ci.descansoHasta=mas(ch.fecha,ci.descansoSemanas*7);
+    Object.keys(ci).forEach(function(k){ if(ci[k]==null) delete ci[k]; }); c.cierre=ci;
+    if(a==='waCierre'){ t.href=waUrl(op.tel,MSJ.cierre(op.nombre,op.sexo,atx,ci,sal)); c.wa=obj(c.wa); c.wa.cierre=new Date().toISOString(); }
+    return fin({seg:s,resumen:a==='waCierre'?'Cierre abierto en WhatsApp':'Cierre del ciclo guardado (descanso / re-estudios)',render:a!=='waCierre'}); }
+  return {};
+}
+
+// ── lo escrito en los cuadros sobrevive a un nuevo pintado del anfitrión (no se pierde un texto a medio editar) ──
+var BOR={};
+function claveIn(e){ var r=e.closest('[data-fc-raiz]'), c=e.closest('[data-fc-chsel]'); return [r?r.getAttribute('data-fc-nip'):'',c?c.getAttribute('data-fc-chsel'):'',e.getAttribute('data-fc-in'),e.getAttribute('data-fc-q')||'',e.type==='checkbox'?e.value:''].join('|'); }
+function guardarBorrador(raiz){ if(!raiz) return; [].slice.call(raiz.querySelectorAll('[data-fc-in]')).forEach(function(e){ BOR[claveIn(e)]=e.type==='checkbox'?e.checked:e.value; }); }
+function restaurarBorrador(raiz){ if(!raiz) return; [].slice.call(raiz.querySelectorAll('[data-fc-in]')).forEach(function(e){ var k=claveIn(e); if(!(k in BOR)) return; if(e.type==='checkbox') e.checked=BOR[k]; else e.value=BOR[k]; }); }
+
+window.FarmaChequeos={palabrasInternas:palabrasInternas,fraseAlumno:fraseAlumno,armarAlumno:armarAlumno,guardarBorrador:guardarBorrador,restaurarBorrador:restaurarBorrador,programa:programa,nivelEfecto:nivelEfecto,alertasEfectos:alertasEfectos,alertasChequeos:alertasChequeos,mensajePendiente:mensajePendiente,
+  resumenAlertas:resumenAlertas,cicloDeAlertas:cicloDeAlertas,vista:vista,aprovechamientoVista:aprovechamientoVista,balanzaCard:balanzaCard,balanzaSvg:balanzaSvg,
+  accion:accion,MSJ:MSJ,waUrl:waUrl,TIPO:TIPO,EST:EST,fd:fd,hoyMx:hoyMx};
+})();
+
+/*FARMA_F3_JS_FIN*/
+</script>
 <script>
 /* ── FARMACOLOGÍA dentro de FitTrack Coach (Noé, 9 nov 2026) ─────────────────────────────────────────────
    Reemplaza la herramienta aparte (control-farmacologico-coach.tiiny.site). Los cambios se guardan AL INSTANTE.
@@ -6799,7 +7671,7 @@ var fapp=null, fdb=null;
 try{ try{ fapp=firebase.app('farma'); }catch(e){ fapp=firebase.initializeApp(CFG,'farma'); } fdb=fapp.database(); }catch(e){ console.error('[FARMA] no se pudo iniciar Firebase de farmacología',e); }
 
 // ══ DATOS EN MEMORIA (espejo en vivo de la base) ══
-var C={students:[], cycles:{}, effects:{}, fxlog:{}, customfx:{}, analytics:{}, notif:{}};
+var C={students:[], cycles:{}, effects:{}, fxlog:{}, customfx:{}, analytics:{}, notif:{}, proceso:{}};
 var LISTO={};
 function _arr(v){
   if(v==null) return [];
@@ -6820,7 +7692,8 @@ function _escuchar(){
   if(!fdb) return;
   [['students',function(v){C.students=_arr(v);}],['cycles',function(v){C.cycles=_porAlumno(v,true);}],['effects',function(v){C.effects=_porAlumno(v,false);}],
    ['fxlog',function(v){C.fxlog=_porAlumno(v,true);}],['customfx',function(v){C.customfx=_porAlumno(v,true);}],['analytics',function(v){C.analytics=_porAlumno(v,true);}],
-   ['coachNotif',function(v){C.notif=(v&&typeof v==='object')?v:{}; C.notifExiste=(v!=null);}]].forEach(function(n){
+   ['coachNotif',function(v){C.notif=(v&&typeof v==='object')?v:{}; C.notifExiste=(v!=null);}],
+   ['proceso',function(v){C.proceso=(v&&typeof v==='object'&&!Array.isArray(v))?v:{};}]].forEach(function(n){
     fdb.ref(n[0]).on('value',function(s){ n[1](s&&s.exists()?s.val():null); LISTO[n[0]]=true; _pedirRender(); },function(err){ console.error('[FARMA] lectura '+n[0],err); });
   });
 }
@@ -7035,7 +7908,7 @@ function vAlumnos(){
     var cy=getActiveCycle(s.id), hist=getCycles(s.id), fx=getFx(s.id), nuevo=nl.some(function(n){return n.sid===s.id;});
     return '<div><button type="button" class="fa-st" onclick="FA.verAlumno(\''+esc(s.id)+'\')"><div class="fa-st-top"><div class="fa-av'+(nuevo?' nuevo':'')+'">'+ini(s.name)+'</div><div style="min-width:0">'+
       '<div class="fa-nm">'+esc(s.name)+'</div><div class="fa-meta">'+esc(GL(s.goal))+' · NIP <b>'+esc(s.nip)+'</b>'+(hist.length?' · '+hist.length+' ciclo'+(hist.length!==1?'s':''):'')+'</div>'+
-      '<div class="fa-tags">'+badgeCiclo(s.id)+(nuevo?'<span class="fa-badge r">🔔 Efectos nuevos</span>':fxAnyActive(fx)?'<span class="fa-badge o">⚠ Efectos</span>':'')+'</div>'+
+      '<div class="fa-tags">'+badgeCiclo(s.id)+badgeF3(s)+(nuevo?'<span class="fa-badge r">🔔 Efectos nuevos</span>':fxAnyActive(fx)?'<span class="fa-badge o">⚠ Efectos</span>':'')+'</div>'+
       (cy&&cy.startDate?pista(cy):'')+'</div></div></button>'+
       '<div class="fa-acts"><button type="button" class="fa-btn s t" onclick="FA.expAbrir(\''+esc(s.id)+'\')">📁 Expediente</button><button type="button" class="fa-btn s" onclick="FA.irCiclo(\''+esc(s.id)+'\')">Ciclo</button><button type="button" class="fa-btn s" onclick="FA.irEfectos(\''+esc(s.id)+'\')">Efectos</button>'+
       '<button type="button" class="fa-btn s" onclick="FA.pdf(\''+esc(s.id)+'\')">📄 PDF</button><button type="button" class="fa-btn s d" onclick="FA.borrarAlumno(\''+esc(s.id)+'\')" aria-label="Eliminar a '+esc(s.name)+'">🗑</button></div></div>';
@@ -7283,7 +8156,7 @@ function guardarCiclo(sidOverride,forzar){
     return escribir('cycles/'+sid,cycles).then(function(ok){
       if(!ok){ toast('❌ No se pudo guardar. Revisa tu conexión e intenta de nuevo.'); return false; }
       if(sid===ED.sid){ if(nuevoId) ED.cid=nuevoId; ED.dirty=false; var g=getCycles(sid).filter(function(c){return c.id===ED.cid;})[0]; ED.base=g?canon(g):null; }
-      avisoGuardado('Ciclo guardado','Los cambios ya son visibles para tu alumno'); render(); return true;
+      avisoGuardado('Ciclo guardado','Los cambios ya son visibles para tu alumno'); render(); if(nuevoId){ try{ f3MensajeCiclo(sid); }catch(e){ console.error('[F3]',e); } } return true;
     });
   }).then(function(r){ return r==='conflicto'?false:r; }).catch(function(e){ console.error(e); toast('❌ No se pudo guardar. Revisa tu conexión e intenta de nuevo.'); return false; });
 }
@@ -7431,6 +8304,96 @@ function anBorrar(id){
     .then(function(ok){ if(!ok) return toast('No se pudo eliminar. Revisa tu conexión.'); var h=getAnHist(sid); AN.id=h.length?h[h.length-1].id:null; AN.custom=AN.id?(h[h.length-1]._custom||[]).slice():[]; AN.form=null; AN.base=anFirma(); toast('Analítica eliminada'); render(); });
 }
 
+// ══ 🧾 PROCESO DE FARMACOLOGÍA (Noé 9 nov 2026, reglas 431–433) ══════════════════════════════════════════════
+// filtro → estudios → entrevista en Harbiz (OPCIONAL: «Solicitada / No requerida», la pone Noé) → reporte «🧾 Interpretación integral».
+// Nodo proceso/n<NIP> en farmacologia-1ecc0: control y estudios los escribe Noé AQUÍ al instante (set del sub-nodo completo);
+// deteccion y reporte los escribe la revisión (tools/farma_reporte.py). Vista compartida con el panel: window.FarmaProceso.
+// Las analíticas de siempre (analytics/<sid>) NO se tocan: se leen y un estudio puede enlazarse a una por analiticaId.
+var PROC={nip:null, ed:null, q:'', sel:''};
+function FPV(){ return window.FarmaProceso||null; }
+function procNodoC(nip){ var P=JSON.parse(JSON.stringify((C.proceso||{})['n'+nip]||{})); var c=P.control||{}; P.nip=String(nip); P.nombre=P.nombre||c.nombre; P.harbizId=P.harbizId||c.harbizId; return P; }
+function procCtxC(sid){ var cy=sid?getActiveCycle(sid):null, wi=cy?getWeekInfo(cy):null;
+  return {hoy:_hoyISO(), analytics:sid?getAnHist(sid):[], ciclo:(cy&&wi&&!wi.finished&&!wi.porIniciar)?{semana:wi.wk,total:wi.total}:null}; }
+function procCalcC(nip,sid){ var F=FPV(); return F?F.calcular(procNodoC(nip),procCtxC(sid)):{alertas:[],pasos:[],etapa:'sin_iniciar'}; }
+function stuDeNip(nip){ return getStudents().filter(function(s){ return String(s.nip)===String(nip); })[0]||null; }
+function procEscribir(nip,parte,val,msg){
+  var p='proceso/n'+nip+'/'+parte;
+  return escribir(p,val).then(function(ok){ if(ok){ toast(msg||'Guardado'); } else toast('No se pudo guardar. Revisa tu conexión.'); return ok; });
+}
+function procControlC(nip,cambio,msg){
+  var P=procNodoC(nip), c0=JSON.parse(JSON.stringify(P.control||{})), s=stuDeNip(nip);
+  Object.keys(cambio).forEach(function(k){ if(cambio[k]==null) delete c0[k]; else c0[k]=cambio[k]; });
+  c0.nip=String(nip); c0.nombre=c0.nombre||(s&&s.name)||P.nombre||''; c0.por='Noé (Coach)'; c0.en=new Date().toISOString();
+  return procEscribir(nip,'control',c0,msg);
+}
+function expProceso(sid){
+  var F=FPV(), s=getStudents().filter(function(x){return x.id===sid;})[0]; if(!F) return '<div class="fa-card fa-vacio">Falta la vista del proceso.</div>';
+  return vistaProceso(String(s.nip), s);
+}
+function vistaProceso(nip,s){
+  var F=FPV();
+  if(PROC.ed&&PROC.ed.nip===nip) return F.editorEstudio(PROC.ed.E,{analytics:s?getAnHist(s.id):[],titulo:(PROC.ed.nuevo?'Cargar estudio':'Editar estudio')});
+  var P=procNodoC(nip), ctx=procCtxC(s?s.id:null);
+  return F.tablero(P,ctx,{editable:true,nip:nip,nombre:s?s.name:P.nombre}) + F.reporte(P.reporte,F.calcular(P,ctx),{});
+}
+function vProcCand(){
+  var nip=PROC.nip, P=procNodoC(nip);
+  return '<button type="button" class="fa-btn s" style="margin-bottom:10px" onclick="FA.procCerrar()">← Alumnos</button>'+vistaProceso(nip,null)+
+    '<div class="fa-card"><div class="fa-hint" style="margin-bottom:8px">Todavía no está registrado en farmacología. Cuando decidas iniciar, regístralo con «+ Registrar alumno» (mismo NIP de FitTrack).</div></div>';
+}
+function procCandCard(){
+  var F=FPV(); if(!F) return '';
+  var reg={}; getStudents().forEach(function(s){ reg[String(s.nip)]=1; });
+  var L=Object.keys(C.proceso||{}).map(function(k){ return String(k).slice(1); }).filter(function(n){ return /^\d{4}$/.test(n)&&!reg[n]; });
+  var filas=getStudents().map(function(s){ return {nip:String(s.nip),nombre:s.name,s:s}; }).concat(L.map(function(n){ var P=procNodoC(n); return {nip:n,nombre:P.nombre||('NIP '+n),s:null}; }));
+  var h='<div class="fa-card" id="fa-proc-card"><div class="fa-row" style="justify-content:space-between;align-items:flex-start"><div class="fa-grow"><div class="fa-h3" style="margin:0">🧾 Proceso</div><div class="fa-hint">Filtro → estudios → entrevista (solo si la pides) → reporte. Amarilla a los 7 días sin estudios, roja a los 14.</div></div>'+
+    '<button type="button" class="fa-btn s" onclick="FA.procIniciar()">+ Iniciar proceso</button></div>';
+  h+=filas.length?filas.map(function(x){ var r=procCalcC(x.nip,x.s?x.s.id:null), al=r.alertas.filter(function(a){return a.nivel!=='info';});
+    return '<button type="button" class="fa-pick" style="margin-top:6px" onclick="'+(x.s?'FA.expAbrir(\''+esc(x.s.id)+'\');FA.expSec(\'proceso\')':'FA.procAbrir(\''+esc(x.nip)+'\')')+'"><span style="min-width:0;flex:1"><span class="fa-nm" style="display:block">'+esc(x.nombre)+'</span><span class="fa-tags"><span class="fa-badge">'+esc(F.ETAPA[r.etapa]||r.etapa)+'</span>'+
+      al.map(function(a){ return '<span class="fa-badge '+(a.nivel==='roja'?'r':'w')+'">'+esc(a.texto)+'</span>'; }).join('')+(x.s?'':'<span class="fa-badge n">sin registrar</span>')+'</span></span></button>'; }).join(''):'<div class="fa-hint" style="margin-top:8px">Nadie en proceso.</div>';
+  return h+'</div>';
+}
+function procIniciarAbrir(){
+  PROC.q=''; PROC.sel=''; pintarIniciar(); cargarAlumnosFitTrack().then(function(){ if($('fa-h-proc')) pintarIniciar(); });
+}
+function listaIniciar(){
+  if(REG.lista==null) return '<div class="fa-vacio">Cargando alumnos de FitTrack…</div>';
+  var ya={}; Object.keys(C.proceso||{}).forEach(function(k){ ya[String(k).slice(1)]=1; });
+  var q=PROC.q.trim().toLowerCase(), c=candidatos().filter(function(a){ return !ya[a.nip]&&(!q||String(a.name).toLowerCase().includes(q)||a.nip.includes(q)); });
+  if(!c.length) return '<div class="fa-vacio">Nadie coincide.</div>';
+  return c.map(function(a){ var on=PROC.sel===a.nip; return '<button type="button" role="option" aria-selected="'+on+'" class="fa-pick'+(on?' on':'')+'" onclick="FA.procElegir(\''+esc(a.nip)+'\')"><span class="fa-av">'+ini(a.name)+'</span><span style="min-width:0"><span class="fa-nm" style="display:block">'+esc(a.name)+'</span><span class="fa-meta">NIP <b>'+esc(a.nip)+'</b></span></span><span class="fa-pick-r" aria-hidden="true">'+(on?'✓':'')+'</span></button>'; }).join('');
+}
+function pintarIniciar(){
+  hoja('fa-h-proc','Iniciar proceso','<p class="fa-hint" style="margin:0 0 10px">Para quien pasó el filtro o un alumno actual que pidió farmacología. Queda con «filtro aprobado» hoy; después marcas estudios y, si hace falta, la entrevista.</p>'+
+    '<div class="fa-search"><span aria-hidden="true">🔍</span><input class="fa-in" id="fa-p-q" type="search" placeholder="Buscar por nombre o NIP" value="'+esc(PROC.q)+'" oninput="FA.procBuscar(this.value)" aria-label="Buscar alumno"></div>'+
+    '<div class="fa-picks" id="fa-p-lista" role="listbox">'+listaIniciar()+'</div><button type="button" class="fa-btn p" style="width:100%;min-height:48px;margin-top:12px" onclick="FA.procConfirmar()">Iniciar proceso</button>');
+}
+function procClickC(t){
+  var F=FPV(); if(!F) return; var a=t.getAttribute('data-fp');
+  if(PROC.ed){
+    var box=document.querySelector('[data-fp-editor]');
+    if(a==='valorAgregar'){ PROC.ed.E=F.leerEditor(box,PROC.ed.E); PROC.ed.E.valores.push({analito:'',valor:null,unidad:'',refMin:null,refMax:null}); render(); return; }
+    if(a==='valorQuitar'){ PROC.ed.E=F.leerEditor(box,PROC.ed.E); PROC.ed.E.valores.splice(+t.getAttribute('data-i'),1); render(); return; }
+    if(a==='estudioCancelar'){ PROC.ed=null; render(); return; }
+    if(a==='estudioGuardar'){ var E=F.leerEditor(box,PROC.ed.E), m=F.validarEstudio(E); if(m){ toast(m); return; }
+      E.registradoPor='Noé (Coach)'; E.registradoEn=E.registradoEn||new Date().toISOString(); E.lectura=E.lectura||'manual'; if(E.lectura==='manual') E.revisado=true;
+      var nip0=PROC.ed.nip, todos=JSON.parse(JSON.stringify(procNodoC(nip0).estudios||{})); todos[E.id]=JSON.parse(JSON.stringify(E));
+      procEscribir(nip0,'estudios',todos,'Estudio guardado').then(function(ok){ if(ok){ PROC.ed=null; render(); } }); return; }
+  }
+  var raiz=t.closest('[data-fp-nip]'), nip=raiz?raiz.getAttribute('data-fp-nip'):null; if(!nip) return;
+  var Cn=procNodoC(nip).control||{}, hoy=_hoyISO(), v=t.getAttribute('data-v');
+  if(a==='entrevista'){ var nv=Cn.entrevista===v?null:v; procControlC(nip,{entrevista:nv,entrevistaEn:nv==='solicitada'?hoy:null},nv==='solicitada'?'Entrevista: solicitada':nv==='no_requerida'?'Entrevista: no requerida':'Entrevista: sin decidir'); return; }
+  if(a==='filtro'){ procControlC(nip,{filtroAprobado:Cn.filtroAprobado?null:hoy},Cn.filtroAprobado?'Filtro: deshecho':'Filtro aprobado'); return; }
+  if(a==='solicitud'){ procControlC(nip,{estudiosSolicitados:Cn.estudiosSolicitados?null:hoy},Cn.estudiosSolicitados?'Fecha de estudios quitada':'Estudios solicitados'); return; }
+  if(a==='medico'){ procControlC(nip,{revisionMedica:(Cn.revisionMedica&&Cn.revisionMedica.fecha)?null:{fecha:hoy}},'Revisión médica actualizada'); return; }
+  if(a==='decision'){ procControlC(nip,{decision:(Cn.decision&&Cn.decision.estado===v)?null:{estado:v,fecha:hoy}},'Decisión guardada'); return; }
+  if(a==='estudioNuevo'){ PROC.ed={nip:nip,nuevo:true,E:F.estudioVacio()}; render(); return; }
+  if(a==='estudioEditar'||a==='estudioRevisado'){ var E0=(procNodoC(nip).estudios||{})[t.getAttribute('data-id')]; if(!E0) return;
+    if(a==='estudioRevisado'){ var tt=JSON.parse(JSON.stringify(procNodoC(nip).estudios||{})); tt[E0.id]=Object.assign({},E0,{revisado:true,revisadoEn:new Date().toISOString()}); procEscribir(nip,'estudios',tt,'Valores confirmados'); return; }
+    PROC.ed={nip:nip,nuevo:false,E:JSON.parse(JSON.stringify(E0))}; render(); return; }
+}
+document.addEventListener('click',function(e){ var t=e.target.closest&&e.target.closest('[data-fp]'); if(!t) return; var sc=$('sc-farma'); if(sc&&sc.contains(t)){ e.preventDefault(); procClickC(t); } });
+
 // ══ 📁 EXPEDIENTE del alumno (Noé 9 nov 20:25) · SOLO LECTURA ══
 // (1) todos sus ciclos · (2) estudios de laboratorio con tendencia · (3) efectos reportados · (4) 📅 calendario con colores.
 // Lee además fittrack_farma/<nip>/pagos (base de Coach) para las semanas de pago. No escribe nada.
@@ -7495,12 +8458,14 @@ function vExpediente(){
   var sid=EXP.sid, s=getStudents().filter(function(x){return x.id===sid;})[0];
   if(!s){ EXP.sid=null; return vAlumnos(); }
   cargarPagos(s.nip);
-  var secs=[['ciclos','Ciclos'],['lab','Laboratorio'],['efectos','Efectos'],['calendario','📅 Calendario']];
+  var npc=procCalcC(String(s.nip),sid).alertas.filter(function(a){return a.nivel!=='info';}).length;
+  var nf3=fcAlertasC(s).filter(function(a){return a.nivel!=='info';}).length;
+  var secs=[['proceso','🧾 Proceso'+(npc?' · '+npc:'')],['chequeos','🩺 Chequeos'+(nf3?' · '+nf3:'')],['aprovechamiento','⚖️ Aprove\u00ADchamiento'],['ciclos','Ciclos'],['lab','Laboratorio'],['efectos','Efectos'],['calendario','📅 Calendario']];
   var h='<button type="button" class="fa-btn s" style="margin-bottom:10px" onclick="FA.expCerrar()">← Alumnos</button>'+
-    '<div class="fa-exp-hd"><div class="fa-av">'+ini(s.name)+'</div><div style="min-width:0"><div class="fa-hint">📁 Expediente · solo lectura</div><div class="fa-h3" style="margin:2px 0 0;overflow-wrap:anywhere">'+esc(s.name)+'</div>'+
+    '<div class="fa-exp-hd"><div class="fa-av">'+ini(s.name)+'</div><div style="min-width:0"><div class="fa-hint">📁 Expediente · '+(EXP.sec==='proceso'?'🧾 proceso (lo que marques se guarda al instante)':EXP.sec==='chequeos'?'🩺 chequeos (lo que guardes se escribe al instante)':'solo lectura')+'</div><div class="fa-h3" style="margin:2px 0 0;overflow-wrap:anywhere">'+esc(s.name)+'</div>'+
     '<div class="fa-meta">'+esc(GL(s.goal))+' · NIP <b>'+esc(s.nip)+'</b></div></div></div>'+
-    '<div class="fa-seg2" role="tablist">'+secs.map(function(x){ return '<button type="button" role="tab" aria-selected="'+(EXP.sec===x[0])+'" class="'+(EXP.sec===x[0]?'on':'')+'" onclick="FA.expSec(\''+x[0]+'\')">'+x[1]+'</button>'; }).join('')+'</div>';
-  return h+(EXP.sec==='ciclos'?expCiclos(sid):EXP.sec==='lab'?expLab(sid):EXP.sec==='efectos'?expEfectos(sid):expCal(sid));
+    '<div class="fa-seg2 c5" role="tablist">'+secs.map(function(x){ return '<button type="button" role="tab" aria-selected="'+(EXP.sec===x[0])+'" class="'+(EXP.sec===x[0]?'on':'')+'" onclick="FA.expSec(\''+x[0]+'\')">'+x[1]+'</button>'; }).join('')+'</div>';
+  return h+(EXP.sec==='chequeos'?expChequeos(sid):EXP.sec==='aprovechamiento'?expAprov(sid):EXP.sec==='proceso'?expProceso(sid):EXP.sec==='ciclos'?expCiclos(sid):EXP.sec==='lab'?expLab(sid):EXP.sec==='efectos'?expEfectos(sid):expCal(sid));
 }
 // (1) Ciclos
 function rangoFechas(c){ var st=_dk(c.startDate); if(!st) return 'Sin fecha de inicio'; var f=_mas(finEfectivo(c),-1); return fFecha(_k(st))+' – '+fFecha(_k(f)); }
@@ -7621,7 +8586,7 @@ function render(){
   if(!fdb){ b.innerHTML='<div class="fa-card fa-vacio"><b>Sin conexión a farmacología</b>No se pudo iniciar la base. Recarga la página.</div>'; return; }
   if(!LISTO.students){ b.innerHTML='<div class="fa-card fa-vacio">Cargando alumnos de farmacología…</div>'; return; }
   var y=null; var cont=document.querySelector('.content'); if(cont) y=cont.scrollTop;
-  b.innerHTML=V.tab==='alumnos'?(EXP.sid?vExpediente():vAlumnos()):V.tab==='ciclos'?vCiclos():V.tab==='efectos'?vEfectos():vAnaliticas();
+  b.innerHTML=V.tab==='alumnos'?(EXP.sid?vExpediente():PROC.nip?vProcCand():chequeosCardC()+vAlumnos()+procCandCard()):V.tab==='ciclos'?vCiclos():V.tab==='efectos'?vEfectos():vAnaliticas();
   if(cont&&y!=null) cont.scrollTop=y;
 }
 // Al llegar datos nuevos de la base: no se repinta un formulario mientras se escribe en él.
@@ -8109,10 +9074,62 @@ async function generateStudentPdf(sid){
   toast('📄 PDF generado');
 }
 
+/*FARMA_F3_GLUE_INI*/
+// ══ 🩺 FASE 3 · CHEQUEOS DE FARMACOLOGÍA + ⚖️ APROVECHAMIENTO (Noé 12 nov 2026, regla 434, ideas 1 y 2) ══════════════════════
+// Calendario y alertas calculados en vivo (window.FarmaChequeos = tools/farma_chequeos.py). Noé escribe SOLO proceso/n<NIP>/seguimiento
+// (aquí al instante; en el panel vía farmaCola). Chequeos e historial los escribe la revisión. WhatsApp: solo abre el chat; Noé envía.
+var CHQ={sel:{},hist:{}};
+function FCV(){ return window.FarmaChequeos||null; }
+function stuF3(sid){ return getStudents().filter(function(x){return x.id===sid;})[0]||null; }
+function telF3(s){ try{ var n=String(s.nip); var k=Object.keys(ALUMNOS_DATA||{}).filter(function(x){ return String((ALUMNOS_DATA[x]||{}).nip)===n; })[0]; var a=k?ALUMNOS_DATA[k]:{}; return a.tel||a.telefono||a.whatsapp||''; }catch(e){ return ''; } }
+function fcCtxC(s){ var P=procNodoC(String(s.nip)), al=((P.chequeos||{}).alumno)||{};
+  return {hoy:_hoyISO(), cycles:getCycles(s.id), analytics:getAnHist(s.id), fxlog:getFxLog(s.id), customfx:getCustomFx(s.id), mujer:al.sexo==='female'}; }
+function fcOpC(s){ var nip=String(s.nip), P=procNodoC(nip), al=((P.chequeos||{}).alumno)||{};
+  return {nip:nip, nombre:s.name, sexo:al.sexo||null, tel:telF3(s), editable:true, sel:CHQ.sel[nip]||null, hist:CHQ.hist[nip]||null}; }
+function fcAlertasC(s){ var F=FCV(); return F?F.resumenAlertas(procNodoC(String(s.nip)),fcCtxC(s)):[]; }
+function expChequeos(sid){ var F=FCV(), s=stuF3(sid); if(!F||!s) return '<div class="fa-card fa-vacio">Falta la vista de chequeos.</div>'; return F.vista(procNodoC(String(s.nip)),fcCtxC(s),fcOpC(s)); }
+function expAprov(sid){ var F=FCV(), s=stuF3(sid); if(!F||!s) return ''; return F.aprovechamientoVista(procNodoC(String(s.nip)),fcCtxC(s),fcOpC(s)); }
+function badgeF3(s){ var a=fcAlertasC(s), r=a.filter(function(x){return x.nivel==='roja';}).length, m=a.some(function(x){return x.tipo==='mensaje';});
+  return (r?'<span class="fa-badge r">🔴 '+r+' alerta'+(r>1?'s':'')+' farma</span>':'')+(m?'<span class="fa-badge o">✉️ Mensaje de ciclo</span>':''); }
+function chequeosCardC(){
+  var F=FCV(); if(!F) return ''; var filas=[], rojas=[];
+  getStudents().forEach(function(s){ var P=procNodoC(String(s.nip)), ctx=fcCtxC(s);
+    F.alertasEfectos(P,ctx).filter(function(a){return !a.atendida;}).forEach(function(a){ rojas.push({s:s,a:a}); });
+    F.programa(P,ctx).filter(function(c){return c.abierto;}).forEach(function(c){ filas.push({s:s,c:c}); }); });
+  if(!filas.length&&!rojas.length) return '';
+  var ir=function(s,ch){ return 'onclick="FA.expAbrir(\''+esc(s.id)+'\');FA.f3Abrir(\''+esc(String(s.nip))+'\',\''+esc(ch||'')+'\')"'; };
+  return '<div class="fa-card" style="margin-bottom:12px">'+(rojas.length?'<div class="fa-h3" style="margin:0 0 6px;color:var(--fa-bad)">🔴 Alertas por efectos secundarios</div>'+rojas.map(function(x){
+      return '<button type="button" class="fa-st" '+ir(x.s,'')+' style="border-left:4px solid var(--fa-bad)"><div class="fa-nm">'+esc(x.s.name)+'</div><div class="fa-meta">'+esc(x.a.texto)+'</div></button>'; }).join(''):'')+
+    (filas.length?'<div class="fa-h3" style="margin:'+(rojas.length?'12px':'0')+' 0 6px">🩺 Chequeos de farmacología abiertos</div><div class="fa-hint" style="margin-bottom:6px">Aparte de los chequeos de 8 semanas.</div>'+filas.map(function(x){
+      return '<button type="button" class="fa-st" '+ir(x.s,x.c.id)+'><div class="fa-nm">'+esc(x.s.name)+'</div><div class="fa-meta">'+esc(F.TIPO[x.c.tipo])+(x.c.semana?' · semana '+x.c.semana:'')+' · desde el '+esc(F.fd(x.c.fecha))+' · '+esc(F.EST[x.c.estado])+'</div></button>'; }).join(''):'')+'</div>';
+}
+function f3Guardar(nip,seg,msg){
+  C.proceso=C.proceso||{}; var k='n'+nip; C.proceso[k]=Object.assign({},C.proceso[k]||{},{seguimiento:seg});
+  return escribir('proceso/'+k+'/seguimiento',seg).then(function(ok){ toast(ok?(msg||'Guardado'):'No se pudo guardar. Revisa tu conexión.'); render(); return ok; });
+}
+function f3MensajeCiclo(sid){   // F3.3: al guardar un ciclo NUEVO, el mensaje de inicio (borrador editable; Noé lo envía)
+  var F=FCV(), s=stuF3(sid); if(!F||!s) return; var cy=getActiveCycle(sid); if(!cy||!cy.startDate) return;
+  var op=fcOpC(s);
+  hoja('fa-h-f3msg','✉️ Mensaje de inicio de ciclo','<div class="fc" data-fc-raiz="1" data-fc-nip="'+esc(op.nip)+'"><p class="fc-sub">Ya puede ver su ciclo en FitTrack. Edita el texto si quieres; el botón solo abre WhatsApp y tú lo envías.</p>'+
+    '<textarea class="fc-in" rows="12" data-fc-in="msgCiclo">'+esc(F.MSJ.cicloCargado(op.nombre,op.sexo))+'</textarea><div class="fc-fila">'+
+    '<a class="fc-btn wa" href="#" target="_blank" rel="noopener" data-fc="waCiclo" data-fc-cy="'+esc(cy.id)+'">Abrir en WhatsApp</a><button type="button" class="fc-btn" data-fc="msgListo" data-fc-cy="'+esc(cy.id)+'">Ya lo envié</button></div></div>');
+}
+document.addEventListener('click',function(e){
+  var t=e.target&&e.target.closest?e.target.closest('[data-fc]'):null; if(!t) return; var raiz=t.closest('[data-fc-raiz]'); if(!raiz) return;
+  var F=FCV(); if(!F) return; var nip=raiz.getAttribute('data-fc-nip'), s=getStudents().filter(function(x){return String(x.nip)===String(nip);})[0]; if(!s) return;
+  e.stopPropagation();
+  var r=F.accion(t,procNodoC(nip),fcCtxC(s),fcOpC(s));
+  if(r.aviso){ e.preventDefault(); toast(r.aviso); return; }
+  if(r.sel!==undefined) CHQ.sel[nip]=r.sel;
+  if('hist' in r) CHQ.hist[nip]=r.hist;
+  var guarda=function(){ if(r.seg){ f3Guardar(nip,r.seg,r.resumen).then(function(){ if(t.getAttribute('data-fc')==='msgListo') cerrarHoja('fa-h-f3msg'); }); } else if(r.render) render(); };
+  if(/^wa/.test(t.getAttribute('data-fc'))) setTimeout(guarda,0); else guarda();
+},true);
+/*FARMA_F3_GLUE_FIN*/
 // ══ API PÚBLICA (para los onclick) ══
 window.FA={
   r:render, cerrar:cerrarHoja,
-  tab:function(t){ EXP.sid=null; if(V.tab==='ciclos'&&t!=='ciclos'&&ED.dirty&&!confirm('Tienes cambios sin guardar en el ciclo.\n¿Salir sin guardar?')) return; if(V.tab==='ciclos'&&t!=='ciclos'&&ED.dirty){ abrirEditor(ED.sid); } V.tab=t; var c=document.querySelector('.content'); render(); if(c) c.scrollTop=0; },
+  tab:function(t){ EXP.sid=null; PROC.nip=null; PROC.ed=null; if(V.tab==='ciclos'&&t!=='ciclos'&&ED.dirty&&!confirm('Tienes cambios sin guardar en el ciclo.\n¿Salir sin guardar?')) return; if(V.tab==='ciclos'&&t!=='ciclos'&&ED.dirty){ abrirEditor(ED.sid); } V.tab=t; var c=document.querySelector('.content'); render(); if(c) c.scrollTop=0; },
   buscar:function(v,foco){ V.q=v; render(); var q=$('fa-q'); if(q){ q.focus(); var L=q.value.length; try{q.setSelectionRange(L,L);}catch(e){} } },
   nuevoAbrir:nuevoAbrir, regElegir:regElegir,
   regBuscar:function(v){ REG.q=v; var l=$('fa-r-lista'); if(l) l.innerHTML=listaReg(); },
@@ -8161,8 +9178,16 @@ window.FA={
   anDelCustom:function(i){ var f=anLeerForm(); var n={}; Object.keys(f).forEach(function(k){ if(!/^_c\d+$/.test(k)) n[k]=f[k]; }); var cs=f._custom.slice(); cs.splice(i,1); var j=0; f._custom.forEach(function(_,k){ if(k===i) return; n['_c'+j]=f['_c'+k]; j++; }); n._custom=cs; AN.custom=cs; AN.form=n; render(); },
   anGuardar:anGuardar, anBorrar:anBorrar,
   expAbrir:function(sid){ cerrarHoja('fa-h-ver'); if(V.tab==='ciclos'&&ED.dirty&&!confirm('Tienes cambios sin guardar en el ciclo.\n¿Salir sin guardar?')) return; if(ED.dirty) abrirEditor(ED.sid); V.tab='alumnos'; EXP.sid=sid; EXP.sec='ciclos'; EXP.y=null; EXP.dia=null; render(); var c=document.querySelector('.content'); if(c) c.scrollTop=0; },
-  expCerrar:function(){ EXP.sid=null; render(); },
+  expCerrar:function(){ EXP.sid=null; PROC.ed=null; render(); },
+  procAbrir:function(nip){ PROC.nip=nip; PROC.ed=null; EXP.sid=null; V.tab='alumnos'; render(); var c=document.querySelector('.content'); if(c) c.scrollTop=0; },
+  procCerrar:function(){ PROC.nip=null; PROC.ed=null; render(); },
+  procIniciar:procIniciarAbrir, procBuscar:function(v){ PROC.q=v; var l=$('fa-p-lista'); if(l) l.innerHTML=listaIniciar(); },
+  procElegir:function(nip){ PROC.sel=PROC.sel===nip?'':nip; var l=$('fa-p-lista'); if(l) l.innerHTML=listaIniciar(); },
+  procConfirmar:function(){ var a=(REG.lista||[]).filter(function(x){return x.nip===PROC.sel;})[0]; if(!a) return toast('Elige a un alumno');
+    procControlC(a.nip,{filtroAprobado:_hoyISO(),nombre:a.name},'Proceso iniciado: filtro aprobado').then(function(ok){ if(ok){ cerrarHoja('fa-h-proc'); FA.procAbrir(a.nip); } }); },
+  _proc:function(){ return {PROC:PROC, calc:procCalcC, nodo:procNodoC}; },
   expSec:function(x){ EXP.sec=x; render(); },
+  f3Abrir:function(nip,ch){ if(ch) CHQ.sel[nip]=ch; EXP.sec='chequeos'; render(); }, f3Mensaje:function(sid){ f3MensajeCiclo(sid); },
   expMes:function(n){ var d=new Date(EXP.y,EXP.m+n,1); EXP.y=d.getFullYear(); EXP.m=d.getMonth(); EXP.dia=null; render(); },
   expIr:function(y,m){ EXP.y=y; EXP.m=m; EXP.dia=null; render(); },
   expDia:function(k){ EXP.dia=(EXP.dia===k)?null:k; render(); var d=$('fa-dia'); if(d) d.scrollIntoView({block:'nearest'}); },
