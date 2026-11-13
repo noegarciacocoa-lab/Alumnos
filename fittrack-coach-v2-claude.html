@@ -9361,7 +9361,8 @@ window.FA={
     var av=D.av||{}; Object.keys(av).forEach(function(id){ var x=av[id]; if(!x||typeof x!=='object') return; var vv=vist[id]||{}; var ent=vv.entendido||(x.resultado&&x.resultado.entendido);
       add({fk:x.creado||'',fuente:'Aviso semanal (Inicio / Mis chequeos)',ruta:'fittrack_chequeos/avisos/'+nip+'/'+id,area:areaDe(x.area||id),fecha:x.creado||x.desde,titulo:x.titulo,tituloEs:x.tituloEs,texto:x.texto,textoEs:x.textoEs,
         extra:(x.desde?'Semana '+fF(x.desde)+' – '+fF(x.hasta):'')+(x.nivel?' · nivel '+x.nivel:'')+(x.resultado&&x.resultado.lectura?' · lectura: '+x.resultado.lectura:'')+(x.corregido?' · corregido: '+x.corregido:''),
-        visto:ent?('entendido '+fF(ent,1)):(vv.primera?('visto '+fF(vv.primera,1)):''),estado:(x.anulado||x.anuladoEn)?'anulada':'vigente',anuladaEn:x.anuladoEn,motivo:x.motivo||x.anuladoMotivo}); });
+        visto:ent?('entendido '+fF(ent,1)):(vv.primera?('visto '+fF(vv.primera,1)):''),estado:(x.anulado||x.anuladoEn)?'anulada':'vigente',anuladaEn:x.anuladoEn,motivo:x.motivo||x.anuladoMotivo||x.motivoAnulado,
+        ed:{tipo:'aviso',nodo:'fittrack_chequeos/avisos',ruta:'fittrack_chequeos/avisos/'+nip+'/'+id,tx:'texto',es:'textoEs',raw:x}}); });
     // 2) Medallero (Mis logros): avisos + textos de cada área
     var M=D.med||{}; (Array.isArray(M.avisos)?M.avisos:Object.keys(M.avisos||{}).map(function(k){ return M.avisos[k]; })).forEach(function(x,i){ if(!x) return; var id=x.id||('aviso '+i); var p=id.split('_');
       add({fk:x.creado||'',fuente:'Mis logros (medallero) · aviso',ruta:'fittrack_medallero/alumno/'+nip+'/avisos/'+i,area:areaDe(p[2]||id),fecha:x.creado,titulo:x.titulo,texto:x.texto,extra:x.tipo?'tipo: '+x.tipo:'',visto:vmed[id]?'visto '+fF(vmed[id],1):'',estado:'vigente',id:id}); });
@@ -9369,11 +9370,13 @@ window.FA={
       add({fuente:'Mis logros (medallero) · texto del área',ruta:'fittrack_medallero/alumno/'+nip+'/areas/'+a,area:areaDe(a),fecha:M.actualizado||M.semana,titulo:'Mis logros · '+a+(x.valor?' ('+x.valor+')':'')+(x.medalla?' · '+x.medalla:''),texto:t,extra:'estado: '+(x.estado||'—')+(M.provisional?' · semana en curso':''),estado:'vigente'}); });
     // 3) Mi semana en números (fittrack_rendimiento) — notas por área
     var R=D.ren||{}; [['actividad','actividad'],['cardio','cardio'],['fuerza','pesas']].forEach(function(q){ var x=R[q[0]]; if(!x||!x.nota) return;
-      add({fuente:'Mi semana en números · nota',ruta:'fittrack_rendimiento/'+nip+'/'+q[0]+'/nota',area:q[1],fecha:x.actualizado||R.actualizado,titulo:'Nota de '+(q[0]==='fuerza'?'pesas (registros y esfuerzo)':q[0]),texto:x.nota,textoEs:x.notaEs,extra:x.fuente?'fuente: '+x.fuente:'',estado:'vigente'}); });
+      add({fuente:'Mi semana en números · nota',ruta:'fittrack_rendimiento/'+nip+'/'+q[0]+'/nota',area:q[1],fecha:x.actualizado||R.actualizado,titulo:'Nota de '+(q[0]==='fuerza'?'pesas (registros y esfuerzo)':q[0]),texto:x.nota,textoEs:x.notaEs,extra:x.fuente?'fuente: '+x.fuente:(x.notaFuente?'fuente: '+x.notaFuente:''),estado:'vigente',
+        ed:{tipo:'ren',nodo:'fittrack_rendimiento',ruta:'fittrack_rendimiento/'+nip+'/'+q[0],sec:q[0],tx:'nota',es:'notaEs',raw:x}}); });
     // 4) Progresiones / observaciones / llamados en ejercicio (fittrack_sugerencias)
     var S=D.sug||{}; Object.keys(S).forEach(function(k){ var x=S[k]; if(!x||x.prueba) return; var tipo=x.tipo||'progresion';
       add({fk:x.fecha||x.creado||x.para||'',fuente:tipo==='llamado'?'Progresiones · llamado de atención':(tipo==='observacion'?'Progresiones · observación':'Progresión sugerida'),ruta:'fittrack_sugerencias/'+nip+'/'+k,area:'pesas',prog:tipo==='progresion',
-        fecha:x.fecha||x.para,titulo:(x.ejercicio||'')+(x.sesion?' · '+x.sesion:''),texto:x.texto,textoEs:x.textoEs,extra:(x.para?'para el '+fF(x.para):'')+(x.atendidaEn?' · atendida '+fF(x.atendidaEn):''),visto:x.vistoEn?'visto '+fF(x.vistoEn,1):'',estado:'vigente',llamado:tipo==='llamado'}); });
+        fecha:x.fecha||x.para,titulo:(x.ejercicio||'')+(x.sesion?' · '+x.sesion:''),texto:x.texto,textoEs:x.textoEs,extra:(x.para?'para el '+fF(x.para):'')+(x.atendidaEn?' · atendida '+fF(x.atendidaEn):''),visto:x.vistoEn?'visto '+fF(x.vistoEn,1):'',estado:'vigente',llamado:tipo==='llamado',
+        ed:{tipo:'sug',nodo:'fittrack_sugerencias',ruta:'fittrack_sugerencias/'+nip+'/'+k,k:k,tx:'texto',es:'textoEs',raw:x}}); });
     // 5) Batería y Pinocho: avisos al entrar (mismo texto que la app)
     function avBat(a,ruta,est,meta){ if(!a||(a.estado!=='deficit'&&a.estado!=='exceso')) return; var k='bat_'+a.desde+'_'+a.estado, dk=a.estado==='exceso'?'exceso_'+(a.motivo||'consumo'):'deficit';
       add({fuente:'Batería · aviso al entrar',ruta:ruta,area:'bateria',fecha:meta.fecha,titulo:T.b_av_t[a.estado],texto:fmt(T.b_av_d[dk]||'',{c:a.consumo,g:a.gasto})+' '+T.u_av,extra:'semana desde '+fF(a.desde)+' · carga '+a.carga+' % · consumo '+a.consumo+' %'+(a.gasto!=null?' · gasto '+a.gasto+' %':''),visto:vf1[k]?'visto '+fF(vf1[k],1):'',estado:est,anuladaEn:meta.anuladaEn,motivo:meta.motivo,clave:k}); }
@@ -9436,6 +9439,7 @@ window.FA={
       '<div class="lva-txt'+(largo&&!ab?' clip':'')+'">'+e(it.texto)+'</div>'+(largo?'<button type="button" class="lva-more" data-mas="'+i+'">'+(ab?'Ver menos':'Ver texto completo')+'</button>':'')+
       (largo&&!ab?'':bloqueEs(it,lang))+
       (it.estado!=='vigente'?'<div class="'+(it.estado==='anulada'?'lva-anu':'lva-rem')+'">'+(it.estado==='anulada'?'⛔ Anulada':'↺ Reemplazada')+(it.anuladaEn?' el '+e(fF(it.anuladaEn,1)):'')+(it.motivo?' · motivo: '+e(it.motivo):'')+'</div>':'')+
+      (window.LVA_EDIT?LVA_EDIT.html(it,i,lang):'')+
       '<div class="lva-meta">'+(it.visto?'👁 '+e(it.visto)+' · ':'')+(it.extra?e(it.extra)+'<br>':'')+'📍 <code>'+e(it.ruta)+'</code></div></div>';
   }
   function filtrar(L){ var q=norm(EST.q); return L.filter(function(it){ if(it.prog&&!EST.prog) return false; if(EST.area!=='todas'&&it.area!==EST.area) return false;
@@ -9515,17 +9519,17 @@ window.FA={
     var tabs=[['bat','🔋 Batería y Pinocho'],['ton','🏋️ Tonelaje y esfuerzo'],['sem','📊 Su semana en números'],['notas','💬 Notas y llamadas',L.filter(function(x){ return !x.prog; }).length]];
     var body={bat:paneBat,ton:paneTon,sem:paneSemana,notas:paneNotas};
     box.innerHTML='<div class="lva-head"><div class="card-title">👁️ Lo que ve el alumno</div><button type="button" class="lva-btn" data-recargar="1">↻ Actualizar</button></div>'+
-      '<div class="lva-sub">Leído de FitTrack (solo lectura) · NIP '+e(D.nip)+' · idioma de su app: '+e(LANG_N[lang]||lang)+(acc.ultimo?' · último acceso '+e(fF(acc.ultimo,1)):'')+(D.err.length?' · <span style="color:var(--red)">no se pudo leer: '+e(D.err.join(', '))+'</span>':'')+'</div>'+
+      '<div class="lva-sub">Leído de FitTrack · NIP '+e(D.nip)+' · idioma de su app: '+e(LANG_N[lang]||lang)+(acc.ultimo?' · último acceso '+e(fF(acc.ultimo,1)):'')+(D.err.length?' · <span style="color:var(--red)">no se pudo leer: '+e(D.err.join(', '))+'</span>':'')+'</div>'+
       '<div class="lva-tabs" role="tablist">'+tabs.map(function(t){ return '<button type="button" role="tab" class="lva-tab'+(EST.tab===t[0]?' on':'')+'" data-tab="'+t[0]+'">'+t[1]+(t[2]!=null?'<span class="lva-n">'+t[2]+'</span>':'')+'</button>'; }).join('')+'</div>'+
       '<div class="lva-pane on">'+body[EST.tab]()+'</div>';
   }
   function abrir(nip){ EST.nip=nip; EST.D=null; EST.L=null; EST.abiertos={}; EST.todasSug=false; pintar();
     return cargar(nip).then(function(D){ if(EST.nip!==nip) return; EST.D=D; try{ EST.L=notas(D); }catch(err){ console.error('[LVA] notas',err); EST.L=[]; } pintar(); })
       .catch(function(err){ console.error('[LVA]',err); var b=document.getElementById('lva-card'); if(b) b.innerHTML='<div class="card-title">👁️ Lo que ve el alumno</div><div class="lva-vacio">No se pudieron leer sus datos de FitTrack.</div>'; }); }
-  window.lvaAbrir=abrir; window.lvaNotas=notas;
+  window.lvaAbrir=abrir; window.lvaNotas=notas; window.lvaPintar=function(){ pintar(); };
   function caja(){ var box=document.getElementById('lva-card'); if(box) return box; var ch=document.getElementById('modal-chequeos'); if(!ch) return null;
     box=document.createElement('div'); box.id='lva-card'; box.className='card'; ch.parentNode.insertBefore(box,ch);
-    box.addEventListener('click',function(ev){ var t=ev.target.closest('[data-tab],[data-area],[data-mas],[data-recargar],[data-todas]'); if(!t) return;
+    box.addEventListener('click',function(ev){ if(window.LVA_EDIT&&LVA_EDIT.click(ev,EST)) return; var t=ev.target.closest('[data-tab],[data-area],[data-mas],[data-recargar],[data-todas]'); if(!t) return;
       if(t.dataset.tab){ EST.tab=t.dataset.tab; pintar(); } else if(t.dataset.area){ EST.area=t.dataset.area; pintar(); }
       else if(t.dataset.mas){ EST.abiertos[t.dataset.mas]=!EST.abiertos[t.dataset.mas]; pintar(); } else if(t.dataset.todas){ EST.todasSug=true; pintar(); }
       else if(t.dataset.recargar&&EST.nip) abrir(EST.nip); });
@@ -9631,7 +9635,7 @@ window.FA={
     if(r.ag) det+=(det?'<br>':'')+'<span style="color:var(--text3)">Autogestión: no lleva evaluación.</span>';
     return '<div class="pse-it '+r.cls+'"><div class="pse-top"><div><div class="pse-nom">'+e(r.nombre)+'</div><div class="pse-sub">NIP '+e(r.nip)+' · '+e(r.nivel)+(r.arch?' · <b style="color:var(--red)">'+e(String(r.est456==='activo'?r.a.status:r.est456).toUpperCase())+'</b> (fuera del conteo, regla 456)':'')+(r.a.pctRend!=null?' · rendimiento '+e(r.a.pctRend)+' %':'')+'</div></div><span class="pse-b '+r.cls+'">'+e(r.lbl)+'</span></div>'+
       '<div class="pse-det">'+ch+(det?'<div style="margin-top:4px">'+det+'</div>':'')+'</div>'+
-      '<div class="pse-acc">'+((r.cls==='fresca'||r.cls==='vieja')&&!r.ag?'<button type="button" class="pri" data-rev="'+e(r.nombre)+'">Revisar propuesta</button>':(r.ag?'':'<button type="button" data-rev="'+e(r.nombre)+'">Evaluar</button>'))+'<button type="button" data-perfil="'+e(r.nombre)+'">Perfil</button></div></div>';
+      '<div class="pse-acc">'+((r.cls==='fresca'||r.cls==='vieja')&&!r.ag?'<button type="button" class="pri" data-rev="'+e(r.nombre)+'">Revisar propuesta</button>':(r.ag?'':'<button type="button" data-rev="'+e(r.nombre)+'">Evaluar</button>'))+(window.PSE_EDIT&&(r.cls==='fresca'||r.cls==='vieja')&&!r.ag?'<button type="button" data-ped="'+e(r.nip)+'">✏️ Editar</button>':'')+'<button type="button" data-perfil="'+e(r.nombre)+'">Perfil</button></div>'+(window.PSE_EDIT?PSE_EDIT.html(r):'')+'</div>';
   }
   function pintar(){ var root=document.getElementById('pse-body'); if(!root) return;
     var T=filas(), F=T.filter(function(r){ return !!r.arch===!!ST.inact; }), nIn=T.filter(function(r){ return r.arch; }).length, L=filtrar(T), c={fresca:0,vieja:0,cola:0,decidida:0,sin:0}; F.forEach(function(r){ c[r.cls]=(c[r.cls]||0)+1; });
@@ -9656,7 +9660,7 @@ window.FA={
     sc.innerHTML='<div class="back-btn" onclick="nav(\'dashboard\')">← Inicio</div><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div class="section-title">📝 Propuestas de evaluación</div><button type="button" class="lva-btn" id="pse-rec">↻ Actualizar</button></div>'+
       '<div style="font-size:12px;color:var(--text2);margin:4px 0 8px">Todos los alumnos activos con su propuesta, cuándo se actualizó y su próximo chequeo.</div><div id="pse-body"></div>';
     ref.parentNode.insertBefore(sc, ref.nextSibling);
-    sc.addEventListener('click',function(ev){ var t=ev.target.closest('[data-est],[data-rev],[data-perfil],#pse-rec'); if(!t) return;
+    sc.addEventListener('click',function(ev){ if(window.PSE_EDIT&&PSE_EDIT.click(ev)) return; var t=ev.target.closest('[data-est],[data-rev],[data-perfil],#pse-rec'); if(!t) return;
       if(t.id==='pse-rec'){ leerProx(true).then(pintar); pintar(); return; }
       if(t.dataset.est){ ST.est=t.dataset.est; pintar(); return; }
       var n=t.dataset.rev||t.dataset.perfil, a=ALUMNOS_DATA[n]; if(!a) return;
@@ -9666,6 +9670,7 @@ window.FA={
     sc.addEventListener('change',function(ev){ var id=ev.target.id; if(id==='pse-est') ST.est=ev.target.value; else if(id==='pse-niv') ST.nivel=ev.target.value; else if(id==='pse-ord') ST.orden=ev.target.value; else if(id==='pse-pronto') ST.pronto=ev.target.checked; else if(id==='pse-inact'){ ST.inact=ev.target.checked; ST.est=ST.inact?'todas':ST.est; } else return; pintar(); });
     return sc;
   }
+  window.psePintar=function(){ pintar(); };
   window.abrirPropuestasSeccion=function(est){ pantalla(); if(est) ST.est=est; nav('propuestas'); pintar(); leerProx().then(function(){ var sc=document.getElementById('sc-propuestas'); if(sc&&sc.classList.contains('active')) pintar(); }); };
   // «Ver» del aviso del inicio y «Propuestas listas» del encabezado → esta sección (antes: lista de alumnos ordenada o Evaluar directo)
   irAPropuestas=function(){ ST.inact=false; window.abrirPropuestasSeccion('listas'); };
@@ -9674,6 +9679,122 @@ window.FA={
   try{ actualizarResumen(); }catch(x){}
   try{ PROP_REF.on('value',function(){ var sc=document.getElementById('sc-propuestas'); if(sc&&sc.classList.contains('active')) pintar(); }); }catch(x){}
   pantalla();
+})();
+</script>
+
+<style>
+/* ── Edición de Noé desde el perfil y desde Propuestas (Noé 13 nov 10:51) ── */
+.ed-bar{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+.ed-b{border:1.5px solid var(--teal);background:transparent;color:var(--teal);font:700 12px 'DM Sans',sans-serif;border-radius:9px;padding:6px 10px;cursor:pointer}
+.ed-b.x{border-color:#e5a5a0;color:var(--red)}
+.ed-b.pri{background:linear-gradient(135deg,var(--teal),var(--teal-2));color:#fff;border-color:transparent}
+.ed-box{margin-top:8px;border:1.5px solid var(--teal-light);background:var(--teal-xlight);border-radius:10px;padding:9px}
+.ed-box.an{border-color:#f0b4ae;background:#fff5f4}
+.ed-box label{display:block;font:700 11.5px 'DM Sans',sans-serif;color:var(--text2);margin:4px 0 3px}
+.ed-box textarea,.ed-box input[type=text],.ed-box input[type=number]{width:100%;background:var(--surface);border:1.5px solid var(--border2);border-radius:8px;padding:8px 9px;font:13px 'DM Sans',sans-serif;color:var(--text);outline:none;resize:vertical}
+.ed-box textarea{min-height:92px;line-height:1.45}
+.ed-box textarea:focus,.ed-box input:focus{border-color:var(--teal)}
+.ed-ayuda{font-size:11px;color:var(--text3);margin-top:4px;line-height:1.4}
+.ed-tag{display:inline-block;margin-top:6px;font:700 10.5px 'DM Sans',sans-serif;background:#ede9fe;color:#5b21b6;border-radius:20px;padding:2px 8px}
+.ed-tag.p{background:var(--amber-light);color:#9a5b00}
+.ed-met{display:grid;grid-template-columns:1fr 64px 64px;gap:6px;align-items:center;font-size:12px;margin:4px 0}
+.ed-met b{font-weight:700;color:var(--text)}
+.ed-met span{color:var(--text3);text-align:center}
+.ed-mot{margin:2px 0 8px}
+</style>
+<script>
+// ══ EDICIÓN DE NOÉ desde FitTrack Coach (Noé 13 nov 10:51) ════════════════════════════════════════════════════════════
+// Perfil → «Lo que ve el alumno» → Notas: «Editar» / «Anular» en cada nota VIGENTE de:
+//   fittrack_sugerencias/<nip>/<k> (progresiones, observaciones y llamados en ejercicio) · fittrack_chequeos/avisos/<nip>/<id>
+//   (avisos semanales) · fittrack_rendimiento/<nip>/<sección>/nota (notas de Mi semana).
+// Propuestas de evaluación → «Editar»: métricas propuestas, motivos y notas de fittrack_propuestas/evaluaciones/<nip>.
+// Guardar escribe en el MISMO nodo que lee la app del alumno (lo ve al momento) con editadoPor:'Noé', editadoEn (ISO) y el texto
+// anterior; en propuestas se conservan los demás campos. Anular: sugerencia → fittrack_sugerencias_anuladas (y se quita);
+// aviso → se marca en su lugar (estado cerrado, anulado); nota de Mi semana → copia en fittrack_rendimiento_anuladas y nota vacía.
+// TODA edición/anulación se registra en fittrack_ediciones_noe/<nip>/<id> {ts, nodo, ruta, antes, despues, tipo} (una sola
+// escritura multi-ruta). El motor la respeta (motor/protege_noe.py + tools/ediciones_noe.py; REVISION_HORARIA paso «ediciones Noé»).
+// Otro idioma: se editan el texto en su idioma y en español; si solo cambia el español → traduccionPendiente:true (el motor traduce).
+// Medallero, batería, Pinocho y mapa NO se editan aquí: se recalculan solos cada corrida (para corregirlos, anula/explica con una nota).
+(function(){
+  var ED={i:null,modo:null}, PE={nip:null};
+  function e(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function ahora(){ return new Date().toISOString(); }
+  function fCorta(iso){ try{ return new Date(iso).toLocaleString('es-MX',{timeZone:'America/Mexico_City',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); }catch(x){ return String(iso).slice(0,16); } }
+  function idEd(){ return 'e'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+  function fuenteNoe(){ return 'Noé (FitTrack Coach '+new Date().toLocaleDateString('es-MX',{timeZone:'America/Mexico_City',day:'numeric',month:'short'})+')'; }
+  function lang(){ try{ var D=window.LVA&&LVA.D; return (((D&&D.vis)||{}).idioma||{}).lang||'es'; }catch(x){ return 'es'; } }
+  function toast(m){ try{ showToast(m); }catch(x){} }
+  function escribir(upd){ return db.ref().update(upd); }
+  function tag(raw){ if(!raw) return ''; var t=''; if(raw.editadoPor) t+='<span class="ed-tag">✏️ Editada por '+e(raw.editadoPor)+(raw.editadoEn?' · '+e(fCorta(raw.editadoEn)):'')+'</span> ';
+    if(raw.traduccionPendiente) t+='<span class="ed-tag p">🌐 traducción pendiente</span>'; return t; }
+  window.LVA_EDIT={
+    html:function(it,i,lg){ if(!it.ed||it.estado!=='vigente') return ''; var raw=it.ed.raw||{}, h=tag(raw);
+      if(ED.i===i&&ED.modo==='editar'){ var otro=lg!=='es';
+        h+='<div class="ed-box">'+(otro?'<label>Texto que ve el alumno ('+e(lg)+')</label><textarea id="ed-tx">'+e(raw[it.ed.tx]||'')+'</textarea><label>🇲🇽 En español</label><textarea id="ed-es">'+e(raw[it.ed.es]||raw[it.ed.tx]||'')+'</textarea><div class="ed-ayuda">Si solo cambias el español, queda marcado «traducción pendiente» y el motor lo traduce en la siguiente corrida; mientras tanto el alumno sigue viendo el texto anterior en su idioma.</div>'
+          :'<label>Texto que ve el alumno</label><textarea id="ed-tx">'+e(raw[it.ed.tx]||'')+'</textarea>')+
+          '<div class="ed-ayuda">Se guarda en <code>'+e(it.ed.ruta)+'</code> (lo ve al momento) y queda en la bitácora fittrack_ediciones_noe.</div><div class="ed-bar"><button type="button" class="ed-b pri" data-ed-guardar="'+i+'">💾 Guardar</button><button type="button" class="ed-b" data-ed-cancel="1">Cancelar</button></div></div>';
+        return h; }
+      if(ED.i===i&&ED.modo==='anular'){ h+='<div class="ed-box an"><label>Motivo de la anulación (queda en el historial)</label><input type="text" id="ed-mot" placeholder="p. ej. falso positivo: sí lo registró"><div class="ed-ayuda">'+(it.ed.tipo==='aviso'?'El aviso se cierra y deja de verse en su app.':it.ed.tipo==='ren'?'La nota se mueve a fittrack_rendimiento_anuladas y deja de verse.':'La propuesta se mueve a fittrack_sugerencias_anuladas y deja de verse.')+'</div><div class="ed-bar"><button type="button" class="ed-b x" data-ed-confirmar="'+i+'">⛔ Confirmar anulación</button><button type="button" class="ed-b" data-ed-cancel="1">Cancelar</button></div></div>'; return h; }
+      return h+'<div class="ed-bar"><button type="button" class="ed-b" data-ed-editar="'+i+'">✏️ Editar</button><button type="button" class="ed-b x" data-ed-anular="'+i+'">⛔ Anular</button></div>'; },
+    click:function(ev,EST){ var t=ev.target.closest('[data-ed-editar],[data-ed-anular],[data-ed-cancel],[data-ed-guardar],[data-ed-confirmar]'); if(!t) return false;
+      var d=t.dataset; if(d.edEditar!=null){ ED={i:+d.edEditar,modo:'editar'}; EST.abiertos[d.edEditar]=true; window.lvaPintar(); return true; }
+      if(d.edAnular!=null){ ED={i:+d.edAnular,modo:'anular'}; window.lvaPintar(); return true; }
+      if(d.edCancel){ ED={i:null,modo:null}; window.lvaPintar(); return true; }
+      var it=EST.L[+(d.edGuardar!=null?d.edGuardar:d.edConfirmar)]; if(!it||!it.ed) return true;
+      var p=d.edGuardar!=null?guardar(it,EST):anular(it,EST); if(!p) return true; t.disabled=true;
+      p.then(function(){ var pend=ED.pend; ED={i:null,modo:null}; toast(d.edGuardar!=null?(pend?'✅ Guardado · traducción pendiente: el alumno ve el texto anterior en su idioma hasta que el motor lo traduzca':'✅ Guardado: el alumno ya lo ve'):'⛔ Anulada'); window.lvaAbrir(EST.nip); })
+       .catch(function(err){ console.error('[EDICION]',err); t.disabled=false; toast('No se pudo guardar. Revisa tu conexión.'); });
+      return true; }
+  };
+  function bitacora(upd,nip,o){ upd['fittrack_ediciones_noe/'+nip+'/'+idEd()]=Object.assign({ts:Date.now(),en:ahora(),por:'Noé',app:'FitTrack Coach'},o); }
+  function guardar(it,EST){ var ed=it.ed, raw=ed.raw||{}, lg=lang(), otro=lg!=='es', nip=EST.nip;
+    var tx=(document.getElementById('ed-tx')||{}).value, es=otro?(document.getElementById('ed-es')||{}).value:null;
+    tx=String(tx==null?'':tx).trim(); if(es!=null) es=String(es).trim();
+    var antTx=raw[ed.tx]||'', antEs=raw[ed.es]||null, cambTx=tx!==String(antTx).trim(), cambEs=otro&&es!==String(antEs||antTx).trim();
+    if(!tx||(!cambTx&&!cambEs)){ toast(!tx?'El texto no puede quedar vacío':'Sin cambios'); return null; }
+    var pend=otro&&cambEs&&!cambTx, upd={}, P=ed.ruta, en=ahora(); ED.pend=pend;
+    upd[P+'/'+ed.tx]=tx; if(otro) upd[P+'/'+ed.es]=es;
+    if(ed.tipo==='ren'){ upd[P+'/notaFuente']=fuenteNoe(); upd[P+'/editadoPor']='Noé'; upd[P+'/editadoEn']=en; upd[P+'/notaAnterior']=antTx; if(otro) upd[P+'/notaEsAnterior']=antEs; upd[P+'/traduccionPendiente']=pend||null; }
+    else { upd[P+'/editadoPor']='Noé'; upd[P+'/editadoEn']=en; upd[P+'/textoAnterior']=antTx; if(otro) upd[P+'/textoEsAnterior']=antEs; upd[P+'/traduccionPendiente']=pend||null;
+      if(ed.tipo==='sug'&&!raw.fuente) upd[P+'/fuente']=fuenteNoe(); }
+    bitacora(upd,nip,{tipo:'edicion',nodo:ed.nodo,ruta:P+'/'+ed.tx,antes:{texto:antTx,textoEs:antEs},despues:{texto:tx,textoEs:otro?es:null},idioma:lg,traduccionPendiente:pend,
+      ejercicio:raw.ejercicio||null,para:raw.para||null,fecha:raw.fecha||raw.creado||null,clave:ed.k||null,seccion:ed.sec||null});
+    return escribir(upd); }
+  function anular(it,EST){ var ed=it.ed, raw=ed.raw||{}, nip=EST.nip, mot=String((document.getElementById('ed-mot')||{}).value||'').trim();
+    if(!mot){ toast('Escribe el motivo'); return null; }
+    var en=ahora(), por='Noé (FitTrack Coach): '+mot, upd={}, P=ed.ruta, copia=JSON.parse(JSON.stringify(raw)); delete copia._id;
+    if(ed.tipo==='sug'){ upd['fittrack_sugerencias_anuladas/'+nip+'/'+ed.k]=Object.assign(copia,{anuladaEn:en,anuladaPor:por,rutaOriginal:P}); upd[P]=null; }
+    else if(ed.tipo==='aviso'){ upd[P+'/estado']='cerrado'; upd[P+'/anulado']=true; upd[P+'/anuladoEn']=en; upd[P+'/anuladoPor']='Noé'; upd[P+'/motivoAnulado']=mot; upd[P+'/anuladoMotivo']=mot; }
+    else if(ed.tipo==='ren'){ upd['fittrack_rendimiento_anuladas/'+nip+'/'+ed.sec+'_nota_noe_'+en.replace(/[:.]/g,'-')]={anuladaEn:en,anuladaPor:por,nota:raw.nota||null,notaEs:raw.notaEs||null,rutaOriginal:P+'/nota'};
+      upd[P+'/nota']=''; upd[P+'/notaEs']=null; upd[P+'/notaFuente']=fuenteNoe(); upd[P+'/editadoPor']='Noé'; upd[P+'/editadoEn']=en; upd[P+'/notaAnterior']=raw.nota||null; }
+    bitacora(upd,nip,{tipo:'anulacion',nodo:ed.nodo,ruta:ed.tipo==='ren'?P+'/nota':P,antes:{texto:raw[ed.tx]||null,textoEs:raw[ed.es]||null},despues:null,motivo:mot,
+      ejercicio:raw.ejercicio||null,para:raw.para||null,fecha:raw.fecha||raw.creado||null,clave:ed.k||null,seccion:ed.sec||null});
+    return escribir(upd); }
+
+  // ── Propuestas de evaluación (fittrack_propuestas/evaluaciones/<nip>) ──
+  var NOM={ef:'Efectividad',es:'Esfuerzo',in:'Intensidad',fu:'Fuerza',re:'Resistencia',rm:'Rango de movimiento',ca:'Cadencia',tc:'Técnica',ud:'Umbral de dolor'};
+  window.PSE_EDIT={
+    html:function(r){ var ev=r.ev||{}; var h=ev.editadoPor?'<span class="ed-tag">✏️ Editada por '+e(ev.editadoPor)+(ev.editadoEn?' · '+e(fCorta(ev.editadoEn)):'')+'</span>':'';
+      if(PE.nip!==r.nip) return h; var full=((PROP.evaluaciones||{})[r.nip])||ev, M=full.metricas||{}, N=full.notas||[];
+      h+='<div class="ed-box"><div style="font:700 12.5px \'DM Sans\',sans-serif;margin-bottom:4px">Editar propuesta · '+e(r.nombre)+'</div><div class="ed-met"><span></span><span>actual</span><span>propuesta</span></div>'+
+        Object.keys(NOM).filter(function(k){ return M[k]; }).map(function(k){ var m=M[k]; return '<div class="ed-met"><b>'+NOM[k]+'</b><span>'+e(m.actual)+'</span><input type="number" min="0" max="100" step="5" data-pm="'+k+'" value="'+e(m.propuesta)+'"></div><div class="ed-mot"><textarea data-pmo="'+k+'" style="min-height:44px">'+e(m.motivo||'')+'</textarea></div>'; }).join('')+
+        (N.length?'<label>Notas propuestas</label>'+N.map(function(n,i){ return '<div class="ed-ayuda">'+e(n.etiqueta||'')+' · '+e(n.fecha||'')+'</div><textarea data-pn="'+i+'" style="min-height:60px">'+e(n.txt||'')+'</textarea>'; }).join(''):'')+
+        '<div class="ed-ayuda">Se guarda en fittrack_propuestas/evaluaciones/'+e(r.nip)+' (editadoPor Noé: el motor ya no la recalcula) y en la bitácora. Aplicarla al alumno sigue siendo «Revisar propuesta».</div>'+
+        '<div class="ed-bar"><button type="button" class="ed-b pri" data-ped-guardar="'+e(r.nip)+'">💾 Guardar</button><button type="button" class="ed-b" data-ped-cancel="1">Cancelar</button></div></div>';
+      return h; },
+    click:function(ev){ var t=ev.target.closest('[data-ped],[data-ped-guardar],[data-ped-cancel]'); if(!t) return false; var d=t.dataset;
+      if(d.pedCancel){ PE.nip=null; window.psePintar(); return true; }
+      if(d.ped!=null){ PE.nip=PE.nip===d.ped?null:d.ped; window.psePintar(); return true; }
+      var nip=d.pedGuardar, full=((PROP.evaluaciones||{})[nip]); if(!full) return true; var box=t.closest('.ed-box'), M=full.metricas||{}, N=full.notas||[], upd={}, antes={}, desp={}, P='fittrack_propuestas/evaluaciones/'+nip;
+      box.querySelectorAll('[data-pm]').forEach(function(inp){ var k=inp.dataset.pm, v=Math.max(0,Math.min(100,Math.round(Number(inp.value)))); if(isFinite(v)&&M[k]&&v!==M[k].propuesta){ upd[P+'/metricas/'+k+'/propuesta']=v; antes['metricas/'+k+'/propuesta']=M[k].propuesta; desp['metricas/'+k+'/propuesta']=v; } });
+      box.querySelectorAll('[data-pmo]').forEach(function(ta){ var k=ta.dataset.pmo, v=ta.value.trim(); if(M[k]&&v!==String(M[k].motivo||'').trim()){ upd[P+'/metricas/'+k+'/motivo']=v; antes['metricas/'+k+'/motivo']=M[k].motivo||''; desp['metricas/'+k+'/motivo']=v; } });
+      box.querySelectorAll('[data-pn]').forEach(function(ta){ var i=+ta.dataset.pn, v=ta.value.trim(); if(N[i]&&v!==String(N[i].txt||'').trim()){ upd[P+'/notas/'+i+'/txt']=v; antes['notas/'+i+'/txt']=N[i].txt||''; desp['notas/'+i+'/txt']=v; } });
+      if(!Object.keys(upd).length){ toast('Sin cambios'); return true; }
+      var en=ahora(); upd[P+'/editadoPor']='Noé'; upd[P+'/editadoEn']=en; upd[P+'/textoAnterior']=antes;
+      bitacora(upd,nip,{tipo:'edicion',nodo:'fittrack_propuestas/evaluaciones',ruta:P,antes:antes,despues:desp,sesion:full.sesion||null});
+      t.disabled=true; escribir(upd).then(function(){ PE.nip=null; toast('✅ Propuesta guardada'); window.psePintar(); }).catch(function(err){ console.error('[EDICION]',err); t.disabled=false; toast('No se pudo guardar. Revisa tu conexión.'); });
+      return true; }
+  };
 })();
 </script>
 
