@@ -9213,5 +9213,469 @@ window.FA={
 // ── fin FARMACOLOGÍA ──
 
 </script>
+<style>
+/* ── «Lo que ve el alumno» (perfil · Noé 13 nov 9:52) ── */
+#lva-card{padding:12px 14px;margin-bottom:12px}
+.lva-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.lva-head .card-title{margin:0}
+.lva-sub{font-size:11.5px;color:var(--text3);margin:-2px 0 8px;line-height:1.4}
+.lva-btn{border:1px solid var(--border2);background:var(--surface2);color:var(--text2);font:600 11.5px 'DM Sans',sans-serif;border-radius:20px;padding:5px 10px;cursor:pointer;white-space:nowrap}
+.lva-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin:0 -2px 10px;scrollbar-width:none}
+.lva-tabs::-webkit-scrollbar{display:none}
+.lva-tab{flex:0 0 auto;border:1.5px solid var(--teal-light);background:var(--surface);color:var(--teal-dark);font:700 12px 'DM Sans',sans-serif;border-radius:20px;padding:7px 12px;cursor:pointer}
+.lva-tab.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.lva-tab .lva-n{display:inline-block;min-width:18px;margin-left:4px;padding:0 5px;border-radius:9px;background:rgba(255,255,255,.25);font-size:10.5px}
+.lva-tab:not(.on) .lva-n{background:var(--teal-light)}
+.lva-pane{display:none}.lva-pane.on{display:block}
+.lva-box{border:1px solid var(--border2);border-radius:12px;padding:10px 12px;margin-bottom:10px;background:var(--surface)}
+.lva-box h4{font:700 13.5px 'Space Grotesk',sans-serif;margin:0 0 6px;display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.lva-box h4 small{font:500 11px 'DM Sans',sans-serif;color:var(--text3)}
+.lva-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:6px;margin:6px 0}
+.lva-kpi{background:var(--surface2);border-radius:10px;padding:7px 8px}
+.lva-kpi b{display:block;font:700 16px 'Space Grotesk',sans-serif;color:var(--text)}
+.lva-kpi span{font-size:10.5px;color:var(--text3)}
+.lva-p{font-size:12.5px;line-height:1.5;color:var(--text);margin:6px 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.lva-es{font-size:12px;line-height:1.45;color:var(--text2);background:var(--surface2);border-left:3px solid var(--teal-3);border-radius:6px;padding:6px 8px;margin:6px 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.lva-es b{color:var(--teal-dark)}
+.lva-muted{font-size:11.5px;color:var(--text3)}
+.lva-est{display:inline-block;font:700 11px 'DM Sans',sans-serif;padding:2px 8px;border-radius:20px}
+.lva-e-cargada{background:var(--green-light);color:var(--green)}.lva-e-media{background:var(--amber-light);color:#9a5b00}
+.lva-e-deficit{background:var(--red-light);color:var(--red)}.lva-e-exceso{background:#fde2e1;color:#a51b12}
+.lva-bars{display:flex;align-items:flex-end;gap:4px;height:74px;margin:8px 0 2px}
+.lva-bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;min-width:0}
+.lva-bar i{display:block;width:70%;border-radius:4px 4px 0 0;background:var(--teal)}
+.lva-bar em{font-style:normal;font-size:9.5px;color:var(--text3);margin-top:2px;white-space:nowrap}
+.lva-bar s{text-decoration:none;font-size:9.5px;color:var(--text2);margin-bottom:1px}
+.lva-tbl{width:100%;border-collapse:collapse;font-size:11.5px}
+.lva-tbl th,.lva-tbl td{padding:4px 3px;border-bottom:1px solid var(--border2);text-align:left}
+.lva-tbl th{color:var(--text3);font-weight:600}
+.lva-an{border:1px dashed #e5a5a0;background:#fff8f7;border-radius:10px;padding:7px 9px;margin-top:6px;font-size:11.5px;color:var(--text2)}
+.lva-an b{color:var(--red)}
+.lva-filtros{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.lva-search{width:100%;background:var(--surface2);border:1.5px solid var(--border2);border-radius:10px;padding:9px 12px;font:14px 'DM Sans',sans-serif;color:var(--text);outline:none}
+.lva-search:focus{border-color:var(--teal)}
+.lva-chips{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.lva-chips::-webkit-scrollbar{display:none}
+.lva-chip{flex:0 0 auto;border:1px solid var(--border2);background:var(--surface);color:var(--text2);font:600 11.5px 'DM Sans',sans-serif;border-radius:20px;padding:5px 9px;cursor:pointer}
+.lva-chip.on{background:var(--teal-dark);border-color:var(--teal-dark);color:#fff}
+.lva-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:11.5px;color:var(--text2)}
+.lva-row select{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:5px 8px;font:12px 'DM Sans',sans-serif;color:var(--text)}
+.lva-row label{display:flex;gap:4px;align-items:center;cursor:pointer}
+.lva-cnt{font-size:11.5px;color:var(--text3);margin:2px 0 8px}
+.lva-tl{position:relative;margin-left:4px;padding-left:14px;border-left:2px solid var(--teal-light)}
+.lva-it{position:relative;border:1px solid var(--border2);border-radius:12px;padding:9px 10px;margin-bottom:9px;background:var(--surface)}
+.lva-it:before{content:'';position:absolute;left:-21px;top:13px;width:10px;height:10px;border-radius:50%;background:var(--teal);border:2px solid var(--surface)}
+.lva-it.anu{border-color:#f0b4ae;background:#fffafa}.lva-it.anu:before{background:var(--red)}
+.lva-it.rem:before{background:var(--amber)}.lva-it.rem{border-color:#f3d39b}
+.lva-it-top{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-bottom:4px}
+.lva-tag{font:700 10px 'DM Sans',sans-serif;padding:2px 7px;border-radius:20px;background:var(--surface2);color:var(--text2);letter-spacing:.2px}
+.lva-tag.a{background:var(--teal-xlight);color:var(--teal-dark)}
+.lva-tag.v{background:var(--green-light);color:var(--green)}
+.lva-tag.x{background:var(--red-light);color:var(--red)}
+.lva-tag.r{background:var(--amber-light);color:#9a5b00}
+.lva-fe{font:700 11.5px 'Space Grotesk',sans-serif;color:var(--text)}
+.lva-tit{font:700 13px 'DM Sans',sans-serif;color:var(--text);margin:2px 0}
+.lva-txt{font-size:12.5px;line-height:1.5;color:var(--text);white-space:pre-wrap;overflow-wrap:anywhere}
+.lva-txt.clip{display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden}
+.lva-more{border:none;background:none;color:var(--teal);font:600 12px 'DM Sans',sans-serif;padding:2px 0;cursor:pointer}
+.lva-meta{font-size:11px;color:var(--text3);margin-top:5px;line-height:1.45;overflow-wrap:anywhere}
+.lva-meta code{font-size:10.5px;background:var(--surface2);padding:0 4px;border-radius:4px;color:var(--text2)}
+.lva-anu{margin-top:6px;font-size:11.5px;color:#9b1c13;background:var(--red-light);border-radius:8px;padding:5px 8px;line-height:1.4}
+.lva-rem{margin-top:6px;font-size:11.5px;color:#7a4a00;background:var(--amber-light);border-radius:8px;padding:5px 8px;line-height:1.4}
+.lva-vacio{font-size:12px;color:var(--text3);padding:8px 0}
+@media (max-width:599px){.lva-tabs{display:grid;grid-template-columns:1fr 1fr;overflow:visible}.lva-tab{white-space:normal;padding:7px 8px;font-size:11.5px}}
+@media (min-width:900px){#profile-modal .modal-sheet{max-width:760px}.lva-kpis{grid-template-columns:repeat(auto-fit,minmax(110px,1fr))}}
+</style>
+<script>
+// ══ «LO QUE VE EL ALUMNO» en el perfil (Noé 13 nov 9:52) ═════════════════════════════════════════════════════════════
+// Solo LECTURA de Firebase (once('value')); no escribe nada. Reúne lo que la app del alumno le muestra y TODO lo que el sistema
+// le ha mandado, incluidas las notas/avisos ANULADOS (*_anuladas) para que Noé sepa qué vio aunque ya no esté.
+// Fuentes: fittrack_bateria · fittrack_confiabilidad · fittrack_tonelaje · fittrack_rendimiento · fittrack_sugerencias ·
+// fittrack_chequeos/avisos/<nip> · fittrack_chequeos/<nip> (feedback) · fittrack_medallero/alumno/<nip> · fittrack_mapa ·
+// fittrack_llamados/<nip> (llamados por WhatsApp, tools/llamados_nodo.py) · fittrack_vistos/<nip> (visto/entendido, idioma)
+// y sus *_anuladas (incluye fittrack_medallero_anuladas/alumno__<nip>).
+(function(){
+  var LANG_N={es:'Español',en:'English',zh_tw:'繁體中文',zh:'中文',fr:'Français',pt:'Português',it:'Italiano',de:'Deutsch',ja:'日本語',ko:'한국어',ru:'Русский',ar:'العربية'};
+  var AREAS=[['todas','Todas'],['nutricion','🥗 Nutrición'],['cardio','❤️ Cardio'],['pesas','🏋️ Pesas'],['actividad','🚶 Actividad'],['registro','📝 Registro'],['bateria','🔋 Batería'],['uso_fittrack','📲 Uso de FitTrack'],['chequeo','📋 Chequeo'],['otro','• Otras']];
+  var AREA_L={}; AREAS.forEach(function(a){ AREA_L[a[0]]=a[1]; });
+  // Textos de la app del alumno (LANGS.es de fittrack-alumno12.html, F1.6/F1.7) — así los lee en español
+  var T={
+    b_e:{cargada:'Cargada',media:'Desbalanceándose',deficit:'Sin energía',exceso:'¡Reventada!'},
+    b_d:{cargada:'Comes lo de tu plan y gastas lo programado: tu balance está en orden y tu cuerpo tiene la energía justa para adaptarse.',
+      media_consumo:'Lo que comes se está saliendo de tu plan. Todavía no es grave, pero tu balance se está moviendo.',
+      media_gasto:'Tu gasto bajó un poco (algún entreno, cardio o pasos de menos). Todavía no es grave, pero tu balance se está moviendo.',
+      deficit:'Te falta energía: estás comiendo bastante menos de lo que indica tu plan. Hay estrés celular y de todo el sistema, y el plan se vuelve contraproducente.',
+      exceso_consumo:'Se reventó por exceso: estás comiendo más de lo que indica tu plan. La energía que sobra tiende a guardarse como grasa.',
+      exceso_gasto:'Se reventó porque tu gasto cayó: faltaste a entrenamientos o al cardio, o caminaste poco. Comes lo mismo, pero ya no lo gastas de forma controlada y estable, y lo que sobra tiende a guardarse como grasa.',
+      exceso_ambos:'Se reventó por las dos: comes de más y además tu gasto cayó (entrenos, cardio o pasos). Lo que sobra tiende a guardarse como grasa.'},
+    b_av_t:{deficit:'🔋 Tu batería se quedó sin energía',exceso:'💥 ¡Se te reventó la batería!'},
+    b_av_d:{deficit:'Esta semana llevas {c} % de las calorías de tu plan. A tu cuerpo le falta energía: revisa qué comidas te estás saltando y regístralas.',
+      exceso_consumo:'Estás comiendo {c} % de lo que indica tu plan. Lo que sobra tiende a guardarse como grasa.',
+      exceso_gasto:'Tu gasto cayó a {g} % de lo programado (entrenos, cardio o pasos). Comes lo mismo, pero ya no lo estás gastando.',
+      exceso_ambos:'Comes {c} % de tu plan y tu gasto cayó a {g} %. Lo que sobra tiende a guardarse como grasa.'},
+    u_av:'Si ya lo registraste hoy, se verá reflejado en la próxima actualización.',
+    p_av_t:'🤥 A tu Pinocho le creció la nariz',
+    p_av_d:'Registraste {n} tareas de golpe el {f} ({h1}–{h2}). Registra el mismo día para que tus datos sean confiables.',
+    p_nv:{alta:'Registros confiables',media:'La nariz está creciendo',baja:'Nariz de Pinocho'},
+    p_et:['Nariz de persona confiable','La nariz empezó a crecer','¡Ya le salió una rama!','Ya hay un nidito en la rama','Ya llegó un pajarito a vivir ahí','¡Y ya puso huevitos!']
+  };
+  var MUS={cuadriceps:'Cuádriceps',gluteo:'Glúteo',isquios:'Isquiotibiales',espaldaMedia:'Espalda media',dorsal:'Dorsal',triceps:'Tríceps',hombros:'Hombros',biceps:'Bíceps',abdomen:'Abdomen',pecho:'Pecho',deltPost:'Deltoide posterior',oblicuos:'Oblicuos',aductores:'Aductores',abductores:'Abductores',pantorrilla:'Pantorrilla',trapecio:'Trapecio',antebrazo:'Antebrazo',lumbar:'Lumbar'};
+  function fmt(s,o){ return String(s).replace(/\{(\w+)\}/g,function(_,k){ return o&&o[k]!=null?o[k]:''; }); }
+  function e(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function n0(x){ var v=Number(x); return isFinite(v)?Math.round(v).toLocaleString('es-MX'):'—'; }
+  function n1(x){ var v=Number(x); return isFinite(v)?(Math.round(v*10)/10).toLocaleString('es-MX'):'—'; }
+  function aFecha(v){ if(v==null||v==='') return null; var s=String(v); if(/^\d{4}-\d{2}-\d{2}$/.test(s)) s+='T12:00:00-06:00'; if(/^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}/.test(s)) s=s.replace(/T(\d{2})-(\d{2})-(\d{2})(-(\d+))?Z?/,'T$1:$2:$3Z'); var d=new Date(s); return isNaN(d)?null:d; }
+  function fF(v,hora){ var d=aFecha(v); if(!d) return ''; try{ var o={timeZone:'America/Mexico_City',day:'numeric',month:'short',year:'numeric'}; if(hora&&!/^\d{4}-\d{2}-\d{2}$/.test(String(v))){ o.hour='2-digit'; o.minute='2-digit'; } return d.toLocaleString('es-MX',o).replace(/\.,/,','); }catch(x){ return String(v).slice(0,16).replace('T',' '); } }
+  function iso(v){ var d=aFecha(v); return d?d.toISOString():''; }
+  function areaDe(s){ s=String(s||'').toLowerCase();
+    if(/llamad|uso_fittrack|no usar fittrack/.test(s)) return 'uso_fittrack';
+    if(/bater/.test(s)) return 'bateria';
+    if(/confiab|pinocho|registro/.test(s)) return 'registro';
+    if(/nutri|dieta|alimen|nut_/.test(s)) return 'nutricion';
+    if(/cardio|car_/.test(s)) return 'cardio';
+    if(/activ|pasos|act_/.test(s)) return 'actividad';
+    if(/fuerza|pesas|tonel|mapa|sugeren|ejerc|progres/.test(s)) return 'pesas';
+    if(/chequeo|feedback|advert/.test(s)) return 'chequeo';
+    return 'otro'; }
+  function lee(p){ return db.ref(p).once('value').then(function(s){ return s&&s.val(); }).catch(function(){ return {__err:p}; }); }
+  var RUTAS={bat:'fittrack_bateria/N',batA:'fittrack_bateria_anuladas/N',conf:'fittrack_confiabilidad/N',confA:'fittrack_confiabilidad_anuladas/N',
+    ton:'fittrack_tonelaje/N',tonA:'fittrack_tonelaje_anuladas/N',ren:'fittrack_rendimiento/N',renA:'fittrack_rendimiento_anuladas/N',
+    sug:'fittrack_sugerencias/N',sugA:'fittrack_sugerencias_anuladas/N',av:'fittrack_chequeos/avisos/N',avA:'fittrack_chequeos_anuladas/avisos/N',
+    chqA:'fittrack_chequeos_anuladas/N',chq:'fittrack_chequeos/N',med:'fittrack_medallero/alumno/N',medA:'fittrack_medallero_anuladas/N',
+    medA2:'fittrack_medallero_anuladas/alumno__N',mapa:'fittrack_mapa/N',mapaA:'fittrack_mapa_anuladas/N',vis:'fittrack_vistos/N',ll:'fittrack_llamados/N'};
+  var EST={nip:null,D:null,tab:'notas',area:'todas',estado:'todas',q:'',prog:false,abiertos:{}};
+  window.LVA=EST;
+  function cargar(nip){ var ks=Object.keys(RUTAS); return Promise.all(ks.map(function(k){ return lee(RUTAS[k].replace('N',nip)); })).then(function(r){ var D={nip:nip,err:[]}; ks.forEach(function(k,i){ var v=r[i]; if(v&&v.__err){ D.err.push(v.__err); v=null; } D[k]=v||null; }); return D; }); }
+
+  // ── recolección de NOTAS y AVISOS (vigentes + anulados) ──
+  var CAMPOS_TX=['texto','nota','detalle','frase'];
+  function esClave(t){ t=String(t||'').trim(); return /^[A-Za-z0-9_.]+$/.test(t)&&/_/.test(t); }
+  function txArea(o){ return [o.detalle,o.siguiente,o.siguienteNivel].filter(function(x){ return typeof x==='string'&&x.trim(); }).join('\n→ '); }
+  function txDe(o){ if(typeof o.texto==='string') return o.texto; if(typeof o.nota==='string') return o.nota; if(typeof o.detalle==='string') return txArea(o); if(typeof o.frase==='string') return o.frase; return ''; }
+  function norm(t){ return String(t||'').replace(/\s+/g,' ').trim().toLowerCase(); }
+  function notas(D){
+    var out=[], vistos=D.vis||{}, nip=D.nip, vist=vistos.avisos||{}, vmed=vistos.medallero||{}, vf1=vistos.f1||{};
+    function add(it){ if(!it.texto&&!it.titulo) return; it.area=it.area||'otro'; if(it.dk==null) it.dk=norm(it.texto)+'|'+(it.fk||''); it.orden=iso(it.fecha)||iso(it.anuladaEn)||''; out.push(it); }
+    function visto(v){ if(!v) return ''; if(typeof v==='string') return v; return v.entendido||v.primera||v.ultima||v.en||''; }
+    // 1) Avisos de chequeo (fittrack_chequeos/avisos/<nip>)
+    var av=D.av||{}; Object.keys(av).forEach(function(id){ var x=av[id]; if(!x||typeof x!=='object') return; var vv=vist[id]||{}; var ent=vv.entendido||(x.resultado&&x.resultado.entendido);
+      add({fk:x.creado||'',fuente:'Aviso semanal (Inicio / Mis chequeos)',ruta:'fittrack_chequeos/avisos/'+nip+'/'+id,area:areaDe(x.area||id),fecha:x.creado||x.desde,titulo:x.titulo,tituloEs:x.tituloEs,texto:x.texto,textoEs:x.textoEs,
+        extra:(x.desde?'Semana '+fF(x.desde)+' – '+fF(x.hasta):'')+(x.nivel?' · nivel '+x.nivel:'')+(x.resultado&&x.resultado.lectura?' · lectura: '+x.resultado.lectura:'')+(x.corregido?' · corregido: '+x.corregido:''),
+        visto:ent?('entendido '+fF(ent,1)):(vv.primera?('visto '+fF(vv.primera,1)):''),estado:(x.anulado||x.anuladoEn)?'anulada':'vigente',anuladaEn:x.anuladoEn,motivo:x.motivo||x.anuladoMotivo}); });
+    // 2) Medallero (Mis logros): avisos + textos de cada área
+    var M=D.med||{}; (Array.isArray(M.avisos)?M.avisos:Object.keys(M.avisos||{}).map(function(k){ return M.avisos[k]; })).forEach(function(x,i){ if(!x) return; var id=x.id||('aviso '+i); var p=id.split('_');
+      add({fk:x.creado||'',fuente:'Mis logros (medallero) · aviso',ruta:'fittrack_medallero/alumno/'+nip+'/avisos/'+i,area:areaDe(p[2]||id),fecha:x.creado,titulo:x.titulo,texto:x.texto,extra:x.tipo?'tipo: '+x.tipo:'',visto:vmed[id]?'visto '+fF(vmed[id],1):'',estado:'vigente',id:id}); });
+    var AR=M.areas||{}; Object.keys(AR).forEach(function(a){ var x=AR[a]; if(!x) return; var t=txArea(x); if(!t) return;
+      add({fuente:'Mis logros (medallero) · texto del área',ruta:'fittrack_medallero/alumno/'+nip+'/areas/'+a,area:areaDe(a),fecha:M.actualizado||M.semana,titulo:'Mis logros · '+a+(x.valor?' ('+x.valor+')':'')+(x.medalla?' · '+x.medalla:''),texto:t,extra:'estado: '+(x.estado||'—')+(M.provisional?' · semana en curso':''),estado:'vigente'}); });
+    // 3) Mi semana en números (fittrack_rendimiento) — notas por área
+    var R=D.ren||{}; [['actividad','actividad'],['cardio','cardio'],['fuerza','pesas']].forEach(function(q){ var x=R[q[0]]; if(!x||!x.nota) return;
+      add({fuente:'Mi semana en números · nota',ruta:'fittrack_rendimiento/'+nip+'/'+q[0]+'/nota',area:q[1],fecha:x.actualizado||R.actualizado,titulo:'Nota de '+(q[0]==='fuerza'?'pesas (registros y esfuerzo)':q[0]),texto:x.nota,textoEs:x.notaEs,extra:x.fuente?'fuente: '+x.fuente:'',estado:'vigente'}); });
+    // 4) Progresiones / observaciones / llamados en ejercicio (fittrack_sugerencias)
+    var S=D.sug||{}; Object.keys(S).forEach(function(k){ var x=S[k]; if(!x||x.prueba) return; var tipo=x.tipo||'progresion';
+      add({fk:x.fecha||x.creado||x.para||'',fuente:tipo==='llamado'?'Progresiones · llamado de atención':(tipo==='observacion'?'Progresiones · observación':'Progresión sugerida'),ruta:'fittrack_sugerencias/'+nip+'/'+k,area:'pesas',prog:tipo==='progresion',
+        fecha:x.fecha||x.para,titulo:(x.ejercicio||'')+(x.sesion?' · '+x.sesion:''),texto:x.texto,textoEs:x.textoEs,extra:(x.para?'para el '+fF(x.para):'')+(x.atendidaEn?' · atendida '+fF(x.atendidaEn):''),visto:x.vistoEn?'visto '+fF(x.vistoEn,1):'',estado:'vigente',llamado:tipo==='llamado'}); });
+    // 5) Batería y Pinocho: avisos al entrar (mismo texto que la app)
+    function avBat(a,ruta,est,meta){ if(!a||(a.estado!=='deficit'&&a.estado!=='exceso')) return; var k='bat_'+a.desde+'_'+a.estado, dk=a.estado==='exceso'?'exceso_'+(a.motivo||'consumo'):'deficit';
+      add({fuente:'Batería · aviso al entrar',ruta:ruta,area:'bateria',fecha:meta.fecha,titulo:T.b_av_t[a.estado],texto:fmt(T.b_av_d[dk]||'',{c:a.consumo,g:a.gasto})+' '+T.u_av,extra:'semana desde '+fF(a.desde)+' · carga '+a.carga+' % · consumo '+a.consumo+' %'+(a.gasto!=null?' · gasto '+a.gasto+' %':''),visto:vf1[k]?'visto '+fF(vf1[k],1):'',estado:est,anuladaEn:meta.anuladaEn,motivo:meta.motivo,clave:k}); }
+    if(D.bat) avBat(D.bat.actual,'fittrack_bateria/'+nip,'vigente',{fecha:D.bat.actualizado});
+    function avConf(C,ruta,est,meta){ var m=C&&C.masivos&&C.masivos[0]; if(!m||!C.aviso) return; var k='conf_'+m.fecha;
+      add({fuente:'Pinocho · aviso al entrar',ruta:ruta,area:'registro',fecha:meta.fecha,titulo:T.p_av_t,texto:fmt(T.p_av_d,{n:m.n,f:fF(m.fecha),h1:m.horaIni,h2:m.horaFin})+' '+T.u_av,extra:'nariz '+(C.nariz!=null?C.nariz:'—')+' · '+(T.p_nv[C.nivel]||C.nivel||'')+' · '+(m.pesas||0)+' pesas · '+(m.cardio||0)+' cardio · '+(m.dieta||0)+' días de dieta',visto:vf1[k]?'visto '+fF(vf1[k],1):'',estado:est,anuladaEn:meta.anuladaEn,motivo:meta.motivo,clave:k}); }
+    if(D.conf) avConf(D.conf,'fittrack_confiabilidad/'+nip,'vigente',{fecha:D.conf.actualizado});
+    // 6) Llamados por WhatsApp (no usar FitTrack) y advertencias formales — fittrack_llamados/<nip>
+    var LL=(D.ll&&D.ll.items)||{}; Object.keys(LL).forEach(function(k){ var x=LL[k]; if(!x) return; var adv=x.tipo==='advertencia_formal';
+      add({fuente:adv?'Advertencia formal (feedback del chequeo)':'WhatsApp · llamado por no usar FitTrack',ruta:'fittrack_llamados/'+nip+'/items/'+k,area:adv?'chequeo':'uso_fittrack',fecha:x.enviadoEn||x.fecha,
+        titulo:adv?'Advertencia formal':('Llamado nivel '+x.nivel+(x.recaida?' (recaída)':'')+' · '+x.diasSin+' días sin entrar'),texto:x.texto,extra:(x.textoOrigen?'texto '+x.textoOrigen:''),estado:x.anulado?'anulada':'vigente',anuladaEn:x.anuladoEn,motivo:x.motivo,llamado:!adv}); });
+    // 7) Feedback de cada chequeo (fittrack_chequeos/<nip>/items) — lo mismo que ve en Mis chequeos
+    var CI=(D.chq&&D.chq.items)||{}; Object.keys(CI).forEach(function(k){ var x=CI[k]; if(!x||x.prueba||!x.mensaje) return;
+      add({fuente:'Mis chequeos · feedback',ruta:'fittrack_chequeos/'+nip+'/items/'+k,area:'chequeo',fecha:x.fecha,titulo:(x.evaluacionInicial||x.num===0)?'Evaluación inicial':'Chequeo #'+x.num,texto:x.mensaje,visto:x.vistoEn?'visto '+fF(x.vistoEn,1):'',estado:'vigente'}); });
+    // 8) Mapa de volumen: frase de la semana
+    if(D.mapa&&D.mapa.frase) add({fuente:'Mapa de volumen · frase de la semana',ruta:'fittrack_mapa/'+nip+'/frase',area:'pesas',fecha:D.mapa.actualizado,titulo:'Frase del mapa de volumen',texto:D.mapa.frase,estado:'vigente'});
+    var vistosTx={}; out.forEach(function(it){ vistosTx[it.dk]=1; });
+    // 9) ANULADAS / REEMPLAZADAS: recorre cada entrada de *_anuladas y saca los textos que el alumno pudo ver
+    function walk(o,camino,cb,prof){ if(!o||typeof o!=='object'||prof>7) return; if(Array.isArray(o)){ o.forEach(function(x,i){ walk(x,camino+'/'+i,cb,prof+1); }); return; }
+      var tiene=CAMPOS_TX.some(function(c){ return typeof o[c]==='string'&&o[c].trim()&&!esClave(o[c]); }); if(tiene) cb(o,camino);
+      Object.keys(o).forEach(function(k){ var v=o[k]; var m=/^(.*)__(nota|texto|detalle|frase)$/.exec(k);
+        if(m&&typeof v==='string'&&!esClave(v)){ var oo={}; oo[m[2]]=v; if(typeof o[m[1]+'__'+m[2]+'Es']==='string') oo[m[2]+'Es']=o[m[1]+'__'+m[2]+'Es']; cb(oo,camino+'/'+m[1]); }
+        else if(v&&typeof v==='object'&&k!=='resultado') walk(v,camino+'/'+k,cb,prof+1); }); }
+    function anuladas(nodo,base,fuente,areaBase){ if(!nodo||typeof nodo!=='object') return; Object.keys(nodo).forEach(function(k){ var E=nodo[k]; if(!E||typeof E!=='object') return;
+      var meta={anuladaEn:E.anuladaEn||E.anuladoEn||E.guardado||null,motivo:E.anuladaPor||E.anuladoPor||E.motivo||'',ruta:E.rutaOriginal||E.ruta||(base+'/'+k),rem:!!(E.copia&&!E.anuladaEn)};
+      // batería / Pinocho: el aviso que salía con esa versión
+      if(/bateria/.test(base)&&E.valor&&E.valor.actual) avBat(E.valor.actual,base+'/'+k,'anulada',{fecha:E.valor.actualizado,anuladaEn:meta.anuladaEn,motivo:meta.motivo});
+      if(/confiabilidad/.test(base)&&E.valor) avConf(E.valor,base+'/'+k,'anulada',{fecha:E.valor.actualizado,anuladaEn:meta.anuladaEn,motivo:meta.motivo});
+      var cuerpo={}; Object.keys(E).forEach(function(c){ if(['anuladaEn','anuladoEn','anuladaPor','anuladoPor','motivo','rutaOriginal','ruta','guardado','campos','accion'].indexOf(c)<0) cuerpo[c]=E[c]; });
+      // la propia entrada puede ser el texto (p. ej. una nota o un aviso movido entero)
+      walk(cuerpo,'',function(o,camino){ var t=txDe(o); if(!t||esClave(t)) return; var key=norm(t)+'|'+(o.fecha||o.creado||o.para||''); if(vistosTx[key]) return; vistosTx[key]=1;
+        var ruta=meta.ruta+(camino?' ·'+camino:''); var area=areaDe((areaBase||'')+' '+meta.ruta+' '+camino+' '+k+' '+(o.id||''));
+        if(areaBase&&!/medallero|rendimiento|mapa|chequeos/.test(base)) area=areaBase;
+        add({fuente:fuente,ruta:base+'/'+k+(camino?camino:''),area:area,fecha:o.creado||o.fecha||(E.valor&&E.valor.actualizado)||o.actualizado||meta.anuladaEn,titulo:o.titulo||(o.ejercicio?o.ejercicio+(o.sesion?' · '+o.sesion:''):''),
+          texto:t,textoEs:o.textoEs||o.notaEs,estado:meta.rem?'reemplazada':'anulada',anuladaEn:meta.anuladaEn,motivo:meta.motivo,extra:meta.ruta&&meta.ruta.indexOf(base)!==0?'ruta original: '+meta.ruta:'',visto:o.vistoEn?'visto '+fF(o.vistoEn,1):(o.id&&vmed[o.id]?'visto '+fF(vmed[o.id],1):''),llamado:o.tipo==='llamado'}); },0); }); }
+    anuladas(D.avA,'fittrack_chequeos_anuladas/avisos/'+nip,'Aviso semanal (anulado)','');
+    anuladas(D.chqA,'fittrack_chequeos_anuladas/'+nip,'Mis chequeos (anulado)','chequeo');
+    anuladas(D.medA,'fittrack_medallero_anuladas/'+nip,'Mis logros (medallero)','');
+    anuladas(D.medA2,'fittrack_medallero_anuladas/alumno__'+nip,'Mis logros (medallero)','');
+    anuladas(D.renA,'fittrack_rendimiento_anuladas/'+nip,'Mi semana en números · nota','');
+    anuladas(D.sugA,'fittrack_sugerencias_anuladas/'+nip,'Progresiones (anulada)','pesas');
+    anuladas(D.mapaA,'fittrack_mapa_anuladas/'+nip,'Mapa de volumen','pesas');
+    anuladas(D.batA,'fittrack_bateria_anuladas/'+nip,'Batería','bateria');
+    anuladas(D.confA,'fittrack_confiabilidad_anuladas/'+nip,'Pinocho','registro');
+    // dedupe de avisos de batería/Pinocho repetidos (misma clave = el alumno lo vio una vez)
+    var vistas={}, fin=[]; out.sort(function(a,b){ return (a.estado==='vigente'?0:1)-(b.estado==='vigente'?0:1); }).forEach(function(it){ if(it.clave){ if(vistas[it.clave]) return; vistas[it.clave]=1; } fin.push(it); });
+    fin.sort(function(a,b){ return String(b.orden).localeCompare(String(a.orden)); });
+    return fin;
+  }
+
+  // ── pintado ──
+  function bloqueEs(it,lang){ if(!it.textoEs||norm(it.textoEs)===norm(it.texto)) return ''; return '<div class="lva-es"><b>🇲🇽 En español:</b> '+(it.tituloEs?'<b>'+e(it.tituloEs)+'</b>\n':'')+e(it.textoEs)+'</div>'; }
+  function itemHTML(it,i,lang){
+    var cls=it.estado==='anulada'?' anu':(it.estado==='reemplazada'?' rem':''); var largo=String(it.texto||'').length>420, ab=EST.abiertos[i];
+    return '<div class="lva-it'+cls+'" data-i="'+i+'"><div class="lva-it-top"><span class="lva-fe">'+e(fF(it.fecha,1)||'sin fecha')+'</span>'+
+      '<span class="lva-tag a">'+e(AREA_L[it.area]||it.area)+'</span>'+(it.llamado?'<span class="lva-tag x">llamada de atención</span>':'')+
+      (it.estado==='anulada'?'<span class="lva-tag x">ANULADA</span>':(it.estado==='reemplazada'?'<span class="lva-tag r">REEMPLAZADA</span>':'<span class="lva-tag v">VIGENTE</span>'))+'</div>'+
+      '<div class="lva-muted" style="margin-bottom:2px">'+e(it.fuente)+'</div>'+
+      (it.titulo?'<div class="lva-tit">'+e(it.titulo)+'</div>':'')+(it.tituloEs&&it.tituloEs!==it.titulo&&!it.textoEs?'<div class="lva-muted">🇲🇽 '+e(it.tituloEs)+'</div>':'')+
+      '<div class="lva-txt'+(largo&&!ab?' clip':'')+'">'+e(it.texto)+'</div>'+(largo?'<button type="button" class="lva-more" data-mas="'+i+'">'+(ab?'Ver menos':'Ver texto completo')+'</button>':'')+
+      (largo&&!ab?'':bloqueEs(it,lang))+
+      (it.estado!=='vigente'?'<div class="'+(it.estado==='anulada'?'lva-anu':'lva-rem')+'">'+(it.estado==='anulada'?'⛔ Anulada':'↺ Reemplazada')+(it.anuladaEn?' el '+e(fF(it.anuladaEn,1)):'')+(it.motivo?' · motivo: '+e(it.motivo):'')+'</div>':'')+
+      '<div class="lva-meta">'+(it.visto?'👁 '+e(it.visto)+' · ':'')+(it.extra?e(it.extra)+'<br>':'')+'📍 <code>'+e(it.ruta)+'</code></div></div>';
+  }
+  function filtrar(L){ var q=norm(EST.q); return L.filter(function(it){ if(it.prog&&!EST.prog) return false; if(EST.area!=='todas'&&it.area!==EST.area) return false;
+    if(EST.estado==='vigente'&&it.estado!=='vigente') return false; if(EST.estado==='anuladas'&&it.estado==='vigente') return false;
+    if(q){ var h=norm([it.texto,it.textoEs,it.titulo,it.tituloEs,it.motivo,it.fuente,it.ruta,it.extra].join(' ')); return q.split(' ').every(function(w){ return h.indexOf(w)>=0; }); } return true; }); }
+  function paneNotas(){ var D=EST.D, L=EST.L||[], lang=((D.vis||{}).idioma||{}).lang||'es';
+    var nProg=L.filter(function(x){ return x.prog; }).length, base=L.filter(function(x){ return !x.prog||EST.prog; });
+    var F=filtrar(L), nA=base.filter(function(x){ return x.estado!=='vigente'; }).length;
+    var cnt={}; base.forEach(function(x){ cnt[x.area]=(cnt[x.area]||0)+1; });
+    var h='<div class="lva-filtros"><input type="search" class="lva-search" id="lva-q" placeholder="Buscar en el texto (p. ej. «cardio», «FC», «llamado»)…" value="'+e(EST.q)+'">'+
+      '<div class="lva-chips">'+AREAS.filter(function(a){ return a[0]==='todas'||cnt[a[0]]; }).map(function(a){ return '<button type="button" class="lva-chip'+(EST.area===a[0]?' on':'')+'" data-area="'+a[0]+'">'+a[1]+(a[0]==='todas'?' '+base.length:' '+cnt[a[0]])+'</button>'; }).join('')+'</div>'+
+      '<div class="lva-row"><select id="lva-est"><option value="todas"'+(EST.estado==='todas'?' selected':'')+'>Vigentes y anuladas</option><option value="vigente"'+(EST.estado==='vigente'?' selected':'')+'>Solo vigentes</option><option value="anuladas"'+(EST.estado==='anuladas'?' selected':'')+'>Solo anuladas / reemplazadas ('+nA+')</option></select>'+
+      '<label><input type="checkbox" id="lva-prog"'+(EST.prog?' checked':'')+'> Incluir progresiones sugeridas ('+nProg+')</label></div></div>'+
+      '<div class="lva-cnt">'+F.length+' de '+base.length+' · '+(base.length-nA)+' vigentes · '+nA+' anuladas/reemplazadas'+(lang!=='es'?' · textos en '+e(LANG_N[lang]||lang)+' con su versión en español':'')+'</div>';
+    h+=F.length?'<div class="lva-tl">'+F.map(function(it){ return itemHTML(it,L.indexOf(it),lang); }).join('')+'</div>':'<div class="lva-vacio">No hay notas con ese filtro.</div>';
+    return h; }
+  function anuBox(nodo,lbl){ if(!nodo) return ''; var ks=Object.keys(nodo); if(!ks.length) return ''; return '<details class="lva-an"><summary><b>'+ks.length+' versión(es) anulada(s) de '+lbl+'</b></summary>'+ks.sort().reverse().map(function(k){ var E=nodo[k]||{}; var v=E.valor||E.copia||{}; var a=v.actual||v.semana||v;
+      return '<div style="margin-top:5px">• '+e(fF(E.anuladaEn||E.guardado,1))+' — '+e(E.anuladaPor||E.motivo||'')+(a&&a.estado?' · antes: <b>'+e(T.b_e[a.estado]||a.estado)+'</b>'+(a.carga!=null?' '+a.carga+' %':''):'')+(v&&v.nivel?' · antes: '+e(T.p_nv[v.nivel]||v.nivel)+' (nariz '+v.nariz+')':'')+(a&&a.ton!=null?' · antes: '+n0(a.ton)+' kg':'')+'</div>'; }).join('')+'</details>'; }
+  function paneBat(){ var D=EST.D, h='';
+    var B=D.bat, a=B&&B.actual;
+    if(a&&a.estado){ var dk=a.estado==='exceso'||a.estado==='media'?a.estado+'_'+(a.estado==='media'?(a.motivo==='gasto'?'gasto':'consumo'):(a.motivo||'consumo')):a.estado;
+      var H=(B.historial||[]).slice(-8).concat([{desde:a.desde,carga:a.carga,estado:a.estado,act:1}]);
+      h+='<div class="lva-box"><h4>🔋 Batería de regulación energética <small>actualizada '+e(fF(B.actualizado,1))+'</small></h4>'+
+        '<span class="lva-est lva-e-'+e(a.estado)+'">'+e(T.b_e[a.estado]||a.estado)+'</span> <span class="lva-muted">semana '+e(fF(a.desde))+' – '+e(fF(a.hasta))+(B.aviso?' · <b style="color:var(--red)">con aviso al entrar</b>':'')+'</span>'+
+        '<div class="lva-p">'+e(T.b_d[dk]||T.b_d[a.estado]||'')+'</div>'+
+        '<div class="lva-kpis"><div class="lva-kpi"><b>'+e(a.carga)+' %</b><span>carga</span></div><div class="lva-kpi"><b>'+e(a.consumo)+' %</b><span>consumo'+(a.fuente==='kcal'?' ('+n0(a.kcalReg)+' de '+n0(a.kcalPlan)+' kcal)':'')+'</span></div>'+
+        (a.gasto!=null?'<div class="lva-kpi"><b>'+e(a.gasto)+' %</b><span>gasto</span></div>':'')+(a.pesas?'<div class="lva-kpi"><b>'+a.pesas[0]+'/'+a.pesas[1]+'</b><span>pesas</span></div>':'')+(a.cardio?'<div class="lva-kpi"><b>'+a.cardio[0]+'/'+a.cardio[1]+'</b><span>cardio</span></div>':'')+
+        (a.pasos?'<div class="lva-kpi"><b>'+n0(a.pasos.prom)+'</b><span>pasos/día (meta '+n0(a.pasos.meta)+')</span></div>':'')+(a.diasSinRegistro?'<div class="lva-kpi"><b>'+a.diasSinRegistro+'</b><span>días sin registro</span></div>':'')+'</div>'+
+        '<div class="lva-bars">'+H.map(function(x){ var v=x.estado==='exceso'?100:Math.max(4,Math.min(100,Number(x.carga)||0)); var col={cargada:'var(--green)',media:'var(--amber)',deficit:'var(--red)',exceso:'#a51b12'}[x.estado]||'var(--text3)';
+          return '<div class="lva-bar" title="'+e(T.b_e[x.estado]||x.estado)+'"><s>'+(x.estado==='exceso'?'💥':x.carga+'%')+'</s><i style="height:'+(v*0.55)+'px;background:'+col+(x.act?';outline:2px solid var(--teal-dark)':'')+'"></i><em>'+e(String(x.desde||'').slice(5).split('-').reverse().join('/'))+(x.act?'*':'')+'</em></div>'; }).join('')+'</div><div class="lva-muted">* semana en curso</div>'+
+        anuBox(D.batA,'la batería')+'</div>';
+    } else h+='<div class="lva-box"><h4>🔋 Batería</h4><div class="lva-vacio">Sin nodo de batería (no aparece en su app: autogestión o sin datos).</div>'+anuBox(D.batA,'la batería')+'</div>';
+    var C=D.conf;
+    if(C){ var ms=C.masivos||[];
+      h+='<div class="lva-box"><h4>🤥 Pinocho de confiabilidad <small>actualizado '+e(fF(C.actualizado,1))+'</small></h4>'+
+        '<span class="lva-est '+(C.nivel==='alta'?'lva-e-cargada':(C.nivel==='media'?'lva-e-media':'lva-e-deficit'))+'">'+e(T.p_nv[C.nivel]||C.nivel||'—')+'</span> <span class="lva-muted">'+e(T.p_et[C.etapa]||'')+(C.aviso?' · <b style="color:var(--red)">con aviso al entrar</b>':'')+'</span>'+
+        '<div class="lva-kpis"><div class="lva-kpi"><b>'+e(C.nariz)+'</b><span>nariz (0–100)</span></div><div class="lva-kpi"><b>'+e(C.confiables)+'</b><span>en tiempo</span></div><div class="lva-kpi"><b>'+e(C.noConfiables)+'</b><span>fuera de tiempo</span></div>'+
+        '<div class="lva-kpi"><b>'+ms.length+'</b><span>registros masivos</span></div>'+(C.tardiosConstantes?'<div class="lva-kpi"><b>'+C.tardiosConstantes+'</b><span>semanas con tardíos seguidos</span></div>':'')+'</div>'+
+        (ms.length?'<table class="lva-tbl"><tr><th>Fecha</th><th>Hora</th><th>De golpe</th><th>Detalle</th></tr>'+ms.map(function(m){ return '<tr><td>'+e(fF(m.fecha))+'</td><td>'+e(m.horaIni)+'–'+e(m.horaFin)+'</td><td>'+e(m.n)+'</td><td>'+(m.pesas||0)+' pesas · '+(m.cardio||0)+' cardio · '+(m.dieta||0)+' dieta</td></tr>'; }).join('')+'</table>':'<div class="lva-muted">Sin registros masivos.</div>')+
+        anuBox(D.confA,'el Pinocho')+'</div>';
+    } else h+='<div class="lva-box"><h4>🤥 Pinocho</h4><div class="lva-vacio">Sin nodo de confiabilidad.</div>'+anuBox(D.confA,'el Pinocho')+'</div>';
+    return h; }
+  function paneTon(){ var D=EST.D, X=D.ton, R=D.ren||{}, h='';
+    if(X&&X.semana){ var s=X.semana, sa=X.semanaAnterior||{}, u=X.unidad||'kg', G=s.grupos||{}, H=(X.historial||[]).slice(-8);
+      var tend={sube:'⬆️ sube',baja:'⬇️ baja',igual:'➡️ igual',estable:'➡️ estable'};
+      h+='<div class="lva-box"><h4>🏋️ Tonelaje semanal <small>actualizado '+e(fF(X.actualizado,1))+'</small></h4><div class="lva-muted">Semana '+e(fF(s.desde))+' – '+e(fF(s.hasta))+' (en curso)'+(X.tendenciaEnCurso?' · va '+e(tend[X.tendenciaEnCurso]||X.tendenciaEnCurso):'')+(X.tendencia?' · tendencia '+e(tend[X.tendencia]||X.tendencia):'')+'</div>'+
+        '<div class="lva-kpis"><div class="lva-kpi"><b>'+n0(s.ton)+'</b><span>'+e(u)+' movidos</span></div><div class="lva-kpi"><b>'+e(s.sesiones)+'</b><span>sesiones</span></div><div class="lva-kpi"><b>'+e(s.seriesEf)+'/'+e(s.seriesReg)+'</b><span>series efectivas / registradas</span></div>'+
+        '<div class="lva-kpi"><b>'+n1(s.kgSerie)+'</b><span>'+e(u)+' por serie</span></div><div class="lva-kpi"><b>'+(s.rpe!=null?n1(s.rpe):'—')+'</b><span>esfuerzo promedio 1–10'+(s.rpeN?' ('+s.rpeN+' ses.)':'')+'</span></div>'+(s.zona?'<div class="lva-kpi"><b style="font-size:13px">'+e(s.zona)+'</b><span>zona de esfuerzo</span></div>':'')+'</div>'+
+        (sa.ton!=null?'<div class="lva-muted">Semana anterior ('+e(fF(sa.desde))+'): '+n0(sa.ton)+' '+e(u)+' · '+e(sa.sesiones)+' sesiones · esfuerzo '+(sa.rpe!=null?n1(sa.rpe):'—')+(sa.zona?' ('+e(sa.zona)+')':'')+(X.anteriorMismaAltura?' · a esta misma altura llevaba '+n0(X.anteriorMismaAltura.ton)+' '+e(u):'')+'</div>':'')+
+        (H.length?'<div class="lva-bars">'+(function(){ var mx=Math.max.apply(null,H.map(function(x){ return x.ton||0; }).concat([s.ton||0,1])); return H.concat([{desde:s.desde,ton:s.ton,act:1}]).map(function(x){ return '<div class="lva-bar"><s>'+(x.ton>=1000?Math.round(x.ton/1000)+'k':n0(x.ton))+'</s><i style="height:'+Math.max(3,55*(x.ton||0)/mx)+'px'+(x.act?';background:var(--teal-3)':'')+'"></i><em>'+e(String(x.desde||'').slice(5).split('-').reverse().join('/'))+(x.act?'*':'')+'</em></div>'; }).join(''); })()+'</div><div class="lva-muted">* semana en curso</div>':'')+
+        (Object.keys(G).length?'<table class="lva-tbl" style="margin-top:6px"><tr><th>Músculo</th><th>Series</th><th>Tonelaje</th></tr>'+Object.keys(G).sort(function(a,b){ return (G[b].ton||0)-(G[a].ton||0); }).map(function(k){ return '<tr><td>'+e(MUS[k]||k)+'</td><td>'+n1(G[k].series)+'</td><td>'+n0(G[k].ton)+' '+e(u)+'</td></tr>'; }).join('')+'</table>':'')+
+        anuBox(D.tonA,'el tonelaje')+'</div>';
+    } else h+='<div class="lva-box"><h4>🏋️ Tonelaje</h4><div class="lva-vacio">Sin nodo de tonelaje.</div>'+anuBox(D.tonA,'el tonelaje')+'</div>';
+    var F=R.fuerza||{}, ES=F.esfuerzo||{};
+    h+='<div class="lva-box"><h4>💪 Esfuerzo y registro de pesas <small>Mi semana · '+e(fF(R.actualizado,1))+'</small></h4><div class="lva-kpis"><div class="lva-kpi"><b>'+(F.conDatos!=null?F.conDatos+'/'+F.total:'—')+'</b><span>ejercicios con peso y reps</span></div><div class="lva-kpi"><b>'+(ES.sesiones!=null?ES.conEsfuerzo+'/'+ES.sesiones:'—')+'</b><span>sesiones con esfuerzo 1–10</span></div></div>'+
+      (F.nota?'<div class="lva-p">'+e(F.nota)+'</div>'+(F.notaEs&&F.notaEs!==F.nota?'<div class="lva-es"><b>🇲🇽 En español:</b> '+e(F.notaEs)+'</div>':''):'')+'</div>';
+    if(D.mapa&&D.mapa.frase) h+='<div class="lva-box"><h4>🗺️ Mapa de volumen <small>'+e(fF(D.mapa.actualizado,1))+'</small></h4><div class="lva-p">'+e(D.mapa.frase)+'</div></div>';
+    return h; }
+  function estadoSug(x){ var hoy=new Date().toISOString().slice(0,10); if(x.atendidaEn||x.estado==='atendida') return ['✅ Atendida','#15803d']; if(x.tipo==='llamado') return ['🔴 Llamado','#b91c1c']; var p=String(x.para||x.fecha||'').slice(0,10); if(p&&p<hoy) return ['⌛ Vencida','#89A5AD']; if(p===hoy) return ['🔥 Hoy','#0e7490']; return ['📅 Próxima','#0891b2']; }
+  function paneSemana(){ var D=EST.D, R=D.ren, h='';
+    if(R){ var a=R.actividad||{}, c=R.cardio||{}, f=R.fuerza||{};
+      function nt(x){ return x&&x.nota?'<div class="lva-p">'+e(x.nota)+'</div>'+(x.notaEs&&x.notaEs!==x.nota?'<div class="lva-es"><b>🇲🇽 En español:</b> '+e(x.notaEs)+'</div>':''):''; }
+      h+='<div class="lva-box"><h4>📊 Su semana en números <small>actualizado '+e(fF(R.actualizado,1))+(R.faseDieta?' · fase '+e(R.faseDieta):'')+'</small></h4>'+
+        '<div class="lva-muted" style="margin-top:4px">🚶 <b>Actividad</b>'+(a.actualizado?' · '+e(fF(a.actualizado,1)):'')+'</div><div class="lva-kpis">'+(a.pasosSemana!=null||a.pasosProm!=null?'<div class="lva-kpi"><b>'+n0(a.pasosSemana!=null?a.pasosSemana:a.pasosProm)+'</b><span>pasos/día (7 días)</span></div>':'')+(a.nivel?'<div class="lva-kpi"><b style="font-size:13px">'+e(a.nivel)+'</b><span>nivel'+(a.tendencia?' · '+e(a.tendencia):'')+'</span></div>':'')+(a.meta?'<div class="lva-kpi"><b>'+n0(a.meta)+'</b><span>meta</span></div>':'')+'</div>'+nt(a)+
+        (c.aplica!==false?'<div class="lva-muted" style="margin-top:8px">❤️ <b>Cardio</b> (últimas 4 semanas)</div><div class="lva-kpis"><div class="lva-kpi"><b>'+(c.total!=null?c.total:'—')+'</b><span>cardios</span></div><div class="lva-kpi"><b>'+(c.conDatos!=null?c.conDatos:'—')+'</b><span>con datos'+(c.conReloj?' · '+c.conReloj+' de reloj':'')+'</span></div>'+(c.kcalProm!=null?'<div class="lva-kpi"><b>'+n0(c.kcalProm)+'</b><span>kcal prom.</span></div>':'')+(c.minProm!=null?'<div class="lva-kpi"><b>'+n1(c.minProm)+'</b><span>min prom.</span></div>':'')+(c.lpmProm!=null?'<div class="lva-kpi"><b>'+n0(c.lpmProm)+'</b><span>lpm prom.</span></div>':'')+'</div>'+nt(c)+(c.fuente?'<div class="lva-muted">fuente de la nota: '+e(c.fuente)+'</div>':''):'<div class="lva-muted" style="margin-top:8px">❤️ Cardio: no aplica</div>')+
+        '<div class="lva-muted" style="margin-top:8px">🏋️ <b>Registro de pesas</b></div><div class="lva-kpis"><div class="lva-kpi"><b>'+(f.conDatos!=null?f.conDatos+'/'+f.total:'—')+'</b><span>ejercicios con peso y reps</span></div>'+(f.esfuerzo?'<div class="lva-kpi"><b>'+f.esfuerzo.conEsfuerzo+'/'+f.esfuerzo.sesiones+'</b><span>con esfuerzo 1–10</span></div>':'')+'</div>'+nt(f)+
+        anuBox(D.renA,'Mi semana')+'</div>';
+    } else h+='<div class="lva-box"><h4>📊 Su semana en números</h4><div class="lva-vacio">Aún sin datos de su semana.</div></div>';
+    var S=D.sug||{}, L=Object.keys(S).map(function(k){ var x=S[k]; if(x) x._id=k; return x; }).filter(function(x){ return x&&!x.prueba; }).sort(function(a,b){ return String(b.para||b.fecha).localeCompare(String(a.para||a.fecha)); });
+    var g={t:L.length,a:0,v:0,l:0}; L.forEach(function(x){ var s=estadoSug(x)[0]; if(/Atendida/.test(s)) g.a++; else if(/Vencida/.test(s)) g.v++; if(x.tipo==='llamado') g.l++; });
+    h+='<div class="lva-box"><h4>📈 Progresiones sugeridas <small>'+g.t+' recibidas · '+g.a+' atendidas · '+g.v+' vencidas · '+g.l+' llamados</small></h4>'+(L.length?L.slice(0,EST.todasSug?L.length:25).map(function(x){ var st=estadoSug(x);
+      return '<div style="font-size:12px;padding:6px 0;border-bottom:1px solid var(--border2)"><span style="color:'+st[1]+';font-weight:700">'+st[0]+'</span> · '+e(fF(x.para||x.fecha))+(x.sesion?' · '+e(x.sesion):'')+'<br><b>'+e(x.ejercicio||'')+'</b> '+(x.tipo==='observacion'?'<span style="color:#b45309">(observación)</span> ':'')+'— '+e(x.texto||'')+(x.textoEs&&x.textoEs!==x.texto?'<div class="lva-es"><b>🇲🇽</b> '+e(x.textoEs)+'</div>':'')+'</div>'; }).join('')+(L.length>25&&!EST.todasSug?'<button type="button" class="lva-more" data-todas="1">Ver las '+L.length+'</button>':''):'<div class="lva-vacio">Aún no tiene progresiones sugeridas.</div>')+anuBox(D.sugA,'progresiones')+'</div>';
+    return h; }
+  function pintar(){ var box=document.getElementById('lva-card'); if(!box) return; var D=EST.D;
+    if(!D){ box.innerHTML='<div class="lva-head"><div class="card-title">👁️ Lo que ve el alumno</div></div><div class="lva-vacio">Cargando de FitTrack…</div>'; return; }
+    var L=EST.L||[], lang=((D.vis||{}).idioma||{}).lang||'es', acc=(D.vis||{}).acceso||{};
+    var tabs=[['bat','🔋 Batería y Pinocho'],['ton','🏋️ Tonelaje y esfuerzo'],['sem','📊 Su semana en números'],['notas','💬 Notas y llamadas',L.filter(function(x){ return !x.prog; }).length]];
+    var body={bat:paneBat,ton:paneTon,sem:paneSemana,notas:paneNotas};
+    box.innerHTML='<div class="lva-head"><div class="card-title">👁️ Lo que ve el alumno</div><button type="button" class="lva-btn" data-recargar="1">↻ Actualizar</button></div>'+
+      '<div class="lva-sub">Leído de FitTrack (solo lectura) · NIP '+e(D.nip)+' · idioma de su app: '+e(LANG_N[lang]||lang)+(acc.ultimo?' · último acceso '+e(fF(acc.ultimo,1)):'')+(D.err.length?' · <span style="color:var(--red)">no se pudo leer: '+e(D.err.join(', '))+'</span>':'')+'</div>'+
+      '<div class="lva-tabs" role="tablist">'+tabs.map(function(t){ return '<button type="button" role="tab" class="lva-tab'+(EST.tab===t[0]?' on':'')+'" data-tab="'+t[0]+'">'+t[1]+(t[2]!=null?'<span class="lva-n">'+t[2]+'</span>':'')+'</button>'; }).join('')+'</div>'+
+      '<div class="lva-pane on">'+body[EST.tab]()+'</div>';
+  }
+  function abrir(nip){ EST.nip=nip; EST.D=null; EST.L=null; EST.abiertos={}; EST.todasSug=false; pintar();
+    return cargar(nip).then(function(D){ if(EST.nip!==nip) return; EST.D=D; try{ EST.L=notas(D); }catch(err){ console.error('[LVA] notas',err); EST.L=[]; } pintar(); })
+      .catch(function(err){ console.error('[LVA]',err); var b=document.getElementById('lva-card'); if(b) b.innerHTML='<div class="card-title">👁️ Lo que ve el alumno</div><div class="lva-vacio">No se pudieron leer sus datos de FitTrack.</div>'; }); }
+  window.lvaAbrir=abrir; window.lvaNotas=notas;
+  function caja(){ var box=document.getElementById('lva-card'); if(box) return box; var ch=document.getElementById('modal-chequeos'); if(!ch) return null;
+    box=document.createElement('div'); box.id='lva-card'; box.className='card'; ch.parentNode.insertBefore(box,ch);
+    box.addEventListener('click',function(ev){ var t=ev.target.closest('[data-tab],[data-area],[data-mas],[data-recargar],[data-todas]'); if(!t) return;
+      if(t.dataset.tab){ EST.tab=t.dataset.tab; pintar(); } else if(t.dataset.area){ EST.area=t.dataset.area; pintar(); }
+      else if(t.dataset.mas){ EST.abiertos[t.dataset.mas]=!EST.abiertos[t.dataset.mas]; pintar(); } else if(t.dataset.todas){ EST.todasSug=true; pintar(); }
+      else if(t.dataset.recargar&&EST.nip) abrir(EST.nip); });
+    box.addEventListener('input',function(ev){ if(ev.target.id==='lva-q'){ EST.q=ev.target.value; var pos=ev.target.selectionStart; pintar(); var q=document.getElementById('lva-q'); if(q){ q.focus(); try{ q.setSelectionRange(pos,pos); }catch(x){} } } });
+    box.addEventListener('change',function(ev){ if(ev.target.id==='lva-est'){ EST.estado=ev.target.value; pintar(); } else if(ev.target.id==='lva-prog'){ EST.prog=ev.target.checked; pintar(); } });
+    return box; }
+  var _o=openProfileModal;
+  openProfileModal=function(nombre){ var r=_o.apply(this,arguments); try{ var a=ALUMNOS_DATA[nombre]; var box=caja();
+      var old=document.getElementById('modal-ftextra'); if(old) old.style.display='none';   // «Su semana en números» ya va dentro de esta sección
+      if(box){ if(a&&a.nip){ box.style.display=''; EST.tab=EST.tab||'notas'; EST.area='todas'; EST.q=''; abrir(String(a.nip)); } else { box.style.display='none'; } } }catch(err){ console.error('[LVA]',err); } return r; };
+})();
+</script>
+
+<style>
+/* ── Sección «Propuestas de evaluación» (Noé 13 nov 10:29) ── */
+.pse-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:6px 0 10px}
+.pse-k{border-radius:12px;padding:8px 9px;border:1px solid var(--border2);background:var(--surface);cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif}
+.pse-k b{display:block;font:700 18px 'Space Grotesk',sans-serif}
+.pse-k span{font-size:10.5px;color:var(--text2);line-height:1.2;display:block}
+.pse-k.on{outline:2px solid var(--teal-dark)}
+.pse-k.f b{color:var(--green)}.pse-k.v b{color:#b45309}.pse-k.c b{color:var(--teal-dark)}.pse-k.a b{color:var(--text2)}.pse-k.s b{color:var(--text3)}
+.pse-fil{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.pse-fil input[type=search]{width:100%;background:var(--surface2);border:1.5px solid var(--border2);border-radius:10px;padding:9px 12px;font:14px 'DM Sans',sans-serif;color:var(--text);outline:none}
+.pse-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.pse-row select{flex:1;min-width:0;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:7px 8px;font:12.5px 'DM Sans',sans-serif;color:var(--text)}
+.pse-row label{font-size:12px;color:var(--text2);display:flex;gap:5px;align-items:center;cursor:pointer}
+.pse-cnt{font-size:11.5px;color:var(--text3);margin:2px 0 8px}
+.pse-it{border:1px solid var(--border2);border-left:4px solid var(--text3);border-radius:12px;padding:10px 11px;margin-bottom:8px;background:var(--surface)}
+.pse-it.fresca{border-left-color:var(--green)}.pse-it.vieja{border-left-color:#e8920a;background:#fffcf6}.pse-it.cola{border-left-color:var(--teal)}.pse-it.decidida{border-left-color:#9fb4bc}
+.pse-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.pse-nom{font:700 14px 'DM Sans',sans-serif;color:var(--text);overflow-wrap:anywhere}
+.pse-sub{font-size:11.5px;color:var(--text3);margin-top:1px}
+.pse-b{flex:0 0 auto;font:700 10.5px 'DM Sans',sans-serif;border-radius:20px;padding:3px 8px;white-space:nowrap}
+.pse-b.fresca{background:var(--green-light);color:var(--green)}.pse-b.vieja{background:var(--amber-light);color:#9a5b00}.pse-b.cola{background:var(--teal-xlight);color:var(--teal-dark)}
+.pse-b.decidida{background:var(--surface2);color:var(--text2)}.pse-b.sin{background:var(--surface2);color:var(--text3)}
+.pse-det{font-size:12px;color:var(--text2);margin-top:6px;line-height:1.5}
+.pse-det b{color:var(--text)}
+.pse-chq{display:inline-block;font-size:11px;font-weight:700;border-radius:8px;padding:2px 7px;background:var(--surface2);color:var(--text2)}
+.pse-chq.pronto{background:#fde2e1;color:#a51b12}.pse-chq.semana{background:var(--amber-light);color:#9a5b00}
+.pse-acc{display:flex;gap:6px;margin-top:8px}
+.pse-acc button{flex:1;border-radius:10px;padding:8px 6px;font:700 12.5px 'DM Sans',sans-serif;cursor:pointer;border:1.5px solid var(--teal);background:transparent;color:var(--teal)}
+.pse-acc button.pri{background:linear-gradient(135deg,var(--teal),var(--teal-2));color:#fff;border-color:transparent}
+.pse-nota{font-size:11.5px;color:var(--text2);background:var(--surface2);border-radius:10px;padding:8px 10px;margin-bottom:10px;line-height:1.45}
+</style>
+<script>
+// ══ SECCIÓN «PROPUESTAS DE EVALUACIÓN» (Noé 13 nov 10:29) ═════════════════════════════════════════════════════════════
+// «X propuestas de evaluación listas — Ver» (inicio) y «Propuestas listas» (encabezado) abren esta pantalla: TODOS los alumnos
+// activos con su propuesta (fittrack_propuestas/evaluaciones/<nip> y solicitudes/<nip>, lo mismo que cuenta el aviso), fecha de
+// última actualización, estado (lista fresca / lista vieja / en cola / aplicada / descartada / sin propuesta), próximo chequeo
+// (fittrack_chequeos/proximo, solo lectura), filtros y acceso a «Revisar» (pantalla Evaluar, flujo de siempre) y al perfil.
+// Esta pantalla NO escribe nada; lo único que escribe la app sigue siendo lo de siempre (aplicar/descartar en Evaluar).
+(function(){
+  var FRESCA_DIAS = 7;   // una propuesta «lista» con más de 7 días se marca vieja (se hizo con datos que ya cambiaron)
+  var ST = {est:'todas', nivel:'todos', orden:'chequeo', q:'', pronto:false, inact:false, prox:null, proxEn:0};
+  // Regla 456 (lista viva = fuente de verdad): archivados, bajas y pausas NO cuentan en el aviso ni en la lista principal.
+  function inactivo(a){ var x=String(estadoDe(a)||'').toLowerCase(), s=String((a&&a.status)||'').toLowerCase(); return x==='archivado'||x==='pausa'||x==='baja'||s==='baja'||s==='pausa'; }
+  window.alumnoInactivo456=inactivo;
+  window.PSE = ST;
+  function e(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function hoyMX(){ var d=new Date(Date.now()-6*3600e3); return d.toISOString().slice(0,10); }
+  function dias(ts){ return ts?Math.floor((Date.now()-ts)/864e5):null; }
+  function fFecha(v,hora){ if(!v) return ''; var d=typeof v==='number'?new Date(v):new Date(/^\d{4}-\d{2}-\d{2}$/.test(v)?v+'T12:00:00-06:00':v); if(isNaN(d)) return ''; var o={timeZone:'America/Mexico_City',day:'numeric',month:'short'}; if(hora){ o.hour='2-digit'; o.minute='2-digit'; } return d.toLocaleString('es-MX',o); }
+  function difDias(iso){ if(!iso) return null; var a=new Date(hoyMX()+'T12:00:00Z'), b=new Date(String(iso).slice(0,10)+'T12:00:00Z'); return Math.round((b-a)/864e5); }
+  function leerProx(forzar){ if(!forzar&&ST.prox&&Date.now()-ST.proxEn<5*60e3) return Promise.resolve(ST.prox);
+    return db.ref('fittrack_chequeos/proximo').once('value').then(function(s){ ST.prox=(s&&s.val())||{}; ST.proxEn=Date.now(); return ST.prox; }).catch(function(){ ST.prox=ST.prox||{}; return ST.prox; }); }
+  function filas(){
+    var P=(typeof PROP!=='undefined'&&PROP)||{}, EV=P.evaluaciones||{}, SO=P.solicitudes||{}, PX=ST.prox||{};
+    return Object.keys(ALUMNOS_DATA).filter(function(n){ var a=ALUMNOS_DATA[n]; return a&&a.nip; }).map(function(n){
+      var a=ALUMNOS_DATA[n], nip=String(a.nip), ev=EV[nip]||null, sol=SO[nip]||null, eb=estadoPropuesta(nip), ag=false; try{ ag=esAutogestion(a); }catch(x){}
+      var cls, lbl, ts=null;
+      if(eb==='lista'){ ts=ev.ts||null; var dd=dias(ts); cls=dd!=null&&dd>FRESCA_DIAS?'vieja':'fresca'; lbl=cls==='vieja'?'Lista · vieja':'Lista · fresca'; }
+      else if(eb==='cola'){ cls='cola'; lbl='En cola'; ts=sol.ts||null; }
+      else if(ev&&(ev.estado==='aplicada'||ev.estado==='descartada')){ cls='decidida'; lbl=ev.estado==='aplicada'?'Aplicada':'Descartada'; ts=ev.ts||null; }
+      else if(ev){ cls='decidida'; lbl=String(ev.estado||'—'); ts=ev.ts||null; }
+      else { cls='sin'; lbl='Sin propuesta'; }
+      var px=PX[nip]||null, pf=px&&px.fecha&&px.estado!=='cerrado'?px.fecha:null;
+      var m=(ev&&ev.metricas)||{}, nc=Object.keys(m).filter(function(k){ return m[k]&&m[k].propuesta!==m[k].actual; }).length;
+      return {nombre:n,a:a,nip:nip,ev:ev,sol:sol,cls:cls,lbl:lbl,ts:ts,dias:dias(ts),ag:ag,prox:pf,proxEst:px&&px.estado,proxCerr:px&&px.estado==='cerrado'?px.fecha:null,dProx:difDias(pf),nc:nc,nn:((ev&&ev.notas)||[]).length,nivel:a.nivel||'—',pausa:estadoDe(a)==='pausa',arch:inactivo(a),est456:estadoDe(a)};
+    });
+  }
+  function filtrar(F){ var q=String(ST.q||'').toLowerCase().trim();
+    return F.filter(function(r){
+      if(!!r.arch!==!!ST.inact) return false;
+      if(ST.est==='listas'&&!(r.cls==='fresca'||r.cls==='vieja')) return false;
+      if(['fresca','vieja','cola','sin'].indexOf(ST.est)>=0&&r.cls!==ST.est) return false;
+      if(ST.est==='decidida'&&r.cls!=='decidida') return false;
+      if(ST.nivel!=='todos'&&r.nivel!==ST.nivel) return false;
+      if(ST.pronto&&!(r.dProx!=null&&r.dProx<=7)) return false;
+      if(q&&(r.nombre.toLowerCase().indexOf(q)<0&&r.nip.indexOf(q)<0)) return false;
+      return true; }).sort(function(x,y){
+      if(ST.orden==='nombre') return x.nombre.localeCompare(y.nombre,'es');
+      if(ST.orden==='actualizada') return (y.ts||0)-(x.ts||0)||x.nombre.localeCompare(y.nombre,'es');
+      if(ST.orden==='antigua') return ((x.ts||9e15)-(y.ts||9e15))||x.nombre.localeCompare(y.nombre,'es');
+      var a=x.dProx==null?9999:x.dProx, b=y.dProx==null?9999:y.dProx; return a-b||x.nombre.localeCompare(y.nombre,'es'); }); }
+  function fila(r){
+    var ch=r.prox?('<span class="pse-chq'+(r.dProx!=null&&r.dProx<=2?' pronto':(r.dProx!=null&&r.dProx<=7?' semana':''))+'">📅 Chequeo '+e(fFecha(r.prox))+(r.dProx!=null?(r.dProx===0?' (hoy)':r.dProx<0?' (hace '+(-r.dProx)+' d)':' (en '+r.dProx+' d)'):'')+'</span>'):(r.proxCerr?'<span class="pse-chq">Último chequeo '+e(fFecha(r.proxCerr))+' (cerrado)</span>':'<span class="pse-chq">Sin chequeo programado</span>');
+    var det='';
+    if(r.ev){ det+='Actualizada <b>'+e(fFecha(r.ev.ts,1))+'</b>'+(r.dias!=null?' · hace '+r.dias+' día'+(r.dias===1?'':'s'):'')+(r.ev.periodo?' · periodo '+e(r.ev.periodo):'');
+      if(r.cls==='fresca'||r.cls==='vieja') det+='<br>'+r.nc+' métrica'+(r.nc===1?'':'s')+' con cambio · '+r.nn+' nota'+(r.nn===1?'':'s')+(r.ev.fuentes?' · '+e(r.ev.fuentes):'');
+      if(r.ev.decididoEn) det+='<br>'+(r.ev.estado==='descartada'?'Descartada':'Aplicada')+' el '+e(fFecha(r.ev.decididoEn,1));
+      if(r.cls==='vieja') det+='<br><span style="color:#9a5b00">⚠️ Tiene más de '+FRESCA_DIAS+' días: se armó con datos que ya cambiaron; conviene pedir una nueva antes de aplicarla.</span>'; }
+    if(r.sol&&r.cls==='cola') det+=(det?'<br>':'')+'Solicitada '+e(fFecha(r.sol.ts,1))+' · Claude la revisa a las '+e(proxRevision());
+    if(r.ag) det+=(det?'<br>':'')+'<span style="color:var(--text3)">Autogestión: no lleva evaluación.</span>';
+    return '<div class="pse-it '+r.cls+'"><div class="pse-top"><div><div class="pse-nom">'+e(r.nombre)+'</div><div class="pse-sub">NIP '+e(r.nip)+' · '+e(r.nivel)+(r.arch?' · <b style="color:var(--red)">'+e(String(r.est456==='activo'?r.a.status:r.est456).toUpperCase())+'</b> (fuera del conteo, regla 456)':'')+(r.a.pctRend!=null?' · rendimiento '+e(r.a.pctRend)+' %':'')+'</div></div><span class="pse-b '+r.cls+'">'+e(r.lbl)+'</span></div>'+
+      '<div class="pse-det">'+ch+(det?'<div style="margin-top:4px">'+det+'</div>':'')+'</div>'+
+      '<div class="pse-acc">'+((r.cls==='fresca'||r.cls==='vieja')&&!r.ag?'<button type="button" class="pri" data-rev="'+e(r.nombre)+'">Revisar propuesta</button>':(r.ag?'':'<button type="button" data-rev="'+e(r.nombre)+'">Evaluar</button>'))+'<button type="button" data-perfil="'+e(r.nombre)+'">Perfil</button></div></div>';
+  }
+  function pintar(){ var root=document.getElementById('pse-body'); if(!root) return;
+    var T=filas(), F=T.filter(function(r){ return !!r.arch===!!ST.inact; }), nIn=T.filter(function(r){ return r.arch; }).length, L=filtrar(T), c={fresca:0,vieja:0,cola:0,decidida:0,sin:0}; F.forEach(function(r){ c[r.cls]=(c[r.cls]||0)+1; });
+    var nBanner=0; try{ nBanner=contarPropuestasListas(); }catch(x){}
+    var k=function(id,cl,n,t){ return '<button type="button" class="pse-k '+cl+(ST.est===id?' on':'')+'" data-est="'+id+'"><b>'+n+'</b><span>'+t+'</span></button>'; };
+    var h=(ST.inact?'<div class="pse-nota">Archivados, bajas y pausas: <b>no cuentan</b> en el aviso del inicio ni en la lista principal (regla 456, lista viva).</div>':'')+(ST.inact?'':'<div class="pse-nota">El aviso del inicio cuenta <b>'+nBanner+'</b> propuesta'+(nBanner===1?'':'s')+' «lista'+(nBanner===1?'':'s')+'»: <b>'+c.fresca+'</b> fresca'+(c.fresca===1?'':'s')+' (≤ '+FRESCA_DIAS+' días) y <b>'+c.vieja+'</b> vieja'+(c.vieja===1?'':'s')+'. Solo lectura: aplicar o descartar se hace en «Revisar propuesta», como siempre. Archivados, bajas y pausas no cuentan (regla 456).</div>')+
+      '<div class="pse-sum">'+k('fresca','f',c.fresca,'Listas frescas')+k('vieja','v',c.vieja,'Listas viejas')+k('cola','c',c.cola,'En cola')+k('decidida','a',c.decidida,'Aplicadas / descartadas')+k('sin','s',c.sin,'Sin propuesta')+k('todas','',F.length,ST.inact?'Todos (inactivos)':'Todos los activos')+'</div>'+
+      '<div class="pse-fil"><input type="search" id="pse-q" placeholder="Buscar alumno o NIP…" value="'+e(ST.q)+'">'+
+      '<div class="pse-row"><select id="pse-est"><option value="todas">Todos los estados</option><option value="listas">Listas (frescas y viejas)</option><option value="fresca">Lista · fresca</option><option value="vieja">Lista · vieja</option><option value="cola">En cola</option><option value="decidida">Aplicada / descartada</option><option value="sin">Sin propuesta</option></select>'+
+      '<select id="pse-niv"><option value="todos">Todos los niveles</option><option>Básico</option><option>Intermedio</option><option>Avanzado</option></select></div>'+
+      '<div class="pse-row"><select id="pse-ord"><option value="chequeo">Orden: próximo chequeo</option><option value="actualizada">Orden: más reciente</option><option value="antigua">Orden: más vieja primero</option><option value="nombre">Orden: nombre</option></select>'+
+      '<label><input type="checkbox" id="pse-pronto"'+(ST.pronto?' checked':'')+'> Chequeo en ≤ 7 días</label></div>'+'<div class="pse-row"><label><input type="checkbox" id="pse-inact"'+(ST.inact?' checked':'')+'> Ver solo archivados / bajas / pausas ('+nIn+')</label></div></div>'+
+      '<div class="pse-cnt">'+L.length+' de '+F.length+' alumnos '+(ST.inact?'archivados / bajas / pausas (no cuentan)':'activos')+(ST.prox?'':' · leyendo próximos chequeos…')+'</div>'+
+      (L.length?L.map(fila).join(''):'<div class="lva-vacio" style="font-size:12px;color:var(--text3)">Ningún alumno con ese filtro.</div>');
+    root.innerHTML=h;
+    var s1=document.getElementById('pse-est'); if(s1) s1.value=ST.est; var s2=document.getElementById('pse-niv'); if(s2) s2.value=ST.nivel; var s3=document.getElementById('pse-ord'); if(s3) s3.value=ST.orden;
+  }
+  function pantalla(){
+    var sc=document.getElementById('sc-propuestas'); if(sc) return sc;
+    var ref=document.getElementById('sc-avisos'); if(!ref) return null;
+    sc=document.createElement('div'); sc.className='screen'; sc.id='sc-propuestas';
+    sc.innerHTML='<div class="back-btn" onclick="nav(\'dashboard\')">← Inicio</div><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div class="section-title">📝 Propuestas de evaluación</div><button type="button" class="lva-btn" id="pse-rec">↻ Actualizar</button></div>'+
+      '<div style="font-size:12px;color:var(--text2);margin:4px 0 8px">Todos los alumnos activos con su propuesta, cuándo se actualizó y su próximo chequeo.</div><div id="pse-body"></div>';
+    ref.parentNode.insertBefore(sc, ref.nextSibling);
+    sc.addEventListener('click',function(ev){ var t=ev.target.closest('[data-est],[data-rev],[data-perfil],#pse-rec'); if(!t) return;
+      if(t.id==='pse-rec'){ leerProx(true).then(pintar); pintar(); return; }
+      if(t.dataset.est){ ST.est=t.dataset.est; pintar(); return; }
+      var n=t.dataset.rev||t.dataset.perfil, a=ALUMNOS_DATA[n]; if(!a) return;
+      if(t.dataset.perfil){ openProfileModal(n); return; }
+      openEvaluar(n, a.ini, a.nivel, a.pct, a.tipo); });
+    sc.addEventListener('input',function(ev){ if(ev.target.id==='pse-q'){ ST.q=ev.target.value; var p=ev.target.selectionStart; pintar(); var q=document.getElementById('pse-q'); if(q){ q.focus(); try{ q.setSelectionRange(p,p); }catch(x){} } } });
+    sc.addEventListener('change',function(ev){ var id=ev.target.id; if(id==='pse-est') ST.est=ev.target.value; else if(id==='pse-niv') ST.nivel=ev.target.value; else if(id==='pse-ord') ST.orden=ev.target.value; else if(id==='pse-pronto') ST.pronto=ev.target.checked; else if(id==='pse-inact'){ ST.inact=ev.target.checked; ST.est=ST.inact?'todas':ST.est; } else return; pintar(); });
+    return sc;
+  }
+  window.abrirPropuestasSeccion=function(est){ pantalla(); if(est) ST.est=est; nav('propuestas'); pintar(); leerProx().then(function(){ var sc=document.getElementById('sc-propuestas'); if(sc&&sc.classList.contains('active')) pintar(); }); };
+  // «Ver» del aviso del inicio y «Propuestas listas» del encabezado → esta sección (antes: lista de alumnos ordenada o Evaluar directo)
+  irAPropuestas=function(){ ST.inact=false; window.abrirPropuestasSeccion('listas'); };
+  // conteo del aviso del inicio y del encabezado: solo alumnos activos (regla 456)
+  contarPropuestasListas=function(){ return Object.keys(PROP.evaluaciones||{}).filter(function(nip){ if(estadoPropuesta(nip)!=='lista') return false; var n=nombrePorNip(nip); return n&&!inactivo(ALUMNOS_DATA[n]); }).length; };
+  try{ actualizarResumen(); }catch(x){}
+  try{ PROP_REF.on('value',function(){ var sc=document.getElementById('sc-propuestas'); if(sc&&sc.classList.contains('active')) pintar(); }); }catch(x){}
+  pantalla();
+})();
+</script>
+
 </body>
 </html>
