@@ -3316,7 +3316,7 @@ function _reporteHTML(r, it){
     sec('🏋️',_tq.length>1||(!Tq.aplica&&r.aprovechamiento)?t('rp_rendimiento'):t('rp_tec_rend'),_tq[0]);
     if(_tq[1]) h+='<div class="rp-sec">'+_tq[1]+'</div>'; }
   if(it&&it.usoFittrack&&it.usoFittrack.dias) sec('📲',t('rp_uso_ft'),_usoFT(it.usoFittrack));
-  if(it&&it.mapaPeriodo&&typeof _mvPeriodo==='function') sec('🗺️',t('mv_pe_tt').replace(/^🗺️\s*/,''),_mvPeriodo(it.mapaPeriodo));
+  if(it&&it.mapaPeriodo&&typeof _mvPeriodo==='function') sec('🗺️',r321cT('mv_pe_tt').replace(/^🗺️\s*/,''),_mvPeriodo(it.mapaPeriodo));
   var gt=it&&it.grupoTeam;
   if(!_ag&&gt&&gt.avisos){ var gc=gt.canalIgnorado?['var(--red)','var(--red-light)']:(gt.leidos/gt.avisos>=0.75?['var(--green)','var(--green-light)']:['var(--amber)','var(--amber-light)']);
     sec('💬',t('rp_grupo_t'),'<div class="chq-tiles" style="grid-template-columns:1fr 1fr"><div class="chq-tile" style="background:'+gc[1]+';color:'+gc[0]+'"><b>'+t('rp_n_leidos',{n:gt.leidos})+'</b><span>'+t('rp_de_avisos',{n:gt.avisos})+'</span></div><div class="chq-tile" style="background:'+(gt.canalIgnorado?'var(--red-light)':'var(--surface2)')+';color:'+(gt.canalIgnorado?'var(--red)':'var(--text2)')+'"><b>'+gt.sinLeerSeguidos+'</b><span>'+t('rp_seg_sin_leer')+'</span>'+(gt.canalIgnorado?'<small>'+t('rp_canal_ign')+'</small>':'')+'</div></div>'
@@ -4513,7 +4513,7 @@ function r236Pintar(){
 //    el número guardado solo es respaldo. Con ≤14 días la nota no se pinta (igual que tools/seguimiento_check.py).
 // 2) Pantalla principal (Rutina, debajo de la cuenta regresiva): nota compacta con los días y las rutinas (días) con
 //    ejercicios en revisión aún sin aprobar. 3) Cierre nuevo de autogestión. 4) Trato usted (lista R321C_USTED, de sync/perfiles).
-var R321C_USTED = {"1480":1,"1499":1,"2086":1,"2301":1,"3737":1,"3918":1,"5620":1,"5646":1,"6355":1,"6665":1,"6706":1,"7609":1,"7836":1,"8279":1,"9180":1,"9381":1,"9887":1};
+var R321C_USTED = {"1480":1,"1499":1,"2086":1,"2301":1,"3737":1,"3918":1,"3982":1,"5620":1,"5646":1,"6355":1,"6665":1,"6706":1,"7609":1,"7836":1,"8279":1,"9381":1,"9887":1};
 var _r321cRef = null, _r321cT = null;
 function r321cHoyMX(){ return new Date(Date.now()-6*3600e3).toISOString().slice(0,10); }
 function r321cDias(S){
@@ -4993,15 +4993,17 @@ function mapaVolInit(nip){
 }
 function _mvColor(p){ return p == null ? 'g' : p >= 90 ? 'v' : p >= 70 ? 'a' : p >= 40 ? 'n' : 'r'; }
 function _mvR(x){ return Math.round(Number(x) || 0); }
-function _mvG(k, g){ var v = t('mv_g_' + k); return v === 'mv_g_' + k ? ((g && g.nombre) || k) : v; }
+function _mvG(k, g){ var v = r321cT('mv_g_' + k); return v === 'mv_g_' + k ? ((g && g.nombre) || k) : v; }
 function _mvStars(n){ return n >= 2 ? '★★' : n >= 1 ? '★' : ''; }
+/* USTED-1113: mapa de volumen en «usted» (claves mv_*_u; r321cT o fraseK.u del motor) */
+(function(U){ if (LANGS.es) Object.keys(U).forEach(function(k){ LANGS.es[k]=U[k]; }); })({"mv_tt_u": "🗺️ Su mapa de la semana", "mv_tap_u": "👆 Toque aquí para ver su mapa completo", "mv_exp_u": "Cada color le dice <b>cuántas series lleva</b> de las que su coach programó para esta semana, contando solo los días que ya pasaron.", "mv_c_v_u": "Va en meta", "mv_pie_u": "Se calcula con lo que registra en Harbiz. Si hizo un ejercicio y no lo registró, aquí no cuenta. Actualizado: {f}.", "mv_prio_ley_u": "★ = prioridad de su etapa", "mv_din_v_u": "Va muy bien.", "mv_din_n_u": "En riesgo: no se salte estos ejercicios.", "mv_din_r_u": "Muy atrasado esta semana: dele prioridad en sus próximas sesiones.", "mv_fr_inicio_u": "Su semana empieza: aquí va a ver cómo avanza cada grupo muscular.", "mv_fr_bien_u": "¡Va muy bien! Está cumpliendo el volumen de todos sus grupos.", "mv_por_hombros_u": "Hombros más redondos dan anchura y hacen ver su cintura más estrecha.", "mv_por_pecho_u": "Da forma y firmeza al torso y ayuda en todos sus empujes.", "mv_por_biceps_u": "Brazos con forma por delante; también ayudan en sus jalones y remos.", "mv_por_antebrazo_u": "Mejora su agarre para que no le limite en los demás ejercicios.", "mv_por_abdomen_u": "Un centro fuerte protege su espalda y le ayuda a verse más firme.", "mv_por_oblicuos_u": "Dan estabilidad al girar y a los lados de su cintura.", "mv_por_aductores_u": "Afirman la parte interna del muslo y estabilizan su cadera.", "mv_por_trapecio_u": "Sostiene sus hombros y mejora su postura.", "mv_por_dorsal_u": "Abren su espalda en forma de V y hacen ver su cintura más chica.", "mv_por_espaldaMedia_u": "Le da una postura más erguida y una espalda con más detalle.", "mv_por_deltPost_u": "Equilibra sus hombros y los lleva hacia atrás para una mejor postura.", "mv_por_lumbar_u": "Fortalece la parte baja de su espalda para cargar y moverse seguro.", "mv_por_gluteo_u": "Es el músculo que más dibuja su silueta: levanta y redondea la cadera.", "mv_por_isquios_u": "Dan forma a la parte de atrás del muslo y protegen sus rodillas.", "mv_por_pantorrilla_u": "Completan la línea de su pierna y le dan estabilidad al caminar.", "mv_cu_tt_u": "🧬 Su cuerpo y su objetivo", "mv_cu_tap_u": "👆 Toque aquí para ver su análisis completo", "mv_cu_lema_u": "Haga arte con su cuerpo: llevamos lo que ya tiene a su mejor versión.", "mv_cu_est_u": "Su estructura", "mv_cu_af_u": "Afinidad con su objetivo", "mv_cu_obj_u": "Su objetivo, con sus palabras", "mv_cu_favor_u": "✅ A su favor", "mv_cu_cat_u": "Medido contra los parámetros de su categoría: {c}.", "mv_cu_fuente_u": "Con base en sus fotos y medidas del {f}. Se actualiza en cada chequeo.", "mv_cu_sil_u": "Su silueta se dibuja con sus medidas reales.", "mv_pe_tt_u": "🗺️ Su mapa del periodo", "mv_pe_sem_u": "Su cumplimiento semana a semana", "mv_pe_lect_u": "Cómo se relaciona con sus medidas y fotos", "mv_pe_aj_u": "El ajuste para su siguiente periodo", "mv_pe_tap_u": "👆 Toque para ver el detalle por grupo"});
 function _mvFrase(M){
   var F = M.fraseK;
   if (!F) return M.frase || '';
-  if (F.k !== 'mv_fr_ojo') return t(F.k);
+  if (F.k !== 'mv_fr_ojo') return (F.u && currentLang === 'es' && LANGS.es[F.k + '_u']) ? LANGS.es[F.k + '_u'] : r321cT(F.k);
   var gs = (F.g || []).map(function(k){ return _mvG(k).toLowerCase(); });
-  var g = gs.length > 1 ? gs[0] + t('mv_y') + gs[1] : (gs[0] || '');
-  return t('mv_fr_ojo', {g: g + (F.mas ? t('mv_otros') : '')});
+  var g = gs.length > 1 ? gs[0] + r321cT('mv_y') + gs[1] : (gs[0] || '');
+  return r321cT('mv_fr_ojo', {g: g + (F.mas ? r321cT('mv_otros') : '')});
 }
 function _mvNotasOk(M){ return !!(M && M.programa && M.aprobacion && M.aprobacion.programa === M.programa); }
 function _mvCuerpo(M, mujer){
@@ -5011,23 +5013,23 @@ function _mvCuerpo(M, mujer){
   var sil = '<div class="mv-big">' + mvFigura('f', mujer, {}, {}, C.silueta) + mvFigura('b', mujer, {}, {}, C.silueta) + '</div>';
   return '<details class="mv-card mv-cu" id="mv-cu"><summary>' +
       '<div class="mv-top"><div class="mv-mini">' + mvFigura('f', mujer, {}, {}, C.silueta) + '</div><div class="mv-res">' +
-        '<div class="mv-tt">' + t('mv_cu_tt') + '</div>' +
-        (C.tipo ? '<div class="mv-sub"><b>' + _esc(t('mv_bt_' + C.tipo)) + '</b></div>' : '') +
-        (n != null ? '<div class="mv-af"><span class="mv-afn">' + n + '</span> ' + t('mv_cu_de10') + ' · ' + t('mv_cu_af') + '</div>' : '') +
+        '<div class="mv-tt">' + r321cT('mv_cu_tt') + '</div>' +
+        (C.tipo ? '<div class="mv-sub"><b>' + _esc(r321cT('mv_bt_' + C.tipo)) + '</b></div>' : '') +
+        (n != null ? '<div class="mv-af"><span class="mv-afn">' + n + '</span> ' + r321cT('mv_cu_de10') + ' · ' + r321cT('mv_cu_af') + '</div>' : '') +
       '</div></div>' +
-      '<div class="mv-tap"><span>' + t('mv_cu_tap') + '</span><span class="mv-arr">▾</span></div>' +
+      '<div class="mv-tap"><span>' + r321cT('mv_cu_tap') + '</span><span class="mv-arr">▾</span></div>' +
     '</summary><div class="mv-body2">' +
-      '<p class="mv-exp">' + t('mv_cu_lema') + '</p>' + sil + '<p class="mv-pie" style="text-align:center">' + t('mv_cu_sil') + '</p>' +
-      (C.objetivo && C.objetivo.texto ? '<div class="mv-cu-b"><div class="mv-cu-h">' + t('mv_cu_obj') + '</div><div class="mv-cu-q">«' + _esc(C.objetivo.texto) + '»</div>' + (C.objetivo.categoria ? '<div class="mv-pie">' + t('mv_cu_cat', {c: _esc(C.objetivo.categoria)}) + '</div>' : '') + '</div>' : '') +
-      '<div class="mv-cu-b"><div class="mv-cu-h">' + t('mv_cu_tipo') + '</div><div>' + _esc(t('mv_bt_' + C.tipo)) + '</div></div>' +
-      (C.grasa ? '<div class="mv-cu-b"><div class="mv-cu-h">' + t('mv_cu_grasa') + '</div><div>' + _esc(t('mv_gr_' + C.grasa)) + (C.pctGrasa ? ' · ' + _esc(C.pctGrasa) : '') + '</div></div>' : '') +
-      (C.estructura && C.estructura.length ? '<div class="mv-cu-b"><div class="mv-cu-h">' + t('mv_cu_est') + '</div><ul>' + lst(C.estructura) + '</ul></div>' : '') +
-      (n != null ? '<div class="mv-cu-b"><div class="mv-cu-h">' + t('mv_cu_af') + '</div><div class="mv-afbar"><i style="width:' + Math.max(4, Math.min(100, n * 10)) + '%"></i></div><div><b>' + n + '</b> ' + t('mv_cu_de10') + (af.resumen ? ' — ' + _esc(af.resumen) : '') + '</div></div>' : '') +
-      (C.aFavor && C.aFavor.length ? '<div class="mv-cu-b mv-cu-ok"><div class="mv-cu-h">' + t('mv_cu_favor') + '</div><ul>' + lst(C.aFavor) + '</ul></div>' : '') +
-      (C.trabajar && C.trabajar.length ? '<div class="mv-cu-b mv-cu-tr"><div class="mv-cu-h">' + t('mv_cu_trab') + '</div><ul>' + lst(C.trabajar) + '</ul></div>' : '') +
-      (C.puede && C.puede.length ? '<div class="mv-cu-b mv-cu-pu"><div class="mv-cu-h">' + t('mv_cu_puede') + '</div><ul>' + lst(C.puede) + '</ul></div>' : '') +
-      (C.fecha ? '<p class="mv-pie">' + t('mv_cu_fuente', {f: _esc(_fcorta ? _fcorta(C.fecha) : C.fecha)}) + '</p>' : '') +
-      '<div class="mv-cerrar" onclick="document.getElementById(\'mv-cu\').open=false">' + t('mv_cerrar') + '</div>' +
+      '<p class="mv-exp">' + r321cT('mv_cu_lema') + '</p>' + sil + '<p class="mv-pie" style="text-align:center">' + r321cT('mv_cu_sil') + '</p>' +
+      (C.objetivo && C.objetivo.texto ? '<div class="mv-cu-b"><div class="mv-cu-h">' + r321cT('mv_cu_obj') + '</div><div class="mv-cu-q">«' + _esc(C.objetivo.texto) + '»</div>' + (C.objetivo.categoria ? '<div class="mv-pie">' + r321cT('mv_cu_cat', {c: _esc(C.objetivo.categoria)}) + '</div>' : '') + '</div>' : '') +
+      '<div class="mv-cu-b"><div class="mv-cu-h">' + r321cT('mv_cu_tipo') + '</div><div>' + _esc(r321cT('mv_bt_' + C.tipo)) + '</div></div>' +
+      (C.grasa ? '<div class="mv-cu-b"><div class="mv-cu-h">' + r321cT('mv_cu_grasa') + '</div><div>' + _esc(r321cT('mv_gr_' + C.grasa)) + (C.pctGrasa ? ' · ' + _esc(C.pctGrasa) : '') + '</div></div>' : '') +
+      (C.estructura && C.estructura.length ? '<div class="mv-cu-b"><div class="mv-cu-h">' + r321cT('mv_cu_est') + '</div><ul>' + lst(C.estructura) + '</ul></div>' : '') +
+      (n != null ? '<div class="mv-cu-b"><div class="mv-cu-h">' + r321cT('mv_cu_af') + '</div><div class="mv-afbar"><i style="width:' + Math.max(4, Math.min(100, n * 10)) + '%"></i></div><div><b>' + n + '</b> ' + r321cT('mv_cu_de10') + (af.resumen ? ' — ' + _esc(af.resumen) : '') + '</div></div>' : '') +
+      (C.aFavor && C.aFavor.length ? '<div class="mv-cu-b mv-cu-ok"><div class="mv-cu-h">' + r321cT('mv_cu_favor') + '</div><ul>' + lst(C.aFavor) + '</ul></div>' : '') +
+      (C.trabajar && C.trabajar.length ? '<div class="mv-cu-b mv-cu-tr"><div class="mv-cu-h">' + r321cT('mv_cu_trab') + '</div><ul>' + lst(C.trabajar) + '</ul></div>' : '') +
+      (C.puede && C.puede.length ? '<div class="mv-cu-b mv-cu-pu"><div class="mv-cu-h">' + r321cT('mv_cu_puede') + '</div><ul>' + lst(C.puede) + '</ul></div>' : '') +
+      (C.fecha ? '<p class="mv-pie">' + r321cT('mv_cu_fuente', {f: _esc(_fcorta ? _fcorta(C.fecha) : C.fecha)}) + '</p>' : '') +
+      '<div class="mv-cerrar" onclick="document.getElementById(\'mv-cu\').open=false">' + r321cT('mv_cerrar') + '</div>' +
     '</div></details>';
 }
 function renderMapaVol(){
@@ -5046,25 +5048,25 @@ function renderMapaVol(){
   var hayPrio = keys.some(function(k){ return G[k].prio; });
   var h = '<details class="mv-card" id="mv-det"><summary>' +
     '<div class="mv-top">' + mini + '<div class="mv-res">' +
-      '<div class="mv-tt">' + t('mv_tt') + '</div>' +
+      '<div class="mv-tt">' + r321cT('mv_tt') + '</div>' +
       '<div class="mv-pct ' + MV_CLS[tc] + '">' + (tot.pct != null ? tot.pct + ' %' : '—') + '</div>' +
-      '<div class="mv-sub">' + t('mv_sub', {h: _mvR(tot.hechas), t: _mvR(tot.tocaban)}) + '</div>' +
+      '<div class="mv-sub">' + r321cT('mv_sub', {h: _mvR(tot.hechas), t: _mvR(tot.tocaban)}) + '</div>' +
     '</div></div>' +
     '<div class="mv-frase">' + _esc(_mvFrase(M)) + '</div>' + (chips ? '<div class="mv-chips">' + chips + '</div>' : '') +
-    '<div class="mv-tap"><span>' + t('mv_tap') + '</span><span class="mv-arr">▾</span></div>' +
+    '<div class="mv-tap"><span>' + r321cT('mv_tap') + '</span><span class="mv-arr">▾</span></div>' +
     '</summary><div class="mv-body2">' +
-    '<p class="mv-exp">' + t('mv_exp') + '</p>' +
+    '<p class="mv-exp">' + r321cT('mv_exp') + '</p>' +
     '<div class="mv-big">' + mvFigura('f', mujer, G, NOMB) + mvFigura('b', mujer, G, NOMB) + '</div>' +
-    '<div class="mv-ley">' + ['v','a','n','r','g'].map(function(c){ return '<span><i class="' + MV_CLS[c] + '"></i>' + t('mv_c_' + c) + (c !== 'g' ? ' ' + t('mv_r_' + c) : '') + '</span>'; }).join('') + (hayPrio ? '<span class="mv-ley-st">' + t('mv_prio_ley') + '</span>' : '') + '</div>' +
+    '<div class="mv-ley">' + ['v','a','n','r','g'].map(function(c){ return '<span><i class="' + MV_CLS[c] + '"></i>' + r321cT('mv_c_' + c) + (c !== 'g' ? ' ' + r321cT('mv_r_' + c) : '') + '</span>'; }).join('') + (hayPrio ? '<span class="mv-ley-st">' + r321cT('mv_prio_ley') + '</span>' : '') + '</div>' +
     '<div class="mv-list">' + keys.map(function(k){ var g = G[k], c = g.color || 'g', p = g.pct, st = _mvStars(g.prio || 0);
       var nota = notas && g.nota ? t(g.nota) : '';
-      var din = (p != null && (g.tocaban || 0) >= 3) ? t('mv_din_' + c) : '';
-      return '<div class="mv-row' + (g.prio ? ' mv-rowp' : '') + '" data-g="' + k + '"><div class="mv-rh"><b><i class="mv-dot ' + MV_CLS[c] + '"></i>' + _esc(NOMB[k]) + (st ? ' <span class="mv-st" title="' + _esc(t('mv_prio')) + '">' + st + '</span>' : '') + '</b><span class="mv-chip ' + MV_CLS[c] + '">' + (p != null ? p + ' %' : t('mv_c_g')) + '</span></div>' +
-        '<div class="mv-rs">' + (p == null ? t('mv_mas_adel', {p: _mvR(g.programadas)}) : t('mv_row', {h: _mvR(g.hechas), t: _mvR(g.tocaban), p: _mvR(g.programadas)})) + '</div>' +
-        (nota || din ? '<div class="mv-nota">' + (g.prio && nota ? '<b>' + _esc(t('mv_prio')) + ':</b> ' : '') + _esc(nota) + (nota && din ? ' ' : '') + (din ? '<i>' + _esc(din) + '</i>' : '') + '</div>' : '') +
+      var din = (p != null && (g.tocaban || 0) >= 3) ? r321cT('mv_din_' + c) : '';
+      return '<div class="mv-row' + (g.prio ? ' mv-rowp' : '') + '" data-g="' + k + '"><div class="mv-rh"><b><i class="mv-dot ' + MV_CLS[c] + '"></i>' + _esc(NOMB[k]) + (st ? ' <span class="mv-st" title="' + _esc(r321cT('mv_prio')) + '">' + st + '</span>' : '') + '</b><span class="mv-chip ' + MV_CLS[c] + '">' + (p != null ? p + ' %' : r321cT('mv_c_g')) + '</span></div>' +
+        '<div class="mv-rs">' + (p == null ? r321cT('mv_mas_adel', {p: _mvR(g.programadas)}) : r321cT('mv_row', {h: _mvR(g.hechas), t: _mvR(g.tocaban), p: _mvR(g.programadas)})) + '</div>' +
+        (nota || din ? '<div class="mv-nota">' + (g.prio && nota ? '<b>' + _esc(r321cT('mv_prio')) + ':</b> ' : '') + _esc(nota) + (nota && din ? ' ' : '') + (din ? '<i>' + _esc(din) + '</i>' : '') + '</div>' : '') +
         '<div class="mv-bar"><i class="' + MV_CLS[c] + '" style="width:' + Math.max(2, Math.min(100, p || 0)) + '%"></i></div></div>'; }).join('') + '</div>' +
-    '<p class="mv-pie">' + t('mv_pie', {f: _esc(_fcorta ? _fcorta(M.actualizado) : (M.actualizado || ''))}) + '</p>' +
-    '<div class="mv-cerrar" onclick="document.getElementById(\'mv-det\').open=false">' + t('mv_cerrar') + '</div>' +
+    '<p class="mv-pie">' + r321cT('mv_pie', {f: _esc(_fcorta ? _fcorta(M.actualizado) : (M.actualizado || ''))}) + '</p>' +
+    '<div class="mv-cerrar" onclick="document.getElementById(\'mv-det\').open=false">' + r321cT('mv_cerrar') + '</div>' +
     '</div></details>' + cu;
   el.innerHTML = h;
 }
@@ -5074,17 +5076,17 @@ function _mvPeriodo(P){
   var G = P.grupos, ks = Object.keys(G).sort(function(a, b){ return ((G[b].prio || 0) - (G[a].prio || 0)) || ((G[b].programadas || 0) - (G[a].programadas || 0)); }), N = {}, T = P.total || {};
   ks.forEach(function(k){ N[k] = _mvG(k); });
   var sem = (P.semanas || []).map(function(w){ var c = _mvColor(w.pct); return '<span class="mv-chip ' + MV_CLS[c] + '">' + _esc(_fcorta ? _fcorta(w.desde) : w.desde) + ' · ' + (w.pct != null ? w.pct + ' %' : '—') + '</span>'; }).join(' ');
-  var atr = (P.atras || []).slice(0, 6).map(function(k){ var g = G[k] || {}; return '<span class="mv-chip ' + MV_CLS[g.color || 'g'] + '">' + _esc(N[k] || k) + ' ' + (g.pct != null ? g.pct + ' %' : '') + '</span>'; }).join(' ') + ((P.atras || []).length > 6 ? ' <span class="mv-sub">' + t('mv_otros') + '</span>' : '');
+  var atr = (P.atras || []).slice(0, 6).map(function(k){ var g = G[k] || {}; return '<span class="mv-chip ' + MV_CLS[g.color || 'g'] + '">' + _esc(N[k] || k) + ' ' + (g.pct != null ? g.pct + ' %' : '') + '</span>'; }).join(' ') + ((P.atras || []).length > 6 ? ' <span class="mv-sub">' + r321cT('mv_otros') + '</span>' : '');
   return '<div class="mv-pe">' +
     '<div class="mv-top"><div class="mv-mini">' + mvFigura('f', !!P.mujer, G, N) + mvFigura('b', !!P.mujer, G, N) + '</div><div class="mv-res">' +
       '<div class="mv-pct ' + MV_CLS[_mvColor(T.pct)] + '">' + (T.pct != null ? T.pct + ' %' : '—') + '</div>' +
-      '<div class="mv-sub">' + t('mv_pe_sub', {h: _mvR(T.hechas), p: _mvR(T.programadas), x: T.pct, n: (P.semanas || []).length}) + '</div></div></div>' +
-    (sem ? '<div class="mv-cu-h" style="margin-top:8px">' + t('mv_pe_sem') + '</div><div class="mv-chips">' + sem + '</div>' : '') +
-    '<div class="mv-cu-h" style="margin-top:8px">' + t('mv_pe_atras') + '</div>' + (atr ? '<div class="mv-chips">' + atr + '</div>' : '<div class="mv-sub">' + t('mv_pe_todo') + '</div>') +
-    (P.lectura ? '<div class="mv-cu-b"><div class="mv-cu-h">' + t('mv_pe_lect') + '</div><div>' + _esc(P.lectura) + '</div></div>' : '') +
-    (P.ajuste ? '<div class="mv-cu-b mv-cu-pu"><div class="mv-cu-h">' + t('mv_pe_aj') + '</div><div>' + _esc(P.ajuste) + '</div></div>' : '') +
-    '<details class="mv-pe-det"><summary class="mv-tap"><span>' + t('mv_pe_tap') + '</span><span class="mv-arr">▾</span></summary><div class="mv-list">' +
-      ks.map(function(k){ var g = G[k], c = g.color || 'g'; return '<div class="mv-row"><div class="mv-rh"><b><i class="mv-dot ' + MV_CLS[c] + '"></i>' + _esc(N[k]) + (g.prio ? ' <span class="mv-st">' + _mvStars(g.prio) + '</span>' : '') + '</b><span class="mv-chip ' + MV_CLS[c] + '">' + (g.pct != null ? g.pct + ' %' : '—') + '</span></div><div class="mv-rs">' + t('mv_pe_row', {h: _mvR(g.hechas), p: _mvR(g.programadas)}) + '</div><div class="mv-bar"><i class="' + MV_CLS[c] + '" style="width:' + Math.max(2, Math.min(100, g.pct || 0)) + '%"></i></div></div>'; }).join('') +
+      '<div class="mv-sub">' + r321cT('mv_pe_sub', {h: _mvR(T.hechas), p: _mvR(T.programadas), x: T.pct, n: (P.semanas || []).length}) + '</div></div></div>' +
+    (sem ? '<div class="mv-cu-h" style="margin-top:8px">' + r321cT('mv_pe_sem') + '</div><div class="mv-chips">' + sem + '</div>' : '') +
+    '<div class="mv-cu-h" style="margin-top:8px">' + r321cT('mv_pe_atras') + '</div>' + (atr ? '<div class="mv-chips">' + atr + '</div>' : '<div class="mv-sub">' + r321cT('mv_pe_todo') + '</div>') +
+    (P.lectura ? '<div class="mv-cu-b"><div class="mv-cu-h">' + r321cT('mv_pe_lect') + '</div><div>' + _esc(P.lectura) + '</div></div>' : '') +
+    (P.ajuste ? '<div class="mv-cu-b mv-cu-pu"><div class="mv-cu-h">' + r321cT('mv_pe_aj') + '</div><div>' + _esc(P.ajuste) + '</div></div>' : '') +
+    '<details class="mv-pe-det"><summary class="mv-tap"><span>' + r321cT('mv_pe_tap') + '</span><span class="mv-arr">▾</span></summary><div class="mv-list">' +
+      ks.map(function(k){ var g = G[k], c = g.color || 'g'; return '<div class="mv-row"><div class="mv-rh"><b><i class="mv-dot ' + MV_CLS[c] + '"></i>' + _esc(N[k]) + (g.prio ? ' <span class="mv-st">' + _mvStars(g.prio) + '</span>' : '') + '</b><span class="mv-chip ' + MV_CLS[c] + '">' + (g.pct != null ? g.pct + ' %' : '—') + '</span></div><div class="mv-rs">' + r321cT('mv_pe_row', {h: _mvR(g.hechas), p: _mvR(g.programadas)}) + '</div><div class="mv-bar"><i class="' + MV_CLS[c] + '" style="width:' + Math.max(2, Math.min(100, g.pct || 0)) + '%"></i></div></div>'; }).join('') +
     '</div></details></div>';
 }
 
