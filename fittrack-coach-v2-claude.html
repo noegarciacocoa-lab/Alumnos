@@ -2132,7 +2132,7 @@ function renderListas(){
     items.forEach(function(item){
       var a = item.a;
       var ultNota = a.notas && a.notas.length ? a.notas[a.notas.length-1] : null;
-      var nota = ultNota ? (typeof ultNota==='string' ? ultNota : (ultNota.txt||'Sin notas')) : 'Sin notas';
+      var nota = ultNota ? (typeof ultNota==='string' ? ultNota : (window.ES?ES.plano(ES.vers(ultNota,'txt')):(ultNota.txt||'Sin notas'))) : 'Sin notas';
       // Aprobación
       var pctAprob = Number((a.pctAprob!==undefined) ? a.pctAprob : (a.pct||0)) || 0;
       pctAprob = Math.round(pctAprob);
@@ -2983,6 +2983,7 @@ function enviarAlerta(){
       fecha: hoyStr,
       ts: Date.now()
     });
+    if(window.ES){ var _nn=ALUMNOS_DATA[a].notas[ALUMNOS_DATA[a].notas.length-1]; ES.notaNueva(_nn, ALUMNOS_DATA[a].nip); ES.bitacoraNota(ALUMNOS_DATA[a].nip, _nn, 'nota_nueva', null); }
     syncToStorage();
   }
   showToast('📤 Nota enviada a '+a.split(' ')[0]+' ✓');
@@ -3050,7 +3051,7 @@ function renderHistorialNotas(){
   var q = filter.toLowerCase().trim();
   if(q){
     all = all.filter(function(it){
-      return it.nombre.toLowerCase().indexOf(q)>=0 || (it.nota.txt||'').toLowerCase().indexOf(q)>=0;
+      return it.nombre.toLowerCase().indexOf(q)>=0 || ((it.nota.txt||'')+' '+(it.nota.txtEs||'')).toLowerCase().indexOf(q)>=0;
     });
   }
   var count = document.getElementById('hist-notas-count');
@@ -3071,7 +3072,7 @@ function renderHistorialNotas(){
     var fechaVal = n.fecha || (n.ts ? new Date(n.ts).toISOString().slice(0,10) : '');
     var semDisplay = n.sem || '—';
     html += '<div class="warn-item '+cls+'" data-id="'+safeId+'">'+
-      '<div class="warn-text" id="txt-'+safeId+'"><strong>'+safeNombre+'</strong> — '+safeTxt+'</div>'+
+      '<div class="warn-text" id="txt-'+safeId+'"><strong>'+safeNombre+'</strong> — '+(window.ES?ES.html(n,'txt',n.lang||ES.lang((ALUMNOS_DATA[it.nombre]||{}).nip)):safeTxt)+'</div>'+
       '<div class="warn-meta" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+
         '<span>'+(isPos?'✅':(isNew?'🔴':'⏰'))+' '+semDisplay+'</span>'+
       '</div>'+
@@ -3105,7 +3106,7 @@ function editNota(id){
   var actEl = document.getElementById('act-'+id);
   if(!txtEl||!actEl) return;
   // Separar el prefijo de nombre del texto real
-  var raw = ref.nota.txt||'';
+  var raw = window.ES?(ES.vers(ref.nota,'txt').es||''):(ref.nota.txt||'');
   txtEl.innerHTML = '<strong>'+ref.nombre.replace(/</g,'&lt;')+'</strong>'+
     '<textarea class="warn-edit-input" id="edit-'+id+'">'+raw.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</textarea>';
   actEl.innerHTML =
@@ -3122,12 +3123,13 @@ function guardarEdicionNota(id){
   if(!ta) return;
   var nuevo = ta.value.trim();
   if(!nuevo){ showToast('⚠️ El texto no puede estar vacío'); return; }
-  ref.nota.txt = nuevo;
+  var _antesEs = ref.nota.txtEs!=null?ref.nota.txtEs:null, _rEs = window.ES?ES.editarNota(ref.nota,nuevo,(ALUMNOS_DATA[ref.nombre]||{}).nip):(ref.nota.txt=nuevo,{});
+  if(_rEs.pend && window.ES) ES.bitacoraNota((ALUMNOS_DATA[ref.nombre]||{}).nip, ref.nota, 'edicion', _antesEs);
   ref.nota.ts = Date.now(); // bumpea ts para que salga arriba
   syncToStorage();
   renderAlumnosList();
   renderHistorialNotas();
-  showToast('✏️ Nota actualizada ✓');
+  showToast(_rEs&&_rEs.pend?'✏️ Nota actualizada · el motor la traduce a su idioma':'✏️ Nota actualizada ✓');
 }
 
 function cambiarFechaNota(id, nuevaFecha){
@@ -6022,7 +6024,7 @@ function abrirRevisionPropuesta(){
   if((ev.notas||[]).length){
     h += '<div class="card-title" style="margin:14px 0 6px">Notas propuestas</div>';
     ev.notas.forEach(function(n,i){
-      h += '<label class="prp-row"><input type="checkbox" class="prp-nota" data-i="'+i+'" checked><span style="flex:1"><span style="font-size:11px;font-weight:700;color:'+(n.tipo==='positive'?'var(--green)':'var(--red)')+'">'+escH(n.etiqueta||'')+' · '+escH(n.fecha||'')+'</span><br><span style="font-size:13px">'+escH(n.txt)+'</span></span></label>';
+      h += '<label class="prp-row"><input type="checkbox" class="prp-nota" data-i="'+i+'" checked><span style="flex:1"><span style="font-size:11px;font-weight:700;color:'+(n.tipo==='positive'?'var(--green)':'var(--red)')+'">'+escH(n.etiqueta||'')+' · '+escH(n.fecha||'')+'</span><br><span style="font-size:13px">'+(window.ES?ES.html(n,'txt',ev.idioma):escH(n.txt))+'</span></span></label>';
     });
   }
   h += '<div style="display:flex;gap:8px;margin-top:14px"><button class="btn btn-ghost" style="flex:1" onclick="descartarPropuesta()">Descartar</button><button class="btn btn-primary" style="flex:2" onclick="aplicarPropuesta()">Aplicar lo marcado</button></div><button class="btn btn-ghost" style="margin-top:6px" onclick="cerrarRevisionPropuesta()">Cerrar sin decidir</button>';
@@ -6057,6 +6059,7 @@ function aplicarPropuesta(){
     if(!a.notas) a.notas = [];
     var fecha = n.fecha || new Date().toISOString().slice(0,10);
     a.notas.push({id:'n-'+Date.now()+'-'+Math.random().toString(36).slice(2,7), tipo:n.tipo==='positive'?'positive':'new', subtipo:n.subtipo||'', txt:n.txt, sem:formatSemLabel(getRevisionInfoEnFecha(nombre, fecha)), fecha:fecha, ts:Date.now(), origen:'propuesta'});
+    if(window.ES) ES.notaExtra(a.notas[a.notas.length-1], n, ev);
     notasAplicadas++;
   });
   syncToStorage(); syncCoachData();
@@ -6309,8 +6312,8 @@ function waSinChat(id){
   function e(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function f(iso){ if(!iso) return ''; var d=/^\d{4}-\d{2}-\d{2}$/.test(iso)?new Date(iso+'T12:00:00'):new Date(iso); return isNaN(d)?'':d.toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'}); }
   function chip(l,v,meta){ if(v==null) return ''; var c=v>=meta?'#15803d':v>=meta-15?'#b45309':'#b91c1c'; return '<span style="display:inline-block;margin:2px 4px 2px 0;padding:3px 8px;border-radius:10px;background:var(--surface2);font-size:11.5px"><b style="color:'+c+'">'+v+'%</b> '+l+'</span>'; }
-  function lista(t,a){ a=a||[]; if(!a.length) return ''; return '<div style="font-size:12px;font-weight:700;margin:8px 0 4px">'+t+'</div><ul style="padding-left:18px;font-size:12px;color:var(--text2);margin:0">'+a.map(function(x){return '<li>'+e(x)+'</li>';}).join('')+'</ul>'; }
-  function nota(t,o){ return o&&o.nota?'<div style="font-size:12px;margin-top:6px"><b>'+t+':</b> '+e(o.nota)+'</div>':''; }
+  function lista(t,a,it,k){ a=a||[]; if(!a.length) return ''; return '<div style="font-size:12px;font-weight:700;margin:8px 0 4px">'+t+'</div><ul style="padding-left:18px;font-size:12px;color:var(--text2);margin:0">'+a.map(function(x,i){return '<li>'+(window.ES&&it?ES.htmlPar(ES.chq(it,k+'['+i+']',x),it.idioma):e(x))+'</li>';}).join('')+'</ul>'; }
+  function nota(t,o,it,ruta){ return o&&o.nota?'<div style="font-size:12px;margin-top:6px"><b>'+t+':</b> '+(window.ES&&it?ES.htmlPar(ES.chq(it,ruta,o.nota),it.idioma):e(o.nota))+'</div>':''; }
   function item(it){
     var meta=it.meta||85, r=it.reporte||{}, rd=r.rendimiento||{}, pg=r.progresiones||{};
     var fal = it.faltas==null?'':'<span style="display:inline-block;margin:2px 4px;padding:3px 8px;border-radius:10px;font-size:11.5px;background:'+(it.faltas>=6?'#fde2e1':it.faltas>=3?'#fef3c7':'#dcfce7')+'">'+(it.faltas>=3?'⚠️ ':'')+it.faltas+' sesiones perdidas</span>';
@@ -6318,10 +6321,10 @@ function waSinChat(id){
       '<div style="margin-top:8px">'+chip('Pesas',it.pesas,meta)+chip('Cardio',it.cardio,meta)+chip('Dieta',it.dieta,meta)+fal+'</div>'+
       '<div style="font-size:12px;color:var(--text2);margin-top:4px">🎯 '+e(it.objetivo||'')+' · exigencia '+meta+'%'+(it.nivel?' · nivel '+e(it.nivel):'')+(it.gestion?' · '+e(it.gestion):'')+'</div>'+
       '<div style="margin-top:4px">'+chip('Disciplina',it.disciplina,75)+chip('Compromiso',it.compromiso,75)+chip('Aprendizaje',it.aprendizaje,75)+(rd.pct!=null?chip('Rendimiento',rd.pct,rd.medio||75):'')+'</div>'+
-      lista('🏆 Logros',it.logros)+lista('⚠️ Puntos críticos',it.criticos)+lista('🎯 Áreas de oportunidad',it.oportunidades)+
-      nota('Rendimiento',rd)+nota('Actividad',r.actividad)+nota('Cardio',r.cardio)+nota('Pesas',r.pesas)+
+      lista('🏆 Logros',it.logros,it,'logros')+lista('⚠️ Puntos críticos',it.criticos,it,'criticos')+lista('🎯 Áreas de oportunidad',it.oportunidades,it,'oportunidades')+
+      nota('Rendimiento',rd,it,'reporte.rendimiento.nota')+nota('Actividad',r.actividad,it,'reporte.actividad.nota')+nota('Cardio',r.cardio,it,'reporte.cardio.nota')+nota('Pesas',r.pesas,it,'reporte.pesas.nota')+
       (pg.recibidas!=null?'<div style="font-size:12px;margin-top:6px"><b>Progresiones:</b> '+pg.recibidas+' recibidas · '+(pg.aplicadas||0)+' aplicadas · '+(pg.vencidas||0)+' vencidas · '+(pg.llamados||0)+' llamados</div>':'')+
-      (it.mensaje?'<details style="margin-top:8px"><summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--teal)">Feedback que recibió</summary><div style="white-space:pre-wrap;font-size:12px;margin-top:6px">'+e(it.mensaje)+'</div></details>':'')+
+      (it.mensaje?'<details style="margin-top:8px"><summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--teal)">Feedback que recibió</summary><div style="white-space:pre-wrap;font-size:12px;margin-top:6px">'+(window.ES?ES.htmlPar(ES.chq(it,'mensaje',it.mensaje),it.idioma):e(it.mensaje))+'</div></details>':'')+
       '</details>';
   }
   function pintar(nip){
@@ -6356,21 +6359,22 @@ function waSinChat(id){
     return Promise.all([db.ref('fittrack_rendimiento/'+nip).once('value'), db.ref('fittrack_sugerencias/'+nip).once('value')]).then(function(r){
       var s=r[1].val()||{}; var sug=Object.keys(s).map(function(k){var x=s[k]; if(x) x._id=k; return x;}).filter(function(x){return x&&!x.prueba;}).sort(function(a,b){return String(b.para||b.fecha).localeCompare(String(a.para||a.fecha));});
       CACHE[nip]={ren:r[0].val()||null, sug:sug}; return CACHE[nip]; }); }
-  function semanaHTML(ren){
+  function semanaHTML(ren, noe){
+    function NE(o){ return noe&&window.ES?ES.html(o,'nota',ren&&ren.idioma):e(o.nota); }
     if(!ren) return '<div style="font-size:12px;color:var(--text3)">Aún sin datos de su semana.</div>';
     var a=ren.actividad||{}, c=ren.cardio||{}, fz=ren.fuerza||{}, o='';
     o+='<div style="font-size:11.5px;color:var(--text3);margin-bottom:6px">Actualizado '+f(ren.actualizado)+(ren.faseDieta?' · fase '+e(ren.faseDieta):'')+'</div>';
-    if(a.pasosProm!=null) o+='<div style="font-size:12.5px;margin:4px 0"><b>🚶 Actividad:</b> '+e(a.nivel||'')+' · '+Number(a.pasosProm).toLocaleString('es-MX')+' pasos/día'+(a.tendencia?' · '+e(a.tendencia):'')+'</div>'+(a.nota?'<div style="font-size:12px;color:var(--text2)">'+e(a.nota)+'</div>':'');
-    if(c.aplica!==false&&(c.total||c.kcalProm)) o+='<div style="font-size:12.5px;margin:8px 0 4px"><b>❤️ Cardio:</b> '+(c.kcalProm!=null?c.kcalProm+' kcal · ':'')+(c.minProm!=null?c.minProm+' min · ':'')+(c.lpmProm!=null?c.lpmProm+' lpm':'')+(c.total?' · '+(c.conDatos||0)+' de '+c.total+' con datos':'')+'</div>'+(c.nota?'<div style="font-size:12px;color:var(--text2)">'+e(c.nota)+'</div>':'');
-    if(fz.total) o+='<div style="font-size:12.5px;margin:8px 0 4px"><b>🏋️ Registros de pesas:</b> '+(fz.conDatos||0)+' de '+fz.total+' ejercicios con peso y reps</div>'+(fz.nota?'<div style="font-size:12px;color:var(--text2)">'+e(fz.nota)+'</div>':'');
+    if(a.pasosProm!=null) o+='<div style="font-size:12.5px;margin:4px 0"><b>🚶 Actividad:</b> '+e(a.nivel||'')+' · '+Number(a.pasosProm).toLocaleString('es-MX')+' pasos/día'+(a.tendencia?' · '+e(a.tendencia):'')+'</div>'+(a.nota?'<div style="font-size:12px;color:var(--text2)">'+NE(a)+'</div>':'');
+    if(c.aplica!==false&&(c.total||c.kcalProm)) o+='<div style="font-size:12.5px;margin:8px 0 4px"><b>❤️ Cardio:</b> '+(c.kcalProm!=null?c.kcalProm+' kcal · ':'')+(c.minProm!=null?c.minProm+' min · ':'')+(c.lpmProm!=null?c.lpmProm+' lpm':'')+(c.total?' · '+(c.conDatos||0)+' de '+c.total+' con datos':'')+'</div>'+(c.nota?'<div style="font-size:12px;color:var(--text2)">'+NE(c)+'</div>':'');
+    if(fz.total) o+='<div style="font-size:12.5px;margin:8px 0 4px"><b>🏋️ Registros de pesas:</b> '+(fz.conDatos||0)+' de '+fz.total+' ejercicios con peso y reps</div>'+(fz.nota?'<div style="font-size:12px;color:var(--text2)">'+NE(fz)+'</div>':'');
     return o||'<div style="font-size:12px;color:var(--text3)">Aún sin datos de su semana.</div>';
   }
-  function progHTML(sug, max){
+  function progHTML(sug, max, noe){
     if(!sug.length) return '<div style="font-size:12px;color:var(--text3)">Aún no tiene progresiones sugeridas.</div>';
     var g={t:sug.length,a:0,v:0,l:0}; sug.forEach(function(x){ var s=estado(x)[0]; if(/Atendida/.test(s)) g.a++; else if(/Vencida/.test(s)) g.v++; if(x.tipo==='llamado') g.l++; });
     var o='<div style="font-size:12px;margin-bottom:6px"><b>'+g.t+'</b> recibidas · <b style="color:#15803d">'+g.a+'</b> atendidas · <b style="color:#89A5AD">'+g.v+'</b> vencidas · <b style="color:#b91c1c">'+g.l+'</b> llamados'+(g.t?' · aplicó el '+Math.round(g.a/g.t*100)+'%':'')+'</div>';
     sug.slice(0,max||sug.length).forEach(function(x){ var st=estado(x);
-      o+='<div style="font-size:12px;padding:6px 0;border-bottom:1px solid var(--border2)"><span style="color:'+st[1]+';font-weight:700">'+st[0]+'</span> · '+f(x.para||x.fecha)+(x.sesion?' · '+e(x.sesion):'')+'<br><b>'+e(x.ejercicio||'')+'</b> '+(x.tipo==='observacion'?'<span style="color:#b45309">(observación)</span> ':'')+'— '+e(x.texto||'')+'</div>'; });
+      o+='<div style="font-size:12px;padding:6px 0;border-bottom:1px solid var(--border2)"><span style="color:'+st[1]+';font-weight:700">'+st[0]+'</span> · '+f(x.para||x.fecha)+(x.sesion?' · '+e(x.sesion):'')+'<br><b>'+e(x.ejercicio||'')+'</b> '+(x.tipo==='observacion'?'<span style="color:#b45309">(observación)</span> ':'')+'— '+(noe&&window.ES?ES.html(x,'texto',null):e(x.texto||''))+'</div>'; });
     if(max&&sug.length>max) o+='<div style="font-size:11.5px;color:var(--text3);margin-top:4px">… y '+(sug.length-max)+' más (completas en el reporte PDF)</div>';
     return o;
   }
@@ -6379,8 +6383,8 @@ function waSinChat(id){
     var box=document.getElementById('modal-ftextra'); if(!box){ var ch=document.getElementById('modal-chequeos'); if(!ch) return; box=document.createElement('div'); box.id='modal-ftextra'; box.className='card'; box.style.cssText='margin-bottom:12px;padding:12px 14px'; ch.parentNode.insertBefore(box, ch.nextSibling); }
     box.innerHTML='<div class="card-title" style="margin-bottom:8px">📊 Su semana en números y progresiones</div><div style="font-size:12px;color:var(--text3)">Cargando…</div>';
     delete CACHE[nip];
-    cargar(nip).then(function(d){ box.innerHTML='<div class="card-title" style="margin-bottom:8px">📊 Su semana en números <span style="font-weight:400;color:var(--text3);font-size:12px">· lo que ve en FitTrack</span></div>'+semanaHTML(d.ren)+
-      '<details style="margin-top:10px"><summary style="cursor:pointer;font-size:13px;font-weight:700">📈 Progresiones sugeridas ('+d.sug.length+')</summary><div style="margin-top:6px">'+progHTML(d.sug, 15)+'</div></details>'; })
+    cargar(nip).then(function(d){ box.innerHTML='<div class="card-title" style="margin-bottom:8px">📊 Su semana en números <span style="font-weight:400;color:var(--text3);font-size:12px">· lo que ve en FitTrack · en español</span></div>'+semanaHTML(d.ren, true)+
+      '<details style="margin-top:10px"><summary style="cursor:pointer;font-size:13px;font-weight:700">📈 Progresiones sugeridas ('+d.sug.length+')</summary><div style="margin-top:6px">'+progHTML(d.sug, 15, true)+'</div></details>'; })
     .catch(function(){ box.innerHTML='<div style="font-size:12px;color:var(--text3)">No se pudieron leer sus datos de FitTrack.</div>'; });
   }
   var _o=openProfileModal;
@@ -9267,6 +9271,89 @@ window.FA={
 
 </script>
 <style>
+/* ── TODO EN ESPAÑOL PARA NOÉ (Noé 13 nov 12:20) ── */
+.es-pend{display:inline-block;font:600 11.5px 'DM Sans',sans-serif;color:#9a5b00;background:var(--amber-light);border-radius:8px;padding:2px 8px;margin:2px 0}
+.es-tp{display:inline-block;font:600 11px 'DM Sans',sans-serif;color:var(--teal-dark);background:var(--teal-xlight);border-radius:8px;padding:1px 7px;margin:3px 0 0}
+span.es-pend.es-pend{color:#9a5b00}
+span.es-tp.es-tp{color:var(--teal-dark)}
+.pse-ntx{font-size:12px;line-height:1.4}
+details.es-orig{margin:5px 0 2px;font-size:12px;line-height:1.4}
+details.es-orig summary{cursor:pointer;color:var(--teal-dark);font-weight:600;list-style:none;display:inline-block;padding:2px 0}
+details.es-orig summary::-webkit-details-marker{display:none}
+details.es-orig[open] summary{margin-bottom:3px}
+details.es-orig .es-o{color:var(--text2);background:var(--surface2);border-left:3px solid var(--border2);border-radius:6px;padding:6px 8px;white-space:pre-wrap;overflow-wrap:anywhere}
+</style>
+<script>
+// ══ TODO EN ESPAÑOL PARA NOÉ (Noé 13 nov 12:20) ══════════════════════════════════════════════════════════════════════
+// Regla: en FitTrack Coach todo se le muestra a Noé en ESPAÑOL (propuestas, perfil «Lo que ve el alumno», notas, avisos,
+// progresiones sugeridas, evaluación). Contrato de datos (motor/CONTRATO_ESPANOL.md):
+//   · texto del alumno en su idioma en el campo de siempre (txt / texto / nota / titulo) y la versión en español junto a él
+//     en <campo>Es (txtEs, textoEs, notaEs, tituloEs); `es` (string) también se acepta.
+//   · si falta el español y el texto no está en español → se muestra «(traducción al español pendiente)» y el original queda
+//     en «👁 Ver como lo ve el alumno»; el motor (tools/notas_es.py) agrega el campo español en la siguiente revisión.
+//   · lo que Noé escribe o edita es español: va a <campo>Es (alumno en otro idioma) + traduccionPendiente:<idioma> y el motor
+//     traduce el campo del alumno; mientras tanto el alumno ve el texto anterior (o el español si es nuevo).
+(function(){
+  var NOMB={es:'Español',en:'English',pt:'Português',it:'Italiano',fr:'Français',de:'Deutsch',ru:'Русский',ar:'العربية',zh_tw:'繁體中文',zh_cn:'简体中文',pl:'Polski'};
+  var ESW=/\b(el|la|los|las|de|del|que|tu|tus|en|con|para|por|una|un|esta|este|semana|hoy|aquí|sesiones|series|se|y|no|si|al|lo|te|le|cuando|tienes|hiciste)\b/gi;
+  var ENW=/\b(the|you|your|and|of|to|this|week|with|for|on|in|is|it|was|were|that|from|so|we|if|at|my|keep|sets|every|next)\b/gi;
+  var OTW=/\b(você|não|seu|sua|são|treino|il|gli|della|sono|questa|settimana|hai|vous|avec|cette|est|der|die|und|ist|nicht|deine|diese|woche|jest|nie|się)\b|ção|ções|ões/gi;
+  function pareceEs(s){ s=String(s==null?'':s); if(!s.replace(/[\s\d!-\/:-@\[-`{-~·×→%]/g,'')) return true;
+    if(/[぀-ヿ㐀-鿿Ѐ-ӿ؀-ۿąęłńśźż]/.test(s)) return false;
+    var a=(s.match(ESW)||[]).length+(/[ñ¿¡]|[áéíóú]/i.test(s)?1:0), b=(s.match(ENW)||[]).length, c=(s.match(OTW)||[]).length; return a>=b&&a>=c; }
+  function e(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function campoEs(c){ return c==='nota'?'notaEs':c+'Es'; }
+  // {es, orig, otro (hay versión distinta para el alumno), pend (falta el español), tp (traducción al idioma del alumno pendiente)}
+  function par(orig,es,tp){ orig=orig==null?'':String(orig);
+    if(es!=null&&String(es).trim()) return {es:String(es),orig:orig,otro:String(es).trim()!==orig.trim()&&!!orig.trim(),pend:false,tp:!!tp};
+    if(pareceEs(orig)) return {es:orig,orig:orig,otro:false,pend:false,tp:!!tp};
+    return {es:null,orig:orig,otro:true,pend:true,tp:!!tp}; }
+  function vers(o,c){ o=o||{}; c=c||'txt'; var es=o[campoEs(c)];
+    if(es==null&&typeof o.es==='string') es=o.es; if(es==null&&c==='txt') es=o.textoEs;
+    return par(o[c],es,o.traduccionPendiente); }
+  function nombreLang(l){ return NOMB[l]||l||'su idioma'; }
+  // Chequeos (fittrack_chequeos/<nip>/items/<c>): el español va en item.textosEs {clave: texto}; clave = ruta del campo con
+  // «.» y «[i]» → «|» (p. ej. mensaje, logros|0, reporte|notas|1, reporte|cardio|nota). Lo genera motor/enviar_chequeo.py.
+  function claveChq(ruta){ return String(ruta).replace(/\[(\d+)\]/g,'|$1').replace(/\./g,'|'); }
+  function chq(item,ruta,valor){ var m=(item&&item.textosEs)||{}; return par(valor,m[claveChq(ruta)],false); }
+  function htmlPar(v,lang,opt){ opt=opt||{}; var h='';
+    h+=v.pend?'<span class="es-pend">(traducción al español pendiente)</span>':e(v.es);
+    if(v.otro&&v.orig) h+='<details class="es-orig"'+(opt.abierto?' open':'')+'><summary>👁 Ver como lo ve el alumno'+(lang&&lang!=='es'?' ('+e(nombreLang(lang))+')':'')+'</summary><div class="es-o">'+e(v.orig)+'</div></details>';
+    if(v.tp&&!opt.sinTp) h+='<div><span class="es-tp">🌐 traducción a su idioma pendiente (el motor la hace)</span></div>';
+    return h; }
+  // Texto plano en español para listas cortas / búsquedas (pendiente → indicador entre paréntesis).
+  function plano(v){ return v.pend?'(traducción al español pendiente)':v.es; }
+  // HTML: español (o indicador) + «👁 Ver como lo ve el alumno» con el texto en su idioma.
+  function html(o,c,lang,opt){ return htmlPar(vers(o,c),lang,opt); }
+  // Idioma de la app del alumno: LVA (perfil abierto) → propuesta → fittrack_vistos/<nip>/idioma/lang (caché).
+  var LC={}, pedidos={};
+  function lang(nip){ nip=String(nip||''); if(!nip) return null; if(LC[nip]) return LC[nip];
+    try{ var D=window.LVA&&LVA.D; if(D&&String(D.nip)===nip&&D.vis&&D.vis.idioma&&D.vis.idioma.lang) return LC[nip]=D.vis.idioma.lang; }catch(x){}
+    try{ var ev=(PROP.evaluaciones||{})[nip]; if(ev&&ev.idioma) return LC[nip]=ev.idioma; }catch(x){}
+    if(!pedidos[nip]){ pedidos[nip]=1; try{ db.ref('fittrack_vistos/'+nip+'/idioma/lang').once('value').then(function(s){ var l=s&&s.val&&s.val(); if(l) LC[nip]=String(l); }).catch(function(){}); }catch(x){} }
+    return null; }
+  function prefetch(){ try{ Object.keys(ALUMNOS_DATA||{}).forEach(function(n){ var a=ALUMNOS_DATA[n]; if(a&&a.nip) lang(a.nip); }); }catch(x){} }
+  setTimeout(prefetch,4000);
+  // Nota que pasa de la propuesta al alumno: conserva su español y el idioma.
+  function notaExtra(dst,n,ev){ if(!dst||!n) return dst; if(n.txtEs) dst.txtEs=String(n.txtEs); if(n.traduccionPendiente) dst.traduccionPendiente=n.traduccionPendiente;
+    var l=(ev&&ev.idioma)||null; if(l&&l!=='es') dst.lang=l; return dst; }
+  // Nota que Noé escribe (español): alumno en otro idioma → txtEs + traduccionPendiente (el motor traduce txt).
+  function notaNueva(dst,nip){ var l=lang(nip); if(l&&l!=='es'){ dst.txtEs=dst.txt; dst.lang=l; dst.traduccionPendiente=l; } return dst; }
+  // Noé edita una nota existente (siempre en español). Devuelve {campo, pend}.
+  function editarNota(n,nuevo,nip){ var v=vers(n,'txt'), l=n.lang||lang(nip);
+    if(n.txtEs!=null||(l&&l!=='es')||!pareceEs(n.txt)){ n.txtEsAnterior=n.txtEs!=null?n.txtEs:null; n.txtEs=nuevo; n.traduccionPendiente=l&&l!=='es'?l:true; if(l&&l!=='es') n.lang=l;
+      n.editadoPor='Noé'; n.editadoEn=new Date().toISOString(); return {campo:'txtEs',pend:true}; }
+    n.txt=nuevo; return {campo:'txt',pend:false}; }
+  // Bitácora para el motor (V14 ediciones Noé → traduce txt al idioma del alumno; la nota se localiza por id).
+  function bitacoraNota(nip,n,tipo,antesEs){ try{ if(!nip||!n||!n.traduccionPendiente) return; var u={}, id='e'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+    u['fittrack_ediciones_noe/'+nip+'/'+id]={ts:Date.now(),en:new Date().toISOString(),por:'Noé',app:'FitTrack Coach',tipo:tipo,nodo:'fittrack_data/alumnos',ruta:'fittrack_data/alumnos/'+nip+'/notas',notaId:n.id||null,
+      antes:{texto:n.txt||null,textoEs:antesEs==null?null:antesEs},despues:{texto:n.txt||null,textoEs:n.txtEs||null},idioma:n.lang||null,traduccionPendiente:true};
+    db.ref().update(u).catch(function(err){ console.warn('[ES] bitácora',err); }); }catch(x){ console.warn('[ES] bitácora',x); } }
+  window.ES={pareceEs:pareceEs,par:par,vers:vers,html:html,htmlPar:htmlPar,plano:plano,chq:chq,claveChq:claveChq,lang:lang,nombreLang:nombreLang,notaExtra:notaExtra,notaNueva:notaNueva,editarNota:editarNota,bitacoraNota:bitacoraNota,_cache:LC};
+})();
+</script>
+
+<style>
 /* ── «Lo que ve el alumno» (perfil · Noé 13 nov 9:52) ── */
 #lva-card{padding:12px 14px;margin-bottom:12px}
 .lva-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
@@ -9404,6 +9491,9 @@ window.FA={
   var CAMPOS_TX=['texto','nota','detalle','frase'];
   function esClave(t){ t=String(t||'').trim(); return /^[A-Za-z0-9_.]+$/.test(t)&&/_/.test(t); }
   function txArea(o){ return [o.detalle,o.siguiente,o.siguienteNivel].filter(function(x){ return typeof x==='string'&&x.trim(); }).join('\n→ '); }
+  // versión en español de un área del medallero (detalleEs/siguienteEs/siguienteNivelEs); undefined si falta alguna parte
+  function txAreaEs(o){ var ks=['detalle','siguiente','siguienteNivel'].filter(function(c){ return typeof o[c]==='string'&&o[c].trim(); }); if(!ks.length) return undefined; var out=[];
+    for(var i=0;i<ks.length;i++){ var c=ks[i], v=o[c+'Es']; if(typeof v==='string'&&v.trim()) out.push(v); else if(window.ES&&window.ES.pareceEs(o[c])) out.push(o[c]); else return undefined; } return out.join('\n→ '); }
   function txDe(o){ if(typeof o.texto==='string') return o.texto; if(typeof o.nota==='string') return o.nota; if(typeof o.detalle==='string') return txArea(o); if(typeof o.frase==='string') return o.frase; return ''; }
   function norm(t){ return String(t||'').replace(/\s+/g,' ').trim().toLowerCase(); }
   function notas(D){
@@ -9418,9 +9508,9 @@ window.FA={
         ed:{tipo:'aviso',nodo:'fittrack_chequeos/avisos',ruta:'fittrack_chequeos/avisos/'+nip+'/'+id,tx:'texto',es:'textoEs',raw:x}}); });
     // 2) Medallero (Mis logros): avisos + textos de cada área
     var M=D.med||{}; (Array.isArray(M.avisos)?M.avisos:Object.keys(M.avisos||{}).map(function(k){ return M.avisos[k]; })).forEach(function(x,i){ if(!x) return; var id=x.id||('aviso '+i); var p=id.split('_');
-      add({fk:x.creado||'',fuente:'Mis logros (medallero) · aviso',ruta:'fittrack_medallero/alumno/'+nip+'/avisos/'+i,area:areaDe(p[2]||id),fecha:x.creado,titulo:x.titulo,texto:x.texto,extra:x.tipo?'tipo: '+x.tipo:'',visto:vmed[id]?'visto '+fF(vmed[id],1):'',estado:'vigente',id:id}); });
+      add({fk:x.creado||'',fuente:'Mis logros (medallero) · aviso',ruta:'fittrack_medallero/alumno/'+nip+'/avisos/'+i,area:areaDe(p[2]||id),fecha:x.creado,titulo:x.titulo,tituloEs:x.tituloEs,texto:x.texto,textoEs:x.textoEs,extra:x.tipo?'tipo: '+x.tipo:'',visto:vmed[id]?'visto '+fF(vmed[id],1):'',estado:'vigente',id:id}); });
     var AR=M.areas||{}; Object.keys(AR).forEach(function(a){ var x=AR[a]; if(!x) return; var t=txArea(x); if(!t) return;
-      add({fuente:'Mis logros (medallero) · texto del área',ruta:'fittrack_medallero/alumno/'+nip+'/areas/'+a,area:areaDe(a),fecha:M.actualizado||M.semana,titulo:'Mis logros · '+a+(x.valor?' ('+x.valor+')':'')+(x.medalla?' · '+x.medalla:''),texto:t,extra:'estado: '+(x.estado||'—')+(M.provisional?' · semana en curso':''),estado:'vigente'}); });
+      add({fuente:'Mis logros (medallero) · texto del área',ruta:'fittrack_medallero/alumno/'+nip+'/areas/'+a,area:areaDe(a),fecha:M.actualizado||M.semana,titulo:'Mis logros · '+a+(x.valor?' ('+x.valor+')':'')+(x.medalla?' · '+x.medalla:''),texto:t,textoEs:txAreaEs(x),extra:'estado: '+(x.estado||'—')+(M.provisional?' · semana en curso':''),estado:'vigente'}); });
     // 3) Mi semana en números (fittrack_rendimiento) — notas por área
     var R=D.ren||{}; [['actividad','actividad'],['cardio','cardio'],['fuerza','pesas']].forEach(function(q){ var x=R[q[0]]; if(!x||!x.nota) return;
       add({fuente:'Mi semana en números · nota',ruta:'fittrack_rendimiento/'+nip+'/'+q[0]+'/nota',area:q[1],fecha:x.actualizado||R.actualizado,titulo:'Nota de '+(q[0]==='fuerza'?'pesas (registros y esfuerzo)':q[0]),texto:x.nota,textoEs:x.notaEs,extra:x.fuente?'fuente: '+x.fuente:(x.notaFuente?'fuente: '+x.notaFuente:''),estado:'vigente',
@@ -9440,10 +9530,10 @@ window.FA={
     // 6) Llamados por WhatsApp (no usar FitTrack) y advertencias formales — fittrack_llamados/<nip>
     var LL=(D.ll&&D.ll.items)||{}; Object.keys(LL).forEach(function(k){ var x=LL[k]; if(!x) return; var adv=x.tipo==='advertencia_formal';
       add({fuente:adv?'Advertencia formal (feedback del chequeo)':'WhatsApp · llamado por no usar FitTrack',ruta:'fittrack_llamados/'+nip+'/items/'+k,area:adv?'chequeo':'uso_fittrack',fecha:x.enviadoEn||x.fecha,
-        titulo:adv?'Advertencia formal':('Llamado nivel '+x.nivel+(x.recaida?' (recaída)':'')+' · '+x.diasSin+' días sin entrar'),texto:x.texto,extra:(x.textoOrigen?'texto '+x.textoOrigen:''),estado:x.anulado?'anulada':'vigente',anuladaEn:x.anuladoEn,motivo:x.motivo,llamado:!adv}); });
+        titulo:adv?'Advertencia formal':('Llamado nivel '+x.nivel+(x.recaida?' (recaída)':'')+' · '+x.diasSin+' días sin entrar'),texto:x.texto,textoEs:x.textoEs,extra:(x.textoOrigen?'texto '+x.textoOrigen:''),estado:x.anulado?'anulada':'vigente',anuladaEn:x.anuladoEn,motivo:x.motivo,llamado:!adv}); });
     // 7) Feedback de cada chequeo (fittrack_chequeos/<nip>/items) — lo mismo que ve en Mis chequeos
     var CI=(D.chq&&D.chq.items)||{}; Object.keys(CI).forEach(function(k){ var x=CI[k]; if(!x||x.prueba||!x.mensaje) return;
-      add({fuente:'Mis chequeos · feedback',ruta:'fittrack_chequeos/'+nip+'/items/'+k,area:'chequeo',fecha:x.fecha,titulo:(x.evaluacionInicial||x.num===0)?'Evaluación inicial':'Chequeo #'+x.num,texto:x.mensaje,visto:x.vistoEn?'visto '+fF(x.vistoEn,1):'',estado:'vigente'}); });
+      add({fuente:'Mis chequeos · feedback',ruta:'fittrack_chequeos/'+nip+'/items/'+k,area:'chequeo',fecha:x.fecha,titulo:(x.evaluacionInicial||x.num===0)?'Evaluación inicial':'Chequeo #'+x.num,texto:x.mensaje,textoEs:(x.textosEs||{}).mensaje,visto:x.vistoEn?'visto '+fF(x.vistoEn,1):'',estado:'vigente'}); });
     // 8) Mapa de volumen: frase de la semana
     if(D.mapa&&D.mapa.frase) add({fuente:'Mapa de volumen · frase de la semana',ruta:'fittrack_mapa/'+nip+'/frase',area:'pesas',fecha:D.mapa.actualizado,titulo:'Frase del mapa de volumen',texto:D.mapa.frase,estado:'vigente'});
     var vistosTx={}; out.forEach(function(it){ vistosTx[it.dk]=1; });
@@ -9481,15 +9571,20 @@ window.FA={
   }
 
   // ── pintado ──
-  function bloqueEs(it,lang){ if(!it.textoEs||norm(it.textoEs)===norm(it.texto)) return ''; return '<div class="lva-es"><b>🇲🇽 En español:</b> '+(it.tituloEs?'<b>'+e(it.tituloEs)+'</b>\n':'')+e(it.textoEs)+'</div>'; }
+  // Noé 13 nov 12:20: todo en ESPAÑOL para Noé; el texto en el idioma del alumno queda en «👁 Ver como lo ve el alumno».
+  function esH(o,c){ var D=EST.D, lg=(((D&&D.vis)||{}).idioma||{}).lang; return window.ES?window.ES.html(o,c,lg):e(o&&o[c]); }
+  function vTx(it){ return window.ES?window.ES.par(it.texto,it.textoEs,((it.ed&&it.ed.raw)||{}).traduccionPendiente):{es:it.texto,orig:it.texto,otro:false,pend:false}; }
+  function vTi(it){ return window.ES?window.ES.par(it.titulo,it.tituloEs):{es:it.titulo,orig:it.titulo,otro:false,pend:false}; }
+  function bloqueEs(it,lang){ var v=vTx(it), t=vTi(it); if(!v.otro&&!t.otro) return '';
+    return '<details class="es-orig"><summary>👁 Ver como lo ve el alumno'+(lang&&lang!=='es'&&window.ES?' ('+e(window.ES.nombreLang(lang))+')':'')+'</summary><div class="es-o">'+(it.titulo?'<b>'+e(it.titulo)+'</b>\n':'')+e(it.texto)+'</div></details>'; }
   function itemHTML(it,i,lang){
-    var cls=it.estado==='anulada'?' anu':(it.estado==='reemplazada'?' rem':''); var largo=String(it.texto||'').length>420, ab=EST.abiertos[i];
+    var cls=it.estado==='anulada'?' anu':(it.estado==='reemplazada'?' rem':''); var _v=vTx(it), largo=String(_v.es||it.texto||'').length>420, ab=EST.abiertos[i];
     return '<div class="lva-it'+cls+'" data-i="'+i+'"><div class="lva-it-top"><span class="lva-fe">'+e(fF(it.fecha,1)||'sin fecha')+'</span>'+
       '<span class="lva-tag a">'+e(AREA_L[it.area]||it.area)+'</span>'+(it.llamado?'<span class="lva-tag x">llamada de atención</span>':'')+
       (it.estado==='anulada'?'<span class="lva-tag x">ANULADA</span>':(it.estado==='reemplazada'?'<span class="lva-tag r">REEMPLAZADA</span>':'<span class="lva-tag v">VIGENTE</span>'))+'</div>'+
       '<div class="lva-muted" style="margin-bottom:2px">'+e(it.fuente)+'</div>'+
-      (it.titulo?'<div class="lva-tit">'+e(it.titulo)+'</div>':'')+(it.tituloEs&&it.tituloEs!==it.titulo&&!it.textoEs?'<div class="lva-muted">🇲🇽 '+e(it.tituloEs)+'</div>':'')+
-      '<div class="lva-txt'+(largo&&!ab?' clip':'')+'">'+e(it.texto)+'</div>'+(largo?'<button type="button" class="lva-more" data-mas="'+i+'">'+(ab?'Ver menos':'Ver texto completo')+'</button>':'')+
+      (it.titulo||it.tituloEs?'<div class="lva-tit">'+(function(t){ return t.pend?(_v.pend?'':'<span class="es-pend">(título: traducción al español pendiente)</span>'):e(t.es); })(vTi(it))+'</div>':'')+
+      '<div class="lva-txt'+(largo&&!ab?' clip':'')+'">'+(_v.pend?'<span class="es-pend">(traducción al español pendiente)</span>':e(_v.es))+'</div>'+(largo?'<button type="button" class="lva-more" data-mas="'+i+'">'+(ab?'Ver menos':'Ver texto completo')+'</button>':'')+
       (largo&&!ab?'':bloqueEs(it,lang))+
       (it.estado!=='vigente'?'<div class="'+(it.estado==='anulada'?'lva-anu':'lva-rem')+'">'+(it.estado==='anulada'?'⛔ Anulada':'↺ Reemplazada')+(it.anuladaEn?' el '+e(fF(it.anuladaEn,1)):'')+(it.motivo?' · motivo: '+e(it.motivo):'')+'</div>':'')+
       (window.LVA_EDIT?LVA_EDIT.html(it,i,lang):'')+
@@ -9548,13 +9643,13 @@ window.FA={
     } else h+='<div class="lva-box"><h4>🏋️ Tonelaje</h4><div class="lva-vacio">Sin nodo de tonelaje.</div>'+anuBox(D.tonA,'el tonelaje')+'</div>';
     var F=R.fuerza||{}, ES=F.esfuerzo||{};
     h+='<div class="lva-box"><h4>💪 Esfuerzo y registro de pesas <small>Mi semana · '+e(fF(R.actualizado,1))+'</small></h4><div class="lva-kpis"><div class="lva-kpi"><b>'+(F.conDatos!=null?F.conDatos+'/'+F.total:'—')+'</b><span>ejercicios con peso y reps</span></div><div class="lva-kpi"><b>'+(ES.sesiones!=null?ES.conEsfuerzo+'/'+ES.sesiones:'—')+'</b><span>sesiones con esfuerzo 1–10</span></div></div>'+
-      (F.nota?'<div class="lva-p">'+e(F.nota)+'</div>'+(F.notaEs&&F.notaEs!==F.nota?'<div class="lva-es"><b>🇲🇽 En español:</b> '+e(F.notaEs)+'</div>':''):'')+'</div>';
+      (F.nota?'<div class="lva-p">'+esH(F,'nota')+'</div>':'')+'</div>';
     if(D.mapa&&D.mapa.frase) h+='<div class="lva-box"><h4>🗺️ Mapa de volumen <small>'+e(fF(D.mapa.actualizado,1))+'</small></h4><div class="lva-p">'+e(D.mapa.frase)+'</div></div>';
     return h; }
   function estadoSug(x){ var hoy=new Date().toISOString().slice(0,10); if(x.atendidaEn||x.estado==='atendida') return ['✅ Atendida','#15803d']; if(x.tipo==='llamado') return ['🔴 Llamado','#b91c1c']; var p=String(x.para||x.fecha||'').slice(0,10); if(p&&p<hoy) return ['⌛ Vencida','#89A5AD']; if(p===hoy) return ['🔥 Hoy','#0e7490']; return ['📅 Próxima','#0891b2']; }
   function paneSemana(){ var D=EST.D, R=D.ren, h='';
     if(R){ var a=R.actividad||{}, c=R.cardio||{}, f=R.fuerza||{};
-      function nt(x){ return x&&x.nota?'<div class="lva-p">'+e(x.nota)+'</div>'+(x.notaEs&&x.notaEs!==x.nota?'<div class="lva-es"><b>🇲🇽 En español:</b> '+e(x.notaEs)+'</div>':''):''; }
+      function nt(x){ return x&&x.nota?'<div class="lva-p">'+esH(x,'nota')+'</div>':''; }
       h+='<div class="lva-box"><h4>📊 Su semana en números <small>actualizado '+e(fF(R.actualizado,1))+(R.faseDieta?' · fase '+e(R.faseDieta):'')+'</small></h4>'+
         '<div class="lva-muted" style="margin-top:4px">🚶 <b>Actividad</b>'+(a.actualizado?' · '+e(fF(a.actualizado,1)):'')+'</div><div class="lva-kpis">'+(a.pasosSemana!=null||a.pasosProm!=null?'<div class="lva-kpi"><b>'+n0(a.pasosSemana!=null?a.pasosSemana:a.pasosProm)+'</b><span>pasos/día (7 días)</span></div>':'')+(a.nivel?'<div class="lva-kpi"><b style="font-size:13px">'+e(a.nivel)+'</b><span>nivel'+(a.tendencia?' · '+e(a.tendencia):'')+'</span></div>':'')+(a.meta?'<div class="lva-kpi"><b>'+n0(a.meta)+'</b><span>meta</span></div>':'')+'</div>'+nt(a)+
         (c.aplica!==false?'<div class="lva-muted" style="margin-top:8px">❤️ <b>Cardio</b> (últimas 4 semanas)</div><div class="lva-kpis"><div class="lva-kpi"><b>'+(c.total!=null?c.total:'—')+'</b><span>cardios</span></div><div class="lva-kpi"><b>'+(c.conDatos!=null?c.conDatos:'—')+'</b><span>con datos'+(c.conReloj?' · '+c.conReloj+' de reloj':'')+'</span></div>'+(c.kcalProm!=null?'<div class="lva-kpi"><b>'+n0(c.kcalProm)+'</b><span>kcal prom.</span></div>':'')+(c.minProm!=null?'<div class="lva-kpi"><b>'+n1(c.minProm)+'</b><span>min prom.</span></div>':'')+(c.lpmProm!=null?'<div class="lva-kpi"><b>'+n0(c.lpmProm)+'</b><span>lpm prom.</span></div>':'')+'</div>'+nt(c)+(c.fuente?'<div class="lva-muted">fuente de la nota: '+e(c.fuente)+'</div>':''):'<div class="lva-muted" style="margin-top:8px">❤️ Cardio: no aplica</div>')+
@@ -9564,7 +9659,7 @@ window.FA={
     var S=D.sug||{}, L=Object.keys(S).map(function(k){ var x=S[k]; if(x) x._id=k; return x; }).filter(function(x){ return x&&!x.prueba; }).sort(function(a,b){ return String(b.para||b.fecha).localeCompare(String(a.para||a.fecha)); });
     var g={t:L.length,a:0,v:0,l:0}; L.forEach(function(x){ var s=estadoSug(x)[0]; if(/Atendida/.test(s)) g.a++; else if(/Vencida/.test(s)) g.v++; if(x.tipo==='llamado') g.l++; });
     h+='<div class="lva-box"><h4>📈 Progresiones sugeridas <small>'+g.t+' recibidas · '+g.a+' atendidas · '+g.v+' vencidas · '+g.l+' llamados</small></h4>'+(L.length?L.slice(0,EST.todasSug?L.length:25).map(function(x){ var st=estadoSug(x);
-      return '<div style="font-size:12px;padding:6px 0;border-bottom:1px solid var(--border2)"><span style="color:'+st[1]+';font-weight:700">'+st[0]+'</span> · '+e(fF(x.para||x.fecha))+(x.sesion?' · '+e(x.sesion):'')+'<br><b>'+e(x.ejercicio||'')+'</b> '+(x.tipo==='observacion'?'<span style="color:#b45309">(observación)</span> ':'')+'— '+e(x.texto||'')+(x.textoEs&&x.textoEs!==x.texto?'<div class="lva-es"><b>🇲🇽</b> '+e(x.textoEs)+'</div>':'')+'</div>'; }).join('')+(L.length>25&&!EST.todasSug?'<button type="button" class="lva-more" data-todas="1">Ver las '+L.length+'</button>':''):'<div class="lva-vacio">Aún no tiene progresiones sugeridas.</div>')+anuBox(D.sugA,'progresiones')+'</div>';
+      return '<div style="font-size:12px;padding:6px 0;border-bottom:1px solid var(--border2)"><span style="color:'+st[1]+';font-weight:700">'+st[0]+'</span> · '+e(fF(x.para||x.fecha))+(x.sesion?' · '+e(x.sesion):'')+'<br><b>'+e(x.ejercicio||'')+'</b> '+(x.tipo==='observacion'?'<span style="color:#b45309">(observación)</span> ':'')+'— '+esH(x,'texto')+'</div>'; }).join('')+(L.length>25&&!EST.todasSug?'<button type="button" class="lva-more" data-todas="1">Ver las '+L.length+'</button>':''):'<div class="lva-vacio">Aún no tiene progresiones sugeridas.</div>')+anuBox(D.sugA,'progresiones')+'</div>';
     return h; }
   function pintar(){ var box=document.getElementById('lva-card'); if(!box) return; var D=EST.D;
     if(!D){ box.innerHTML='<div class="lva-head"><div class="card-title">👁️ Lo que ve el alumno</div></div><div class="lva-vacio">Cargando de FitTrack…</div>'; return; }
@@ -9706,7 +9801,7 @@ window.FA={
     var h='<div class="pse-acd"><div class="pse-acd-t">Métricas propuestas</div>'+keys.map(function(k){ var x=M[k]||{actual:act[k]||0,propuesta:act[k]||0,motivo:'Sin evidencia nueva.'}; var ig=x.actual===x.propuesta, col=x.propuesta>x.actual?'var(--green)':x.propuesta<x.actual?'var(--red)':'var(--text3)';
       return '<label class="pse-m'+(ig?' ig':'')+'"><input type="checkbox" class="pse-cm" data-k="'+k+'" data-v="'+e(x.propuesta)+'"'+(ig?' disabled':' checked')+'><span class="pse-mn"><b>'+e(NM[k]||k)+'</b><span>'+e(x.motivo||'')+'</span></span><span class="pse-mv" style="color:'+col+'">'+e(x.actual)+' → '+e(x.propuesta)+'</span></label>'; }).join('')+
       '<div class="pse-rend" data-rend="'+e(r.nip)+'">'+rendTxt(r.nip)+'</div>'+
-      (N.length?'<div class="pse-acd-t">Notas propuestas</div>'+N.map(function(n,i){ return '<label class="pse-m"><input type="checkbox" class="pse-cn" data-i="'+i+'" checked><span class="pse-mn"><b style="color:'+(n.tipo==='positive'?'var(--green)':'var(--red)')+'">'+e(n.etiqueta||'')+(n.fecha?' · '+e(n.fecha):'')+'</b><span style="color:var(--text)">'+e(n.txt||'')+'</span></span></label>'; }).join(''):'<div class="pse-sub" style="margin:4px 0">Sin notas propuestas.</div>')+
+      (N.length?'<div class="pse-acd-t">Notas propuestas</div>'+N.map(function(n,i){ return '<label class="pse-m"><input type="checkbox" class="pse-cn" data-i="'+i+'" checked><span class="pse-mn"><b style="color:'+(n.tipo==='positive'?'var(--green)':'var(--red)')+'">'+e(n.etiqueta||'')+(n.fecha?' · '+e(n.fecha):'')+'</b><div class="pse-ntx" style="color:var(--text)">'+(window.ES?ES.html(n,'txt',ev.idioma):e(n.txt||''))+'</div></span></label>'; }).join(''):'<div class="pse-sub" style="margin:4px 0">Sin notas propuestas.</div>')+
       (ST.desc===r.nip?'<div class="pse-desc"><label>Motivo del descarte (opcional)</label><input type="text" id="pse-dmot" placeholder="p. ej. la reviso en el chequeo"><div class="pse-acc"><button type="button" class="neg" data-descartar-ok="'+e(r.nip)+'">🗑️ Confirmar descarte</button><button type="button" data-descartar-no="1">Cancelar</button></div></div>':'')+
       '<div class="pse-acc"><button type="button" class="pri" data-aprobar="'+e(r.nip)+'">✅ Aprobar</button>'+(window.PSE_EDIT?'<button type="button" data-ped="'+e(r.nip)+'">✏️ Editar</button>':'')+'<button type="button" class="neg" data-descartar="'+e(r.nip)+'">🗑️ Descartar</button></div>'+
       '<div class="pse-sub" style="margin-top:6px">Aprobar aplica lo marcado igual que «Revisar propuesta» dentro del alumno (métricas y notas en su evaluación).</div></div>';
@@ -9832,7 +9927,8 @@ window.FA={
 // aviso → se marca en su lugar (estado cerrado, anulado); nota de Mi semana → copia en fittrack_rendimiento_anuladas y nota vacía.
 // TODA edición/anulación se registra en fittrack_ediciones_noe/<nip>/<id> {ts, nodo, ruta, antes, despues, tipo} (una sola
 // escritura multi-ruta). El motor la respeta (motor/protege_noe.py + tools/ediciones_noe.py; REVISION_HORARIA paso «ediciones Noé»).
-// Otro idioma: se editan el texto en su idioma y en español; si solo cambia el español → traduccionPendiente:true (el motor traduce).
+// Otro idioma (Noé 13 nov 12:20): Noé edita en ESPAÑOL; el texto en el idioma del alumno queda en «👁 Ver como lo ve el alumno»;
+// si solo cambia el español → traduccionPendiente:true (el motor traduce). Notas de propuesta: txtEs + traduccionPendiente:<idioma>.
 // Medallero, batería, Pinocho y mapa NO se editan aquí: se recalculan solos cada corrida (para corregirlos, anula/explica con una nota).
 (function(){
   var ED={i:null,modo:null}, PE={nip:null};
@@ -9849,7 +9945,7 @@ window.FA={
   window.LVA_EDIT={
     html:function(it,i,lg){ if(!it.ed||it.estado!=='vigente') return ''; var raw=it.ed.raw||{}, h=tag(raw);
       if(ED.i===i&&ED.modo==='editar'){ var otro=lg!=='es';
-        h+='<div class="ed-box">'+(otro?'<label>Texto que ve el alumno ('+e(lg)+')</label><textarea id="ed-tx">'+e(raw[it.ed.tx]||'')+'</textarea><label>🇲🇽 En español</label><textarea id="ed-es">'+e(raw[it.ed.es]||raw[it.ed.tx]||'')+'</textarea><div class="ed-ayuda">Si solo cambias el español, queda marcado «traducción pendiente» y el motor lo traduce en la siguiente corrida; mientras tanto el alumno sigue viendo el texto anterior en su idioma.</div>'
+        h+='<div class="ed-box">'+(otro?'<label>Texto en español</label><textarea id="ed-es">'+e(raw[it.ed.es]||(window.ES&&!window.ES.pareceEs(raw[it.ed.tx])?'':raw[it.ed.tx])||'')+'</textarea><div class="ed-ayuda">Escribe en español: queda marcado «traducción pendiente» y el motor lo traduce a su idioma en la siguiente revisión; mientras tanto el alumno sigue viendo el texto anterior en su idioma.</div><details class="es-orig"><summary>👁 Ver como lo ve el alumno'+(window.ES?' ('+e(window.ES.nombreLang(lg))+')':'')+'</summary><textarea id="ed-tx">'+e(raw[it.ed.tx]||'')+'</textarea></details>'
           :'<label>Texto que ve el alumno</label><textarea id="ed-tx">'+e(raw[it.ed.tx]||'')+'</textarea>')+
           '<div class="ed-ayuda">Se guarda en <code>'+e(it.ed.ruta)+'</code> (lo ve al momento) y queda en la bitácora fittrack_ediciones_noe.</div><div class="ed-bar"><button type="button" class="ed-b pri" data-ed-guardar="'+i+'">💾 Guardar</button><button type="button" class="ed-b" data-ed-cancel="1">Cancelar</button></div></div>';
         return h; }
@@ -9868,7 +9964,7 @@ window.FA={
   function bitacora(upd,nip,o){ upd['fittrack_ediciones_noe/'+nip+'/'+idEd()]=Object.assign({ts:Date.now(),en:ahora(),por:'Noé',app:'FitTrack Coach'},o); }
   function guardar(it,EST){ var ed=it.ed, raw=ed.raw||{}, lg=lang(), otro=lg!=='es', nip=EST.nip;
     var tx=(document.getElementById('ed-tx')||{}).value, es=otro?(document.getElementById('ed-es')||{}).value:null;
-    tx=String(tx==null?'':tx).trim(); if(es!=null) es=String(es).trim();
+    tx=String(tx==null?'':tx).trim(); if(es!=null) es=String(es).trim(); if(otro&&!es){ toast('Escribe el texto en español'); return null; }
     var antTx=raw[ed.tx]||'', antEs=raw[ed.es]||null, cambTx=tx!==String(antTx).trim(), cambEs=otro&&es!==String(antEs||antTx).trim();
     if(!tx||(!cambTx&&!cambEs)){ toast(!tx?'El texto no puede quedar vacío':'Sin cambios'); return null; }
     var pend=otro&&cambEs&&!cambTx, upd={}, P=ed.ruta, en=ahora(); ED.pend=pend;
@@ -9891,13 +9987,15 @@ window.FA={
     return escribir(upd); }
 
   // ── Propuestas de evaluación (fittrack_propuestas/evaluaciones/<nip>) ──
+  // Noé edita las notas propuestas en español (txtEs si el alumno usa otro idioma; el motor traduce txt).
+  function pnEs(n){ if(n.txtEs!=null) return String(n.txtEs); return window.ES&&!window.ES.pareceEs(n.txt)?'':String(n.txt||''); }
   var NOM={ef:'Efectividad',es:'Esfuerzo',in:'Intensidad',fu:'Fuerza',re:'Resistencia',rm:'Rango de movimiento',ca:'Cadencia',tc:'Técnica',ud:'Umbral de dolor'};
   window.PSE_EDIT={
     html:function(r){ var ev=r.ev||{}; var h=ev.editadoPor?'<span class="ed-tag">✏️ Editada por '+e(ev.editadoPor)+(ev.editadoEn?' · '+e(fCorta(ev.editadoEn)):'')+'</span>':'';
       if(PE.nip!==r.nip) return h; var full=((PROP.evaluaciones||{})[r.nip])||ev, M=full.metricas||{}, N=full.notas||[];
       h+='<div class="ed-box"><div style="font:700 12.5px \'DM Sans\',sans-serif;margin-bottom:4px">Editar propuesta · '+e(r.nombre)+'</div><div class="ed-met"><span></span><span>actual</span><span>propuesta</span></div>'+
         Object.keys(NOM).filter(function(k){ return M[k]; }).map(function(k){ var m=M[k]; return '<div class="ed-met"><b>'+NOM[k]+'</b><span>'+e(m.actual)+'</span><input type="number" min="0" max="100" step="5" data-pm="'+k+'" value="'+e(m.propuesta)+'"></div><div class="ed-mot"><textarea data-pmo="'+k+'" style="min-height:44px">'+e(m.motivo||'')+'</textarea></div>'; }).join('')+
-        (N.length?'<label>Notas propuestas</label>'+N.map(function(n,i){ return '<div class="ed-ayuda">'+e(n.etiqueta||'')+' · '+e(n.fecha||'')+'</div><textarea data-pn="'+i+'" style="min-height:60px">'+e(n.txt||'')+'</textarea>'; }).join(''):'')+
+        (N.length?'<label>Notas propuestas</label>'+N.map(function(n,i){ return '<div class="ed-ayuda">'+e(n.etiqueta||'')+' · '+e(n.fecha||'')+'</div><textarea data-pn="'+i+'" style="min-height:60px">'+e(pnEs(n))+'</textarea>'; }).join(''):'')+
         '<div class="ed-ayuda">Se guarda en fittrack_propuestas/evaluaciones/'+e(r.nip)+' (editadoPor Noé: el motor ya no la recalcula) y en la bitácora. Aplicarla al alumno sigue siendo «Revisar propuesta».</div>'+
         '<div class="ed-bar"><button type="button" class="ed-b pri" data-ped-guardar="'+e(r.nip)+'">💾 Guardar</button><button type="button" class="ed-b" data-ped-cancel="1">Cancelar</button></div></div>';
       return h; },
@@ -9907,10 +10005,14 @@ window.FA={
       var nip=d.pedGuardar, full=((PROP.evaluaciones||{})[nip]); if(!full) return true; var box=t.closest('.ed-box'), M=full.metricas||{}, N=full.notas||[], upd={}, antes={}, desp={}, P='fittrack_propuestas/evaluaciones/'+nip;
       box.querySelectorAll('[data-pm]').forEach(function(inp){ var k=inp.dataset.pm, v=Math.max(0,Math.min(100,Math.round(Number(inp.value)))); if(isFinite(v)&&M[k]&&v!==M[k].propuesta){ upd[P+'/metricas/'+k+'/propuesta']=v; antes['metricas/'+k+'/propuesta']=M[k].propuesta; desp['metricas/'+k+'/propuesta']=v; } });
       box.querySelectorAll('[data-pmo]').forEach(function(ta){ var k=ta.dataset.pmo, v=ta.value.trim(); if(M[k]&&v!==String(M[k].motivo||'').trim()){ upd[P+'/metricas/'+k+'/motivo']=v; antes['metricas/'+k+'/motivo']=M[k].motivo||''; desp['metricas/'+k+'/motivo']=v; } });
-      box.querySelectorAll('[data-pn]').forEach(function(ta){ var i=+ta.dataset.pn, v=ta.value.trim(); if(N[i]&&v!==String(N[i].txt||'').trim()){ upd[P+'/notas/'+i+'/txt']=v; antes['notas/'+i+'/txt']=N[i].txt||''; desp['notas/'+i+'/txt']=v; } });
+      var lgP=full.idioma||(window.ES&&ES.lang(nip))||'es', otroP=lgP!=='es';
+      box.querySelectorAll('[data-pn]').forEach(function(ta){ var i=+ta.dataset.pn, v=ta.value.trim(); if(!N[i]||!v||v===String(pnEs(N[i])).trim()) return;
+        if(otroP){ upd[P+'/notas/'+i+'/txtEs']=v; upd[P+'/notas/'+i+'/traduccionPendiente']=lgP; upd[P+'/traduccionPendiente']=lgP; antes['notas/'+i+'/txtEs']=N[i].txtEs||null; desp['notas/'+i+'/txtEs']=v; }
+        else { upd[P+'/notas/'+i+'/txt']=v; antes['notas/'+i+'/txt']=N[i].txt||''; desp['notas/'+i+'/txt']=v; } });
       if(!Object.keys(upd).length){ toast('Sin cambios'); return true; }
       var en=ahora(); upd[P+'/editadoPor']='Noé'; upd[P+'/editadoEn']=en; upd[P+'/textoAnterior']=antes;
-      bitacora(upd,nip,{tipo:'edicion',nodo:'fittrack_propuestas/evaluaciones',ruta:P,antes:antes,despues:desp,sesion:full.sesion||null});
+      var _tp=otroP&&Object.keys(desp).some(function(k){ return /txtEs$/.test(k); });
+      bitacora(upd,nip,{tipo:'edicion',nodo:'fittrack_propuestas/evaluaciones',ruta:P,antes:antes,despues:desp,sesion:full.sesion||null,idioma:otroP?lgP:null,traduccionPendiente:_tp||null});
       t.disabled=true; escribir(upd).then(function(){ PE.nip=null; toast('✅ Propuesta guardada'); window.psePintar(); }).catch(function(err){ console.error('[EDICION]',err); t.disabled=false; toast('No se pudo guardar. Revisa tu conexión.'); });
       return true; }
   };
