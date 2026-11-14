@@ -2265,6 +2265,7 @@ function doLogin(){
   try{ var _raw=JSON.parse(localStorage.getItem('fittrack_data')||'{}'); var _e=_raw.alumnos&&_raw.alumnos[nip]&&_raw.alumnos[nip].estado; if(_e==='archivado'){ err.style.display='block'; err.textContent=t('login_err_archivado'); document.querySelectorAll('.nip-digit').forEach(function(d){d.value='';d.classList.remove('filled');}); return; } }catch(e){}
   err.style.display='none';
   currentAlumno=nip;
+  try{ r321cTratoEntrada(nip); }catch(e){} // TRATO-VIVO: fittrack_trato/<nip> (usted/tú sin republicar la app)
   var st=_stAlumno(a); // i18n7
   var pct=calcAprobGeneral(); // Promedio real de aprobación por día
   var ini=a.name.split(' ').map(function(w){return w[0]||'';}).slice(0,2).join('').toUpperCase();
@@ -4512,8 +4513,8 @@ function r236Pintar(){
 // 1) Los días sin enviar se cuentan EN VIVO (día de México) desde el último envío (o la justificación si es posterior);
 //    el número guardado solo es respaldo. Con ≤14 días la nota no se pinta (igual que tools/seguimiento_check.py).
 // 2) Pantalla principal (Rutina, debajo de la cuenta regresiva): nota compacta con los días y las rutinas (días) con
-//    ejercicios en revisión aún sin aprobar. 3) Cierre nuevo de autogestión. 4) Trato usted (lista R321C_USTED, de sync/perfiles).
-var R321C_USTED = {"1480":1,"1499":1,"2086":1,"2301":1,"3737":1,"3918":1,"3982":1,"5620":1,"5646":1,"6355":1,"6665":1,"6706":1,"7609":1,"7836":1,"8279":1,"9381":1,"9887":1};
+//    ejercicios en revisión aún sin aprobar. 3) Cierre nuevo de autogestión. 4) Trato usted: nodo vivo fittrack_trato/<nip> → lista R321C_USTED (respaldo, de tools/trato_usted_app.py).
+var R321C_USTED = {"1480":1,"1499":1,"2086":1,"2301":1,"3737":1,"3918":1,"3982":1,"5620":1,"5646":1,"6355":1,"6665":1,"6706":1,"6745":1,"7609":1,"7836":1,"8279":1,"9381":1,"9887":1};
 var _r321cRef = null, _r321cT = null;
 function r321cHoyMX(){ return new Date(Date.now()-6*3600e3).toISOString().slice(0,10); }
 function r321cDias(S){
@@ -4526,7 +4527,33 @@ function r321cDias(S){
   if(!(d>14)) return null;
   return d;
 }
-function r321cUsted(){ try{ return currentLang==='es' && !!R321C_USTED[String(currentAlumno)]; }catch(e){ return false; } }
+// TRATO-VIVO (13 nov 2026): el trato se lee EN VIVO de Firebase fittrack_trato/<nip> = {trato:'tu'|'usted', fuente, hid, en}
+//    (lo escribe el sistema con tools/trato_usted_app.py: alta y cambio de trato). Orden: nodo vivo → copia local del
+//    último nodo leído (localStorage ft_trato_<nip>, para no parpadear al entrar) → lista fija R321C_USTED (respaldo).
+//    Si el nodo cambia el trato ya pintado, se repinta todo (como un cambio de idioma) + mapa de volumen.
+var _R321C_VIVO = {};
+function _r321cTratoVal(v){ v = (v && typeof v === 'object') ? v.trato : v; v = String(v || '').toLowerCase().replace('tú', 'tu'); return (v === 'usted' || v === 'tu') ? v : null; }
+function r321cTratoDe(nip){
+  nip = String(nip || ''); var v = _R321C_VIVO[nip];
+  if (v === 'usted' || v === 'tu') return v;
+  try{ var c = _r321cTratoVal(localStorage.getItem('ft_trato_' + nip)); if (c) return c; }catch(e){}
+  return R321C_USTED[nip] ? 'usted' : 'tu';
+}
+function r321cUsted(){ try{ return currentLang==='es' && r321cTratoDe(currentAlumno) === 'usted'; }catch(e){ return false; } }
+function r321cTratoEntrada(nip){
+  try{
+    if (!nip || typeof db === 'undefined') return;
+    db.ref('fittrack_trato/' + nip).once('value').then(function(s){
+      var v = _r321cTratoVal(s && s.val()); if (!v) return;   // sin nodo → sigue la lista fija
+      var antes = r321cTratoDe(nip); _R321C_VIVO[nip] = v;
+      try{ localStorage.setItem('ft_trato_' + nip, v); }catch(e){}
+      if (currentAlumno === nip && antes !== v){
+        try{ if (typeof onLangChange === 'function') onLangChange(); }catch(e){}
+        try{ if (typeof _mapa !== 'undefined' && _mapa && typeof renderMapaVol === 'function') renderMapaVol(); }catch(e){}
+      }
+    }).catch(function(){});
+  }catch(e){}
+}
 function r321cT(k,v){ if(r321cUsted() && LANGS.es[k+'_u']!==undefined) return _tFmt(LANGS.es[k+'_u'],v); return t(k,v); }
 function r321cTexto(esRev,dias,S){
   return r321cT(esRev?'r321_fija':'r236_fija',{n:dias,u:(S.ultimoReporte?' '+r321cT('r236_ult',{f:_r235Fecha(S.ultimoReporte)}):'')});
